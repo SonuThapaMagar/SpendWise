@@ -5,35 +5,54 @@ import Logo from "/src/assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Login = () => {
+const Login = ({ login }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleSignUpClick = () => {
     navigate("/signup");
   };
 
-  const handleUsernameChange = (e) => {
-    setUser({ ...user, username: e.target.value });
-  };
+  // const handleUsernameChange = (e) => {
+  //   setUser({ ...user, username: e.target.value });
+  // };
 
-  const handlePasswordChange = (e) => {
-    setUser({ ...user, password: e.target.value });
-  };
+  // const handlePasswordChange = (e) => {
+  //   setUser({ ...user, password: e.target.value });
+  // };
 
   const onFinish = async (values) => {
     const { username, password } = values;
 
-    // Static admin login
-    if (username === "admin" && password === "admin") {
-      login("admin"); // Set role as admin
-      message.success("Admin login successful!");
-      navigate("/admin/dashboard");
-    } else {
-      // Simulate user login (replace with actual API call for user login)
-      login("user"); // Set role as user
-      message.success("User login successful!");
-      navigate("/user/dashboard");
+    try {
+      setLoading(true);
+
+      // Fetch users from JSON server
+      const response = await axios.get("http://localhost:4000/users", {
+        params: { username, password },
+      });
+
+      if (response.data.length > 0) {
+        const user = response.data[0];
+
+        // Save user to local storage
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Set user role (admin or user)
+        const role =
+          username === "admin" && password === "admin" ? "admin" : "user";
+        login(role); // Use the login function passed as a prop
+
+        message.success("Login successful!");
+        navigate(role === "admin" ? "/admin/dashboard" : "/user/dashboard");
+      } else {
+        message.error("Invalid username or password");
+      }
+    } catch (error) {
+      message.error("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,9 +68,6 @@ const Login = () => {
           initialValues={{
             remember: true,
           }}
-          style={{
-            maxWidth: 360,
-          }}
           onFinish={onFinish}
         >
           <Form.Item
@@ -63,12 +79,7 @@ const Login = () => {
               },
             ]}
           >
-            <Input
-              prefix={<UserOutlined />}
-              placeholder="Username"
-              value={user.username}
-              onChange={handleUsernameChange}
-            />
+            <Input prefix={<UserOutlined />} placeholder="Username" />
           </Form.Item>
 
           <Form.Item
@@ -80,13 +91,7 @@ const Login = () => {
               },
             ]}
           >
-            <Input.Password
-              prefix={<LockOutlined />}
-              type="password"
-              placeholder="Password"
-              value={user.password}
-              onChange={handlePasswordChange}
-            />
+            <Input.Password prefix={<LockOutlined />} placeholder="Password" />
           </Form.Item>
           <Form.Item>
             <Flex justify="space-between" align="center">
@@ -102,6 +107,7 @@ const Login = () => {
               type="primary"
               htmlType="submit"
               className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 mb-4"
+              loading={loading}
             >
               Login
             </Button>

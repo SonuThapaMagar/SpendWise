@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { BrowserRouter, Routes, Route,Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Landing from "./pages/Landing";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
-import UserDashboard from "./pages/User/Dashboard"; 
-import AdminDashboard from "./pages/Admin/Dashboard"; 
+import UserDashboard from "./pages/User/Dashboard";
+import AdminDashboard from "./pages/Admin/Dashboard";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -24,7 +24,16 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login login={login} />} />
         <Route path="/signup" element={<SignUp />} />
-
+        <Route
+          path="/user/dashboard"
+          element={
+            user?.role === "user" ? (
+              <UserDashboard />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
         <Route
           path="/admin/dashboard"
           element={

@@ -19,8 +19,9 @@ const Login = ({ login }) => {
       if (response.data.length > 0) {
         const user = response.data[0];
         localStorage.setItem("user", JSON.stringify(user)); // Save user data to localStorage
+        localStorage.setItem("is_login", "1"); 
         message.success("Login successful!");
-        navigate("/users/dashboard"); // Redirect to user dashboard
+        navigate("/users/dashboard"); 
       } else {
         message.error("Invalid username or password");
       }

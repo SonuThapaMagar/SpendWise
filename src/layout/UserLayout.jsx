@@ -25,7 +25,10 @@ const UserLayout = () => {
 
   useEffect(() => {
     const isLogin = localStorage.getItem("is_login");
-    if (isLogin !== "1") {
+    const user = localStorage.getItem("user");
+
+    if (isLogin !== "1" || !user) {
+      // Redirect to landing page if not logged in
       navigate("/");
     }
   }, [navigate]);
@@ -40,25 +43,25 @@ const UserLayout = () => {
       key: "1",
       icon: <DashboardOutlined />,
       label: "Dashboard",
-      onClick: () => navigate("/dashboard"),
+      onClick: () => navigate("/users/dashboard"),
     },
     {
       key: "2",
       icon: <MoneyCollectOutlined />,
       label: "Budget",
-      onClick: () => navigate("/budget"),
+      onClick: () => navigate("/users/budget"),
     },
     {
       key: "3",
       icon: <DollarOutlined />,
       label: "Expense",
-      onClick: () => navigate("/expense"),
+      onClick: () => navigate("/users/expense"),
     },
     {
       key: "4",
       icon: <UserOutlined />,
       label: "My Profile",
-      onClick: () => navigate("/profile"),
+      onClick: () => navigate("/users/profile"),
     },
     {
       key: "5",
@@ -123,7 +126,8 @@ const UserLayout = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {/* <Outlet /> */}
+          {/* Render nested routes here */}
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

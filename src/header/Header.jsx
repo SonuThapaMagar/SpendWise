@@ -29,18 +29,18 @@ const Header = ({ user, logout }) => {
           >
             Home
           </a>
-          <a
+          {/* <a
             href="/about"
             className="text-gray-700 hover:text-blue-600 transition duration-300"
           >
             About
-          </a>
-          <a
+          </a> */}
+          {/* <a
             href="/contact"
             className="text-gray-700 hover:text-blue-600 transition duration-300"
           >
             Contact
-          </a>
+          </a> */}
           {user ? (
             <>
               <Button

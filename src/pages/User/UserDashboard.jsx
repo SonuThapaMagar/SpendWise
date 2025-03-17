@@ -1,12 +1,22 @@
 import React from "react";
-import UserLayout from "../../layout/UserLayout";
+import { Card } from "antd";
 
-const UserDashboard = () => {
+const Dashboard = () => {
   return (
-    <>
-      <UserLayout/>
-    </>
+    <div>
+      <h1>Dashboard</h1>
+      <Card title="Card title" variant="borderless" style={{ width: 300 }}>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+      </Card>
+      <Card title="Card title" variant="borderless" style={{ width: 300 }}>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+      </Card>
+    </div>
   );
 };
 
-export default UserDashboard;
+export default Dashboard;

@@ -1,36 +1,33 @@
 import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, Flex, message } from "antd";
-import Logo from "/src/assets/logo.png";
+import { Button, Form, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import Logo from "/src/assets/logo.png";
 
-const Login = ({ login }) => {
+const AdminLogin = ({ login }) => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
     const { username, password } = values;
 
     try {
-      // Fetch users from JSON server
-      const response = await axios.get("http://localhost:4000/users", {
-        params: { username, password },
-      });
-      if (response.data.length > 0) {
-        const user = response.data[0];
-        localStorage.setItem("user", JSON.stringify(user)); // Save user data to localStorage
-        message.success("Login successful!");
-        navigate("/users/dashboard"); // Redirect to user dashboard
+      setLoading(true);
+
+      // Static admin credentials (replace with your logic if needed)
+      if (username === "admin" && password === "admin") {
+        localStorage.setItem("user", JSON.stringify({ role: "admin" }));
+        login("admin"); // Set user role to admin
+        message.success("Admin login successful!");
+        navigate("/admin/dashboard");
       } else {
-        message.error("Invalid username or password");
+        message.error("Invalid admin credentials");
       }
     } catch (error) {
       message.error("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleSignUpClick = () => {
-    navigate("/signup");
   };
 
   return (
@@ -38,10 +35,10 @@ const Login = ({ login }) => {
       <div className="w-full max-w-sm bg-white shadow-lg rounded-lg p-6">
         <img src={Logo} alt="Logo" className="mx-auto w-24 h-24 rounded-full" />
         <h2 className="text-2xl font-semibold text-center mb-4 text-[#050C9C]">
-          Login
+          Admin Login
         </h2>
         <Form
-          name="login"
+          name="adminLogin"
           initialValues={{
             remember: true,
           }}
@@ -70,30 +67,16 @@ const Login = ({ login }) => {
           >
             <Input.Password prefix={<LockOutlined />} placeholder="Password" />
           </Form.Item>
-          <Form.Item>
-            <Flex justify="space-between" align="center">
-              <a href="">Forgot password</a>
-            </Flex>
-          </Form.Item>
 
           <Form.Item>
             <Button
               type="primary"
               htmlType="submit"
               className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 mb-4"
+              loading={loading}
             >
               Login
             </Button>
-
-            <p className="text-center mt-4">
-              Don't have an account?
-              <span
-                onClick={handleSignUpClick}
-                className="text-blue-500 ml-1 cursor-pointer"
-              >
-                Sign Up now!
-              </span>
-            </p>
           </Form.Item>
         </Form>
       </div>
@@ -101,4 +84,4 @@ const Login = ({ login }) => {
   );
 };
 
-export default Login;
+export default AdminLogin;

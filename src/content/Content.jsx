@@ -1,7 +1,8 @@
-import React from 'react';
-import { ArrowRight, PieChart, BarChart3, TrendingUp } from 'lucide-react';
-import Landing from '../assets/landing.jpg'
-import about from '../assets/about.jpg'
+import React from "react";
+import { ArrowRight, PieChart, BarChart3, TrendingUp } from "lucide-react";
+import Landing from "../assets/landing.jpg";
+import about from "../assets/about.jpg";
+import contact from '../assets/signup.jpg'
 
 const Content = () => {
   return (
@@ -9,14 +10,28 @@ const Content = () => {
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden bg-gradient-to-br from-emerald-900 to-teal-800">
         <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <svg
+            className="w-full h-full"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <pattern
+                id="grid"
+                width="10"
+                height="10"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M 10 0 L 0 0 0 10"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="0.5"
+                />
+              </pattern>
+            </defs>
             <path d="M0,0 L100,0 L100,100 L0,100 Z" fill="url(#grid)" />
           </svg>
-          <defs>
-            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-          </defs>
         </div>
 
         <div className="container relative mx-auto px-6">
@@ -28,8 +43,9 @@ const Content = () => {
                 <span className="text-emerald-300">With SpendWise</span>
               </h1>
               <p className="text-gray-100 text-lg mb-8 max-w-lg">
-                Take control of your spending habits, track expenses effortlessly, and achieve your financial goals with
-                our intuitive expense tracking system.
+                Take control of your spending habits, track expenses
+                effortlessly, and achieve your financial goals with our
+                intuitive expense tracking system.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                 <button className="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition duration-300 font-medium flex items-center justify-center">
@@ -59,10 +75,12 @@ const Content = () => {
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Why Choose SpendWise?</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              Why Choose SpendWise?
+            </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Our powerful expense tracking tools help you gain insights into your spending habits and make smarter
-              financial decisions.
+              Our powerful expense tracking tools help you gain insights into
+              your spending habits and make smarter financial decisions.
             </p>
           </div>
 
@@ -72,9 +90,12 @@ const Content = () => {
               <div className="bg-emerald-100 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-6">
                 <PieChart className="h-7 w-7 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Expense Tracking</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                Expense Tracking
+              </h3>
               <p className="text-gray-600">
-                Easily log and categorize your expenses to keep track of where your money is going.
+                Easily log and categorize your expenses to keep track of where
+                your money is going.
               </p>
             </div>
 
@@ -83,9 +104,12 @@ const Content = () => {
               <div className="bg-emerald-100 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-6">
                 <BarChart3 className="h-7 w-7 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Budget Planning</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                Budget Planning
+              </h3>
               <p className="text-gray-600">
-                Set budgets for different categories and receive alerts when you're approaching your limits.
+                Set budgets for different categories and receive alerts when
+                you're approaching your limits.
               </p>
             </div>
 
@@ -94,9 +118,12 @@ const Content = () => {
               <div className="bg-emerald-100 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-6">
                 <TrendingUp className="h-7 w-7 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Financial Insights</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                Financial Insights
+              </h3>
               <p className="text-gray-600">
-                Gain valuable insights with detailed reports and visualizations of your spending patterns.
+                Gain valuable insights with detailed reports and visualizations
+                of your spending patterns.
               </p>
             </div>
           </div>
@@ -107,10 +134,12 @@ const Content = () => {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">About SpendWise</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              About SpendWise
+            </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              We're a team of financial experts and technology enthusiasts dedicated to helping you take control of your
-              finances.
+              We're a team of financial experts and technology enthusiasts
+              dedicated to helping you take control of your finances.
             </p>
           </div>
 
@@ -128,14 +157,19 @@ const Content = () => {
 
             {/* Text Section */}
             <div className="order-1 lg:order-2">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-emerald-500 pl-4">Our Mission</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-emerald-500 pl-4">
+                Our Mission
+              </h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                At SpendWise, we believe that financial freedom starts with understanding your spending habits. Our
-                mission is to provide you with the tools and insights you need to make smarter financial decisions.
+                At SpendWise, we believe that financial freedom starts with
+                understanding your spending habits. Our mission is to provide
+                you with the tools and insights you need to make smarter
+                financial decisions.
               </p>
               <p className="text-gray-600 mb-8 text-lg leading-relaxed">
-                Founded in 2023, we've helped thousands of users gain control over their finances, reduce unnecessary
-                expenses, and save more for what truly matters to them.
+                Founded in 2023, we've helped thousands of users gain control
+                over their finances, reduce unnecessary expenses, and save more
+                for what truly matters to them.
               </p>
               <button className="bg-emerald-500 text-white px-6 py-3 rounded-lg hover:bg-emerald-600 transition duration-300 font-medium">
                 Learn More About Us
@@ -149,9 +183,12 @@ const Content = () => {
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Contact Us</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              Contact Us
+            </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Have questions or feedback? We'd love to hear from you! Our team is always ready to help.
+              Have questions or feedback? We'd love to hear from you! Our team
+              is always ready to help.
             </p>
           </div>
 
@@ -159,14 +196,17 @@ const Content = () => {
             {/* Image Section */}
             <div className="relative h-full min-h-[400px] lg:min-h-[600px]">
               <img
-                src="https://via.placeholder.com/600" // Replace with your image URL
+                src={contact}
                 alt="Customer Support"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/80 to-transparent flex flex-col justify-center p-12">
-                <h3 className="text-3xl font-bold text-white mb-6">Get In Touch</h3>
+                <h3 className="text-3xl font-bold text-white mb-6">
+                  Get In Touch
+                </h3>
                 <p className="text-white/90 mb-8 max-w-md text-lg">
-                  Our support team is available to answer your questions and help you make the most of SpendWise.
+                  Our support team is available to answer your questions and
+                  help you make the most of SpendWise.
                 </p>
                 <div className="space-y-4">
                   <div className="flex items-center text-white">
@@ -216,7 +256,10 @@ const Content = () => {
               <form className="space-y-6">
                 {/* Name Field */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Full Name
                   </label>
                   <input
@@ -231,7 +274,10 @@ const Content = () => {
 
                 {/* Email Field */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Email Address
                   </label>
                   <input
@@ -246,7 +292,10 @@ const Content = () => {
 
                 {/* Subject Field */}
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="subject"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Subject
                   </label>
                   <input
@@ -261,7 +310,10 @@ const Content = () => {
 
                 {/* Message Field */}
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Message
                   </label>
                   <textarea

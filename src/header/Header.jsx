@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import Logo from "../assets/logo.png";
-import { DownloadOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 
 const Header = () => {
@@ -10,7 +9,6 @@ const Header = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-//   const [size, setSize] = useState('large');
 
   return (
     <header className="bg-white shadow-md">
@@ -43,7 +41,6 @@ const Header = () => {
           <Button
             type="primary"
             shape="round"
-            icon={<DownloadOutlined />}
           >
             Login
           </Button>
@@ -51,7 +48,6 @@ const Header = () => {
             type="primary"
             color="purple"
             shape="round"
-            icon={<DownloadOutlined />}
           >
             Sign Up
           </Button>

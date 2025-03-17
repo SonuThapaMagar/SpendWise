@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import Logo from "../assets/logo.png";
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ user, logout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  const navigate = useNavigate();
 
   return (
     <header className="bg-white shadow-md">
@@ -38,19 +41,44 @@ const Header = () => {
           >
             Contact
           </a>
-          <Button
-            type="primary"
-            shape="round"
-          >
-            Login
-          </Button>
-          <Button
-            type="primary"
-            color="purple"
-            shape="round"
-          >
-            Sign Up
-          </Button>
+          {user ? (
+            <>
+              <Button
+                type="primary"
+                shape="round"
+                onClick={() =>
+                  navigate(
+                    user.role === "admin"
+                      ? "/admin/dashboard"
+                      : "/user/dashboard"
+                  )
+                }
+              >
+                Dashboard
+              </Button>
+              <Button type="primary" danger shape="round" onClick={logout}>
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                type="primary"
+                shape="round"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </Button>
+              <Button
+                type="primary"
+                color="purple"
+                shape="round"
+                onClick={() => navigate("/signup")}
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
         </nav>
 
         {/* Mobile Menu Button (Hamburger Icon) */}
@@ -97,18 +125,43 @@ const Header = () => {
             >
               Contact
             </a>
-            <button
-              onClick={() => navigate("/login")}
-              className="flex items-center text-gray-700 hover:text-blue-600 transition duration-300"
-            >
-              <LockOutlined className="mr-1" /> Login
-            </button>
-            <button
-              onClick={() => navigate("/signup")}
-              className="flex items-center text-gray-700 hover:text-blue-600 transition duration-300"
-            >
-              <UserOutlined className="mr-1" /> Signup
-            </button>
+            {user ? (
+              <>
+                <button
+                  onClick={() =>
+                    navigate(
+                      user.role === "admin"
+                        ? "/admin/dashboard"
+                        : "/user/dashboard"
+                    )
+                  }
+                  className="flex items-center text-gray-700 hover:text-blue-600 transition duration-300"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={logout}
+                  className="flex items-center text-gray-700 hover:text-blue-600 transition duration-300"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="flex items-center text-gray-700 hover:text-blue-600 transition duration-300"
+                >
+                  <LockOutlined className="mr-1" /> Login
+                </button>
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="flex items-center text-gray-700 hover:text-blue-600 transition duration-300"
+                >
+                  <UserOutlined className="mr-1" /> Signup
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

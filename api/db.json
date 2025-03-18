@@ -18,5 +18,22 @@
       "email": "user@gmail.com",
       "password": "user@123"
     }
+  ],
+  "budgets": [
+    {
+      "id": "1",
+      "budgetName": "Travel",
+      "budgetAmount": 9000
+    },
+    {
+      "id": "2",
+      "budgetName": "Groceries",
+      "budgetAmount": 5000
+    },
+    {
+      "id": "9026",
+      "budgetName": "Fashion",
+      "budgetAmount": 1000
+    }
   ]
 }

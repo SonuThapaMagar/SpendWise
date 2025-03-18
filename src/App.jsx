@@ -6,9 +6,11 @@ import SignUp from "./pages/Auth/SignUp";
 import AdminLogin from "./pages/Auth/AdminLogin";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import UserDashboard from "./pages/User/UserDashboard";
-import Budget from "./pages/User/Budget";
+import Budget from "./pages/User/Budget/Budget";
 import UserLayout from "./layout/UserLayout";
-import AddBudget from "./pages/User/AddBudget";
+import AddBudget from "./pages/User/Budget/AddBudget";
+import Expense from "./pages/User/Expense/Expense";
+import EditBudget from "./pages/User/Budget/EditBudget";
 
 function App() {
   return (
@@ -21,6 +23,9 @@ function App() {
           <Route path="/users/dashboard" element={<UserDashboard />} />
           <Route path="/users/budget" element={<Budget />}></Route>
           <Route path="/users/budget/addBudget" element={<AddBudget />}></Route>
+          <Route path="/users/budget/editBudget/:id" element={<EditBudget />}></Route>
+
+          <Route path="/users/expense" element={<Expense />}></Route>
         </Route>
 
         <Route path="/admin/login" element={<AdminLogin />} />

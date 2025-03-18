@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Table, Button, ConfigProvider, Flex } from "antd";
+import { Typography, Table, Button, ConfigProvider, Flex, Space } from "antd";
 import { useResponsive } from "antd-style";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
+import axios from "axios";
 
 const { Title } = Typography;
 
@@ -10,11 +11,21 @@ const Budget = () => {
   const navigate = useNavigate();
   const [budgets, setBudgets] = useState([]);
 
-  // Fetch budgets from localStorage when component loads
+  // Fetch budgets from the server
   useEffect(() => {
-    const storedBudgets = JSON.parse(localStorage.getItem("budgets")) || [];
-    setBudgets(storedBudgets);
+    fetchBudgets();
   }, []);
+
+  const fetchBudgets = () => {
+    axios
+      .get("http://localhost:4000/budgets")
+      .then(function (response) {
+        setBudgets(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
   // Define table columns
   const columns = [
@@ -27,7 +38,17 @@ const Budget = () => {
       title: "Budget Amount",
       dataIndex: "budgetAmount",
       key: "budgetAmount",
-      render: (amount) => `Rs. ${amount}`, // Formatting as currency
+      render: (amount) => `Rs. ${amount}`,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, item) => (
+        <Space size="middle">
+          <NavLink to={`/users/budget/editBudget/${item.id}`}>Edit</NavLink>
+          <Button type="button">Delete</Button>
+        </Space>
+      ),
     },
   ];
 
@@ -50,7 +71,7 @@ const Budget = () => {
           <Table 
             dataSource={budgets} 
             columns={columns} 
-            rowKey="budgetName" 
+            rowKey="id" 
             style={{ marginTop: 20 }} 
           />
         </Flex>

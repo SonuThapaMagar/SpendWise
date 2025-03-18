@@ -8,6 +8,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import UserDashboard from "./pages/User/UserDashboard";
 import Budget from "./pages/User/Budget";
 import UserLayout from "./layout/UserLayout";
+import AddBudget from "./pages/User/AddBudget";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/users" element={<UserLayout />}>
           <Route path="/users/dashboard" element={<UserDashboard />} />
           <Route path="/users/budget" element={<Budget />}></Route>
+          <Route path="/users/budget/addBudget" element={<AddBudget />}></Route>
         </Route>
 
         <Route path="/admin/login" element={<AdminLogin />} />

@@ -1,86 +1,71 @@
 import React from "react";
-import { ArrowRight } from "lucide-react"; 
+import { ArrowRight, PieChart, BarChart, TrendingUp, CreditCard } from "lucide-react"; // Icons for services
+
 const Services = () => {
   return (
     <section id="services" className="py-20 px-6 bg-white">
       <div className="container mx-auto">
         {/* Section Heading */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-800">Services</h2>
+          <h2 className="text-3xl font-bold text-gray-800">Our <span className="text-blue-600">Features</span></h2>
           <p className="text-gray-600 max-w-2xl mx-auto mt-4">
-            Necessitatibus eius consequatur ex aliquid fuga eum quidem sint
-            consectetur velit
+            Take control of your finances with our powerful expense tracking tools.
           </p>
         </div>
 
         {/* Service Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Service 1: Nesciunt Mete */}
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          {/* Service 1: Expense Tracking */}
+          <div className="bg-blue-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="bg-blue-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+              <PieChart className="h-6 w-6 text-blue-600" />
+            </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Nesciunt Mete
+              Expense Tracking
             </h3>
             <p className="text-gray-600 mb-6">
-              Provident nihil minus qui consequatur non omnis maiores. Eos
-              accusantium minus dolores iure perferendis tempore et consequatur.
+              Easily log and categorize your expenses to keep track of where your money is going.
             </p>
-            <a
-              href="#"
-              className="text-blue-500 hover:text-blue-600 flex items-center"
-            >
-              Read More <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
           </div>
 
-          {/* Service 2: Ledo Markt */}
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          {/* Service 2: Budget Planning */}
+          <div className="bg-blue-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="bg-green-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+              <BarChart className="h-6 w-6 text-green-600" />
+            </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Ledo Markt
+              Budget Planning
             </h3>
             <p className="text-gray-600 mb-6">
-              Ut excepturi voluptatem nisi sed. Quidem fuga consequatur. Minus
-              ea aut. Vel qui id voluptas adipisci eos earum corrupti.
+              Set budgets for different categories and receive alerts when you're approaching your limits.
             </p>
-            <a
-              href="#"
-              className="text-blue-500 hover:text-blue-600 flex items-center"
-            >
-              Read More <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
+            
           </div>
 
-          {/* Service 3: Eoste Commodi */}
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          {/* Service 3: Financial Insights */}
+          <div className="bg-blue-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="bg-purple-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+              <TrendingUp className="h-6 w-6 text-purple-600" />
+            </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Eoste Commodi
+              Financial Insights
             </h3>
             <p className="text-gray-600 mb-6">
-              Ut autem aut autem non a. Sint sint sit facilis nam justo sint.
-              Libero corrupti neque eum hic non ut nesciunt dolorem.
+              Gain valuable insights with detailed reports and visualizations of your spending patterns.
             </p>
-            <a
-              href="#"
-              className="text-blue-500 hover:text-blue-600 flex items-center"
-            >
-              Read More <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
           </div>
 
-          {/* Service 4: Asperiores Commodit */}
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          {/* Service 4: Secure Payments */}
+          <div className="bg-blue-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="bg-orange-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+              <CreditCard className="h-6 w-6 text-orange-600" />
+            </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Asperiores Commodit
+              Secure Payments
             </h3>
             <p className="text-gray-600 mb-6">
-              Non et temporibus minus omnis sed dolor esse consequatur.
-              Cupiditate sed error ea fuga sit provident adipisci neque.
+              Securely link your bank accounts and credit cards for seamless expense tracking.
             </p>
-            <a
-              href="#"
-              className="text-blue-500 hover:text-blue-600 flex items-center"
-            >
-              Read More <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
           </div>
         </div>
       </div>

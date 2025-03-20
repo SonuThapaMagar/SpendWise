@@ -20,21 +20,24 @@ const Header = ({ user, logout }) => {
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <img src={Logo} className="h-8" alt="SpendWise Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap">
+          <span
+            className="text-blue-600 self-center text-2xl font-semibold whitespace-nowrap"
+            style={{ fontFamily: "Poppins, sans-serif" }}
+          >
             SpendWise
           </span>
         </a>
         <div className="flex md:order-2 space-x-4 rtl:space-x-reverse">
           <button
             type="button"
-            className="text-blue-700 bg-indigo-300 hover:bg-indigo-400 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-4 py-2 text-center"
+            className="text-blue-700 bg-indigo-200 hover:bg-indigo-300 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-4 py-2 text-center"
             onClick={() => navigate("/login")}
           >
             Login
           </button>
           <button
             type="button"
-            className="text-blue-700 bg-indigo-300  hover:bg-indigo-400 hover:text-white focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm px-4 py-2 text-center"
+            className="text-blue-700 bg-indigo-200  hover:bg-indigo-300 hover:text-white focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm px-4 py-2 text-center"
             onClick={() => navigate("/signup")}
           >
             Sign Up
@@ -66,10 +69,15 @@ const Header = ({ user, logout }) => {
           </button>
         </div>
         <div
-          className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${isMobileMenuOpen ? 'block' : 'hidden'}`}
+          className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${
+            isMobileMenuOpen ? "block" : "hidden"
+          }`}
           id="navbar-sticky"
         >
-          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
+          <ul
+            className="flex flex-col p-4 md:p-0 mt-4 font-sm text-sm border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white"
+            style={{ fontFamily: "Poppins, sans-serif" }}
+          >
             <li>
               <a
                 href="#"

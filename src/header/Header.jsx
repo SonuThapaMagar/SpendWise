@@ -27,14 +27,14 @@ const Header = ({ user, logout }) => {
         <div className="flex md:order-2 space-x-4 rtl:space-x-reverse">
           <button
             type="button"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
+            className="text-blue-700 bg-indigo-300 hover:bg-indigo-400 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-4 py-2 text-center"
             onClick={() => navigate("/login")}
           >
             Login
           </button>
           <button
             type="button"
-            className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
+            className="text-blue-700 bg-indigo-300  hover:bg-indigo-400 hover:text-white focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm px-4 py-2 text-center"
             onClick={() => navigate("/signup")}
           >
             Sign Up
@@ -73,7 +73,7 @@ const Header = ({ user, logout }) => {
             <li>
               <a
                 href="#"
-                className="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+                className="block py-2 px-3 text-gray-500 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
                 aria-current="page"
               >
                 Home
@@ -82,7 +82,7 @@ const Header = ({ user, logout }) => {
             <li>
               <a
                 href="#"
-                className="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+                className="block py-2 px-3 text-gray-500 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
               >
                 About
               </a>
@@ -90,7 +90,7 @@ const Header = ({ user, logout }) => {
             <li>
               <a
                 href="#"
-                className="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+                className="block py-2 px-3 text-gray-500 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
               >
                 Services
               </a>
@@ -98,7 +98,7 @@ const Header = ({ user, logout }) => {
             <li>
               <a
                 href="#"
-                className="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+                className="block py-2 px-3 text-gray-500 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
               >
                 Contact
               </a>

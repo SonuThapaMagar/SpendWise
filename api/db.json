@@ -35,5 +35,25 @@
       "budgetName": "Fashion",
       "budgetAmount": 1000
     }
+  ],
+  "expenses": [
+    {
+      "id": "1",
+      "expenseName": "Shirt",
+      "expenseAmount": 2000,
+      "budgetId": "1"
+    },
+    {
+      "id": "2",
+      "expenseName": "Vegetables",
+      "expenseAmount": 1000,
+      "budgetId": "2"
+    },
+    {
+      "id": "c5ec",
+      "expenseName": "Tshirt",
+      "expenseAmount": 100,
+      "budgetId": "9026"
+    }
   ]
 }

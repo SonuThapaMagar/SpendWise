@@ -72,7 +72,7 @@ const UserLayout = () => {
   ];
 
   return (
-    <Layout>
+    <Layout  style={{vh:100}}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div
           className="demo-logo-vertical"

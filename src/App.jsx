@@ -9,8 +9,9 @@ import UserDashboard from "./pages/User/UserDashboard";
 import Budget from "./pages/User/Budget/Budget";
 import UserLayout from "./layout/UserLayout";
 import AddBudget from "./pages/User/Budget/AddBudget";
-import Expense from "./pages/User/Expense/Expense";
 import EditBudget from "./pages/User/Budget/EditBudget";
+import AddExpense from './pages/User/Expense/AddExpense';
+import Expense from "./pages/User/Expense/Expense";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route path="/users/budget/editBudget/:id" element={<EditBudget />}></Route>
 
           <Route path="/users/expense" element={<Expense />}></Route>
+          <Route path="/users/expense/addExpense" element={<AddExpense />}></Route>
+
         </Route>
 
         <Route path="/admin/login" element={<AdminLogin />} />

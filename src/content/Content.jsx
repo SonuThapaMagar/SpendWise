@@ -1,7 +1,14 @@
 import React from "react";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  PieChart,
+  BarChart,
+  TrendingUp,
+  ShieldCheck,
+} from "lucide-react";
 import Landing from "../assets/Landing.svg";
-import About from "../assets/about.svg";
+import Services from "./Services";
+import About from "./About";
 
 const Content = () => {
   return (
@@ -57,34 +64,96 @@ const Content = () => {
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="py-20  px-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            {/* Image on the left */}
-            <div className="flex justify-center md:justify-start">
-              <img
-                src={About}
-                alt="About Us"
-                className="rounded-full w-64 h-64 md:w-80 md:h-80 object-cover shadow-lg bg-indigo-200"
-              />
+      {/*Features*/}
+
+      <section className="relative py-20 px-6 bg-gradient-to-br overflow-hidden ">
+        <div className="container mx-auto">
+          {/* Section Heading */}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-700">
+              Why Choose <span className="text-blue-600">SpendWise?</span>
+            </h2>
+            <p className="text-gray-600 max-w-lg mx-auto mt-2">
+              Our powerful expense tracking tools help you make smarter
+              financial decisions.
+            </p>
+          </div>
+
+          {/* Feature Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 ">
+            {/* Feature 1: Expense Tracking */}
+            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center">
+              <div className="bg-blue-100 p-3 rounded-full">
+                <PieChart className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-700 mt-4">
+                Expense Tracking
+              </h3>
+              <p className="text-gray-500 text-sm text-center mt-2">
+                Easily log and categorize expenses to track your spending.
+              </p>
             </div>
 
-            {/* Content on the right */}
-            <div className="text-center md:text-left">
-              <h2 className="text-3xl font-bold">About Us</h2>
-              <p className="mt-4 text-gray-600 mb-8">
-                We help you save money and manage your expenses. Our team is
-                dedicated to providing you with the best tools and insights to
-                achieve financial freedom.
+            {/* Feature 2: Budget Planning */}
+            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center">
+              <div className="bg-green-100 p-3 rounded-full">
+                <BarChart className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-700 mt-4">
+                Budget Planning
+              </h3>
+              <p className="text-gray-500 text-sm text-center mt-2">
+                Set budgets and receive alerts when nearing your limits.
               </p>
-              <button className="bg-blue-500 text-gray-100 px-4 py-2 rounded-full hover:bg-blue-600 transition duration-300 font-sm flex items-center justify-center">
-                Learn More
-              </button>
+            </div>
+
+            {/* Feature 3: Financial Insights */}
+            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center">
+              <div className="bg-purple-100 p-3 rounded-full">
+                <TrendingUp className="h-6 w-6 text-purple-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-700 mt-4">
+                Financial Insights
+              </h3>
+              <p className="text-gray-500 text-sm text-center mt-2">
+                Visualize your spending trends with detailed reports.
+              </p>
+            </div>
+
+            {/* Feature 4: Secure Payments */}
+            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center">
+              <div className="bg-orange-100 p-3 rounded-full">
+                <ShieldCheck className="h-6 w-6 text-orange-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-700 mt-4">
+                Secure Payments
+              </h3>
+              <p className="text-gray-500 text-sm text-center mt-2">
+                Link bank accounts securely for seamless tracking.
+              </p>
             </div>
           </div>
         </div>
+        {/* Wave Divider at the Bottom of Hero Section */}
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+          <svg
+            className="relative block w-full h-20"
+            data-name="Layer 1"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0 60 Q 300 120, 600 60 T 1200 60 L 1200 120 L 0 120 Z"
+              className="fill-white"
+            ></path>
+          </svg>
+        </div>
       </section>
+
+      <About></About>
+
+      <Services></Services>
     </div>
   );
 };

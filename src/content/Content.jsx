@@ -15,9 +15,9 @@ const Content = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mt-8">
             {/* Content */}
             <div className="text-center md:text-left">
-              <h2 className="text-3xl text-gray-600 md:text-4xl font-bold text-blue mb-4 leading-tight">
-                <span className="block text-blue-600">Save money,</span>
-                <span className="block">without thinking about it.</span>
+              <h2 className="text-4xl text-gray-600 md:text-4xl font-bold text-blue mb-4 leading-tight">
+                <span className="block text-blue-600 text-5xl">Save money,</span>
+                <span className="block text-5xl mt-2">without thinking about it.</span>
               </h2>
               <p className="text-gray-500 text-md mb-8 max-w-lg">
                 Spendwise analyzes your spending and automatically saves the

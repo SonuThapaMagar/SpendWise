@@ -3,7 +3,7 @@ import { FacebookOutlined, TwitterOutlined, InstagramOutlined, LinkedinOutlined 
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white py-8">
+    <footer className="bg-blue-500 rounded-xl text-white py-8 px-4">
       <div className="container mx-auto px-4">
         {/* Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -46,7 +46,7 @@ const Footer = () => {
         </div>
 
         {/* Copyright Notice */}
-        <div className="border-t border-gray-700 mt-8 pt-6 text-center">
+        <div className="border-t border-white mt-8 pt-6 text-center">
           <p>© 2023 SpendWise. All rights reserved.</p>
         </div>
       </div>

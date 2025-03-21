@@ -1,16 +1,16 @@
 import React from "react";
-import { MapPin, Phone, Mail, Clock } from "lucide-react"; // Icons for contact info
+import { MapPin, Phone, Mail, Clock } from "lucide-react"; 
 
 const Contact = () => {
   return (
-    <section id="contact" className="py-20 px-20 bg-white">
+    <section id="contact" className="py-20 px-20 bg-indigo-50">
       {/* Section Title */}
       <div className="container mx-auto text-center mb-12 ">
         <button  className="text-md w-24 font-semi-bold text-indigo-800 bg-indigo-100 rounded-full">
           Contact
         </button>
         <h2 className="text-black mt-4 text-3xl font-bold"><span className="text-blue-600">Contact</span> Us</h2>
-      </div>
+      </div>  
 
       <div className="container mx-auto px-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -27,7 +27,7 @@ const Contact = () => {
             </div>
 
             {/* Call Us */}
-            <div className="bg-gray-50  p-6  shadow-md">
+            <div className="bg-gray-50  p-6 shadow-md">
               <div className="flex items-center mb-4">
                 <Phone className="h-6 w-6 text-blue-600 mr-2" />
                 <h3 className="text-xl font-semibold text-gray-800">Call Us</h3>

@@ -17,6 +17,12 @@
       "username": "user",
       "email": "user@gmail.com",
       "password": "user@123"
+    },
+    {
+      "id": "3a78",
+      "username": "sonu",
+      "email": "sonu@gmail.com",
+      "password": "sonu@123"
     }
   ],
   "budgets": [

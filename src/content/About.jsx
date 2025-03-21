@@ -1,10 +1,12 @@
 import React from "react";
 import AboutIcon from "../assets/about.svg";
 import BackgroundImg from "../assets/hero-bg.png";
+import Header from "../header/Header";
 
 const About = () => {
   return (
     <>
+    <Header/>
       {/* About Section */}
       <section id="about" className="py-20 px-6 md:px-20 relative overflow-hidden">
         {/* Background Image */}

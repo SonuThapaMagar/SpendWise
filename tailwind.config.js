@@ -12,6 +12,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Nunito", "sans-serif"], 
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

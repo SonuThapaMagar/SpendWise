@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+.bg-loginBackground {
+    background-image: url('/src/assets//hero-bg.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 100;
+}

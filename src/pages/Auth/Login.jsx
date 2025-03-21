@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, Flex, message } from "antd";
+import { Button, Form, Input, Flex, message } from "antd";
 import Logo from "/src/assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -19,9 +19,9 @@ const Login = ({ login }) => {
       if (response.data.length > 0) {
         const user = response.data[0];
         localStorage.setItem("user", JSON.stringify(user)); // Save user data to localStorage
-        localStorage.setItem("is_login", "1"); 
+        localStorage.setItem("is_login", "1");
         message.success("Login successful!");
-        navigate("/users/dashboard"); 
+        navigate("/users/dashboard");
       } else {
         message.error("Invalid username or password");
       }
@@ -35,10 +35,13 @@ const Login = ({ login }) => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full max-w-sm bg-white shadow-lg rounded-lg p-6">
-        <img src={Logo} alt="Logo" className="mx-auto w-24 h-24 rounded-full" />
-        <h2 className="text-2xl font-semibold text-center mb-4 text-[#050C9C]">
+    <div className="flex justify-center items-center min-h-screen p-4 bg-indigo-50 bg-loginBackground ">
+      {/* Login Form */}
+      <div
+        className="w-full max-w-sm bg-white shadow-lg rounded-lg p-6 relative z-10" // Add z-index to bring the form above the overlay
+      >
+        <img src={Logo} alt="Logo" className="mx-auto w-18 h-18 mb-4" />
+        <h2 className="text-2xl font-semibold text-center mb-4 text-blue-600">
           Login
         </h2>
         <Form
@@ -57,7 +60,11 @@ const Login = ({ login }) => {
               },
             ]}
           >
-            <Input prefix={<UserOutlined />} placeholder="Username" />
+            <Input
+              prefix={<UserOutlined className="text-gray-600 font-medium" />}
+              placeholder="Username"
+              className="rounded-lg"
+            />
           </Form.Item>
 
           <Form.Item
@@ -69,28 +76,42 @@ const Login = ({ login }) => {
               },
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+            <Input.Password
+              prefix={<LockOutlined className="text-gray-600 font-md" />}
+              placeholder="Password"
+              className="rounded-lg"
+            />
           </Form.Item>
           <Form.Item>
             <Flex justify="space-between" align="center">
-              <a href="">Forgot password</a>
+              <a href="" className="text-blue-500 hover:text-blue-700">
+                Forgot password?
+              </a>
             </Flex>
           </Form.Item>
 
           <Form.Item>
             <Button
-              type="primary"
               htmlType="submit"
-              className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 mb-4"
+              type="primary"
+              className="w-full text-blue-500 px-6 py-3 rounded-lg hover:bg-indigo-400 transition duration-300 mb-4"
+              style={{
+                width: "100%",
+                color: "white",
+                padding: "1rem 1.5rem",
+                borderRadius: "0.5rem",
+                fontSize: "large",
+                fontFamily: "Nunito, sans-serif",
+              }}
             >
               Login
             </Button>
 
-            <p className="text-center mt-4">
-              Don't have an account?
+            <p className="text-center mt-4 text-medium text-gray-600">
+              Don't have an account?{" "}
               <span
                 onClick={handleSignUpClick}
-                className="text-blue-500 ml-1 cursor-pointer"
+                className="text-blue-500 hover:text-blue-600 cursor-pointer"
               >
                 Sign Up now!
               </span>

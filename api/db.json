@@ -52,6 +52,11 @@
       "id": "9026",
       "budgetName": "Fashion",
       "budgetAmount": 1000
+    },
+    {
+      "id": "e00a",
+      "budgetName": "Household",
+      "budgetAmount": 7500
     }
   ],
   "expenses": [

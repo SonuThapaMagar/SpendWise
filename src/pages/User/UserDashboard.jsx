@@ -2,7 +2,7 @@ import React ,{useState,useEffect} from "react";
 import { Card, Row, Col } from "antd";
 import Budget from "./Budget/Budget";
 import axios from "axios";
-
+import ExpenseGraph from "./ExpenseGraph";
 
 const Dashboard = () => {
   const [budgets, setBudgets] = useState([]);
@@ -56,6 +56,7 @@ const Dashboard = () => {
           </Col>
         ))}
       </Row>
+      <ExpenseGraph/>
       <Budget />
     </div>
   );

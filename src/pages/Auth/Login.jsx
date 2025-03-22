@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Flex, message } from "antd";
+import { Button, Form, Input, Flex } from "antd";
 import Logo from "/src/assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { showSuccessToast, showErrorToast } from "../../utils/toastify.util";
+import { UserContext } from "../../context API/user.context";
 
-const Login = ({ login }) => {
+
+const Login = () => {
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext); 
 
   const onFinish = async (values) => {
+    
     const { username, password } = values;
 
     try {
@@ -20,13 +25,13 @@ const Login = ({ login }) => {
         const user = response.data[0];
         localStorage.setItem("user", JSON.stringify(user)); // Save user data to localStorage
         localStorage.setItem("is_login", "1");
-        message.success("Login successful!");
+        showSuccessToast("Login successful!");
         navigate("/users/dashboard");
       } else {
-        message.error("Invalid username or password");
+        showErrorToast("Invalid username or password");
       }
     } catch (error) {
-      message.error("Login failed. Please try again.");
+      showErrorToast("Login failed. Please try again.");
     }
   };
 

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
-import Logo from "../assets/logo-transparent.png";
-
+import Logo from "../assets/spend.png";
 import {
   DashboardOutlined,
   MoneyCollectOutlined,
@@ -10,8 +9,11 @@ import {
   DollarOutlined,
   UserOutlined,
   LogoutOutlined,
+  LockOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme } from "antd";
+import { Button, Layout, Menu, theme, Dropdown, Avatar } from "antd";
+import { showSuccessToast } from "../utils/toastify.util";
+import { UserContext } from "../context API/user.context";
 
 const { Header, Sider, Content } = Layout;
 
@@ -22,20 +24,21 @@ const UserLayout = () => {
   } = theme.useToken();
 
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     const isLogin = localStorage.getItem("is_login");
-    const user = localStorage.getItem("user");
 
     if (isLogin !== "1" || !user) {
-      // Redirect to landing page if not logged in
+      // Redirecting to landing page if not logged in
       navigate("/");
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   const handleLogoutClick = () => {
     localStorage.setItem("is_login", 0);
-    navigate("/");
+    showSuccessToast("Logout Successful!");
+    navigate("/login");
   };
 
   const menuItems = [
@@ -71,8 +74,21 @@ const UserLayout = () => {
     },
   ];
 
+  // Dropdown menu items
+  const menu = (
+    <Menu>
+      <Menu.Item key="profile" icon={<UserOutlined />}>
+        Edit Profile
+      </Menu.Item>
+      <Menu.Item key="password" icon={<LockOutlined />}>
+        Change Password
+      </Menu.Item>
+      <Menu.Divider />
+    </Menu>
+  );
+
   return (
-    <Layout  style={{vh:100}}>
+    <Layout style={{ vh: 100 }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div
           className="demo-logo-vertical"
@@ -102,8 +118,11 @@ const UserLayout = () => {
       <Layout style={{ flex: 1 }}>
         <Header
           style={{
-            padding: 0,
+            padding: "0 16px", 
             background: colorBgContainer,
+            display: "flex",
+            alignItems: "center", 
+            justifyContent: "space-between", 
           }}
         >
           <Button
@@ -116,6 +135,28 @@ const UserLayout = () => {
               height: 64,
             }}
           />
+          {/* Profile Section */}
+          <Dropdown menu={menu} trigger={["click"]}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <Avatar
+                // src={user.profilePhoto}
+                icon={<UserOutlined />}
+                style={{ marginRight: 8 }}
+              />
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontWeight: "bold" }}>{user?.name}</div>
+                {/* <div style={{ fontSize: "12px", color: "gray" }}>
+                  {user?.email}
+                </div> */}
+              </div>
+            </div>
+          </Dropdown>
         </Header>
         <Content
           style={{

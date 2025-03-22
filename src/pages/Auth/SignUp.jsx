@@ -3,10 +3,12 @@ import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
 import Logo from "/src/assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useUser } from "../../context API/user.context";
+import { showSuccessToast, showErrorToast } from "../../utils/toastify.util";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { signup } = useUser();
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -14,29 +16,13 @@ const SignUp = () => {
 
   const onFinish = async (values) => {
     try {
-      // Check if the email already exists
-      const response = await axios.get("http://localhost:4000/users", {
-        params: {
-          email: values.email,
-        },
-      });
+      // Calling the signup function from context
+      await signup(values);
+      showSuccessToast("Signup successful! Please login.");
 
-      if (response.data.length > 0) {
-        message.error("Email already exists");
-        return;
-      }
-
-      //saving the new user to JSON Server
-      await axios.post("http://localhost:4000/users", {
-        username: values.username,
-        email: values.email,
-        password: values.password,
-      });
-
-      message.success("Signup successful! Please login.");
       navigate("/login");
     } catch (error) {
-      message.error("An error occurred. Please try again.");
+      showErrorToast("An error occurred !");
     }
   };
 

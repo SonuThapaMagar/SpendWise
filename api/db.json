@@ -23,6 +23,18 @@
       "username": "sonu",
       "email": "sonu@gmail.com",
       "password": "sonu@123"
+    },
+    {
+      "id": "2172",
+      "username": "new",
+      "email": "new@gmail.com",
+      "password": "new@123"
+    },
+    {
+      "id": "fa5a",
+      "username": "zen",
+      "email": "zen@gmail.com",
+      "password": "zen@123"
     }
   ],
   "budgets": [

@@ -88,7 +88,7 @@ const UserLayout = () => {
   );
 
   return (
-    <Layout style={{ vh: 100 }}>
+    <Layout style={{ maxHeight: "100vh" }}> 
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div
           className="demo-logo-vertical"
@@ -97,6 +97,7 @@ const UserLayout = () => {
             display: "flex",
             alignItems: "center",
             gap: "8px",
+
           }}
         >
           <img
@@ -115,14 +116,14 @@ const UserLayout = () => {
           items={menuItems}
         />
       </Sider>
-      <Layout style={{ flex: 1 }}>
+      <Layout style={{ flex: 1 }}> {/* Ensure the inner layout is flexible */}
         <Header
           style={{
-            padding: "0 16px", 
+            padding: "0 16px",
             background: colorBgContainer,
             display: "flex",
-            alignItems: "center", 
-            justifyContent: "space-between", 
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
           <Button
@@ -162,9 +163,10 @@ const UserLayout = () => {
           style={{
             margin: "24px 16px",
             padding: 24,
-            minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
+            flex: 1, // Allow the content to grow and fill the available space
+            overflow: "auto", // Add scroll only if content overflows
           }}
         >
           {/* Render nested routes here */}

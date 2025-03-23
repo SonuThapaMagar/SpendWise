@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [expensesByCategory, setExpensesByCategory] = useState([]);
+  const [remainingBalance, setRemainingBalance] = useState(0);
   // const [recentExpenses, setRecentExpenses] = useState([]);
 
   // Fetch budgets from the server
@@ -46,7 +47,7 @@ const Dashboard = () => {
       .get("http://localhost:4000/expenses")
       .then((response) => {
         const totalExpenses = response.data.reduce(
-          (sum, expense) => sum + expense.amount,
+          (sum, expense) => sum + expense.expenseAmount,
           0
         );
         setTotalExpenses(totalExpenses);
@@ -55,6 +56,10 @@ const Dashboard = () => {
         console.error("Error fetching expenses:", error);
       });
   };
+  // Calculate remaining balance whenever totalBudget or totalExpenses changes
+  useEffect(() => {
+    setRemainingBalance(totalBudget - totalExpenses);
+  }, [totalBudget, totalExpenses]);
 
   const fetchExpensesByCategory = () => {
     axios
@@ -103,7 +108,7 @@ const Dashboard = () => {
         Dashboard
       </h1>
       <Row gutter={[16, 16]} style={{ marginBottom: "24px" }}>
-        <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+        <Col xs={24} sm={12}  md={8} lg={8} xl={8}>
           <Card
             title="Total Budget"
             style={{
@@ -118,7 +123,7 @@ const Dashboard = () => {
             </Text>
           </Card>
         </Col>
-        <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+        <Col xs={24} sm={12} md={8} lg={8} xl={8}>
           <Card
             title="Total Expenses"
             style={{
@@ -130,6 +135,23 @@ const Dashboard = () => {
               style={{ fontSize: "24px", fontWeight: "bold", color: "#ff4d4f" }}
             >
               Rs. {totalExpenses}
+            </Text>
+          </Card>
+        </Col>
+
+        {/* Remaining Balance Card */}
+        <Col xs={24} sm={12} md={8} lg={8} xl={8}>
+          <Card
+            title="Remaining Balance"
+            style={{
+              borderRadius: "8px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Text
+              style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}
+            >
+              Rs. {remainingBalance}
             </Text>
           </Card>
         </Col>

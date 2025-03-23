@@ -10,11 +10,12 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme } from "antd";
+import { Button, Layout, Menu, theme, Typography, Avatar } from "antd";
 import { showSuccessToast } from "../utils/toastify.util";
 import { UserContext } from "../context API/user.context";
 
 const { Header, Sider, Content } = Layout;
+const { Text } = Typography;
 
 const UserLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -75,11 +76,19 @@ const UserLayout = () => {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
+      {/* Fixed Sider */}
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
-        style={{ height: "100vh", overflow: "auto" }} // Set height to 100vh
+        style={{
+          height: "100vh",
+          position: "fixed",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: 1,
+        }}
       >
         <div
           className="demo-logo-vertical"
@@ -106,14 +115,21 @@ const UserLayout = () => {
           items={menuItems}
         />
       </Sider>
-      <Layout style={{ flex: 1, minHeight: "100vh" }}>
-        {" "}
-        {/* Ensure the inner layout is flexible and full height */}
+
+      {/* Content with padding to account for the fixed Sider */}
+      <Layout
+        style={{
+          marginLeft: collapsed ? 80 : 200, // Adjust based on collapsed state
+          transition: "margin-left 0.2s",
+          minHeight: "100vh",
+        }}
+      >
         <Header
           style={{
             padding: "0 16px",
             background: colorBgContainer,
             display: "flex",
+            height:"80px",
             alignItems: "center",
             justifyContent: "space-between",
           }}
@@ -128,6 +144,34 @@ const UserLayout = () => {
               height: 64,
             }}
           />
+
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ textAlign: "right" }}>
+              <Text
+                strong
+                style={{
+                  display: "block",
+                  fontSize: "16px",
+                  lineHeight: "0",
+                   marginTop: "2rem"
+                }}
+              >
+                {user?.username || "Username"}
+              </Text>
+              <Text
+                type="secondary"
+                style={{ fontSize: "14px", lineHeight: "0",
+                }}
+              >
+                {user?.email || "Email"}
+              </Text>
+            </div>
+            <Avatar
+              size="large"
+              icon={<UserOutlined />}
+              style={{ backgroundColor: "#1890ff" }}
+            />
+          </div>
         </Header>
         <Content
           style={{
@@ -135,8 +179,7 @@ const UserLayout = () => {
             padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
-            flex: 1, // Allow the content to grow and fill the available space
-            overflow: "auto", // Add scroll only if content overflows
+            overflow: "auto",
           }}
         >
           {/* Render nested routes here */}

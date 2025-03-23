@@ -2,9 +2,10 @@
   "users": [
     {
       "id": "0a25",
-      "username": "test",
-      "email": "test@gmail.com",
-      "password": "test@123"
+      "username": "new",
+      "email": "new@gmail.com",
+      "password": "test@123",
+      "contact": "98765432210"
     },
     {
       "id": "eaa5",

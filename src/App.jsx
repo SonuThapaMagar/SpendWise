@@ -19,6 +19,7 @@ import Contact from "./content/Contact";
 import { UserProvider } from "./context API/user.context";
 import { ToastContainer } from "react-toastify";
 import Profile from "./pages/User/Profile";
+import EditProfile from "./pages/User/EditProfile";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
               element={<AddExpense />}
             />
             <Route path="/users/profile" element={<Profile />}></Route>
+            <Route path="/users/editProfile" element={<EditProfile />}></Route>
           </Route>
 
           <Route path="/admin/login" element={<AdminLogin />} />

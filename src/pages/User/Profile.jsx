@@ -2,12 +2,14 @@ import React from "react";
 import { Card, Row, Col, Button, Avatar, Typography, Divider } from "antd";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
 import { useUser } from "../../context API/user.context";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 const Profile = () => {
   // Getting the user from user.context
   const { user } = useUser();
+  const navigate = useNavigate();
 
   return (
     <Card
@@ -71,6 +73,7 @@ const Profile = () => {
             type="primary"
             icon={<EditOutlined />}
             style={{ width: "100%", maxWidth: 200 }}
+            onClick={() => navigate('/users/editProfile')}
           >
             Edit Profile
           </Button>

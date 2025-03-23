@@ -74,7 +74,8 @@
       "id": "2",
       "expenseName": "Vegetables",
       "expenseAmount": 1000,
-      "budgetId": "2"
+      "budgetId": "2",
+      "date": "2025-03-23"
     },
     {
       "id": "cd89",

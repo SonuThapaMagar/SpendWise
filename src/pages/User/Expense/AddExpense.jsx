@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, InputNumber, Select, Button, Card, message } from "antd";
+import { Form, Input, InputNumber, Select, Button, Card, message,DatePicker } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
+import dayjs from "dayjs";
 import axios from "axios";
 
 const { Option } = Select;
@@ -36,7 +37,11 @@ const AddExpense = () => {
     axios
       .get(`http://localhost:4000/expenses/${id}`)
       .then((response) => {
-        form.setFieldsValue(response.data); // Pre-fill the form with the expense data
+        // Pre-fill the form with the expense data
+        form.setFieldsValue({
+          ...response.data,
+          date: response.data.date ? dayjs(response.data.date) : null, // Convert date string to dayjs object
+        });
       })
       .catch((error) => {
         console.error("Error fetching expense:", error);
@@ -50,10 +55,16 @@ const AddExpense = () => {
   const onFinish = (values) => {
     setLoading(true);
 
+    // Format the date to a string before sending to the server
+    const formattedValues = {
+      ...values,
+      date: values.date ? values.date.format("YYYY-MM-DD") : null,
+    };
+
     if (id) {
       // If editing, update the expense
       axios
-        .patch(`http://localhost:4000/expenses/${id}`, values)
+        .patch(`http://localhost:4000/expenses/${id}`, formattedValues)
         .then(() => {
           message.success("Expense updated successfully!");
           navigate("/users/expense"); // Redirect to the expenses list
@@ -68,7 +79,7 @@ const AddExpense = () => {
     } else {
       // If adding, create a new expense
       axios
-        .post("http://localhost:4000/expenses", values)
+        .post("http://localhost:4000/expenses", formattedValues)
         .then(() => {
           message.success("Expense added successfully!");
           navigate("/users/expense"); // Redirect to the expenses list
@@ -93,7 +104,9 @@ const AddExpense = () => {
         <Form.Item
           name="expenseName"
           label="Expense Name"
-          rules={[{ required: true, message: "Please input the expense name!" }]}
+          rules={[
+            { required: true, message: "Please input the expense name!" },
+          ]}
         >
           <Input placeholder="Enter expense name" />
         </Form.Item>
@@ -102,7 +115,9 @@ const AddExpense = () => {
         <Form.Item
           name="expenseAmount"
           label="Expense Amount"
-          rules={[{ required: true, message: "Please input the expense amount!" }]}
+          rules={[
+            { required: true, message: "Please input the expense amount!" },
+          ]}
         >
           <InputNumber
             style={{ width: "100%" }}
@@ -124,6 +139,15 @@ const AddExpense = () => {
               </Option>
             ))}
           </Select>
+        </Form.Item>
+
+        {/* Date */}
+        <Form.Item
+          name="date"
+          label="Date"
+          rules={[{ required: true, message: "Please select a date!" }]}
+        >
+          <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
         </Form.Item>
 
         {/* Submit Button */}

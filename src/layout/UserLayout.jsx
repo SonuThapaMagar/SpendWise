@@ -9,9 +9,8 @@ import {
   DollarOutlined,
   UserOutlined,
   LogoutOutlined,
-  LockOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme, Dropdown, Avatar } from "antd";
+import { Button, Layout, Menu, theme } from "antd";
 import { showSuccessToast } from "../utils/toastify.util";
 import { UserContext } from "../context API/user.context";
 
@@ -74,22 +73,14 @@ const UserLayout = () => {
     },
   ];
 
-  // Dropdown menu items
-  const menu = (
-    <Menu>
-      <Menu.Item key="profile" icon={<UserOutlined />}>
-        Edit Profile
-      </Menu.Item>
-      <Menu.Item key="password" icon={<LockOutlined />}>
-        Change Password
-      </Menu.Item>
-      <Menu.Divider />
-    </Menu>
-  );
-
   return (
-    <Layout style={{ maxHeight: "100vh" }}> 
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+    <Layout style={{ minHeight: "100vh" }}>
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        style={{ height: "100vh", overflow: "auto" }} // Set height to 100vh
+      >
         <div
           className="demo-logo-vertical"
           style={{
@@ -97,7 +88,6 @@ const UserLayout = () => {
             display: "flex",
             alignItems: "center",
             gap: "8px",
-
           }}
         >
           <img
@@ -116,7 +106,9 @@ const UserLayout = () => {
           items={menuItems}
         />
       </Sider>
-      <Layout style={{ flex: 1 }}> {/* Ensure the inner layout is flexible */}
+      <Layout style={{ flex: 1, minHeight: "100vh" }}>
+        {" "}
+        {/* Ensure the inner layout is flexible and full height */}
         <Header
           style={{
             padding: "0 16px",
@@ -136,29 +128,6 @@ const UserLayout = () => {
               height: 64,
             }}
           />
-          {/* Profile Section */}
-          <Dropdown menu={menu} trigger={["click"]}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                
-                cursor: "pointer",
-              }}
-            >
-              <Avatar
-                // src={user.profilePhoto}
-                icon={<UserOutlined />}
-                style={{ marginRight: 8 }}
-              />
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontWeight: "bold" }}>{user?.name}</div>
-                {/* <div style={{ fontSize: "12px", color: "gray" }}>
-                  {user?.email}
-                </div> */}
-              </div>
-            </div>
-          </Dropdown>
         </Header>
         <Content
           style={{

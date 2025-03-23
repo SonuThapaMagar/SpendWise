@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Row, Col, Button, Avatar, Typography, Divider } from "antd";
-import { UserOutlined, EditOutlined } from "@ant-design/icons";
+import { UserOutlined, EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useUser } from "../../context API/user.context";
 import { useNavigate } from "react-router-dom";
 
@@ -50,7 +50,11 @@ const Profile = () => {
 
           {/* Email Section */}
           <div style={{ marginBottom: 16 }}>
-            <Text type="secondary" strong style={{ display: "block", marginBottom: 4 }}>
+            <Text
+              type="secondary"
+              strong
+              style={{ display: "block", marginBottom: 4 }}
+            >
               Email:
             </Text>
             <Text style={{ display: "block", fontSize: "16px" }}>
@@ -60,7 +64,11 @@ const Profile = () => {
 
           {/* Contact Section */}
           <div style={{ marginBottom: 24 }}>
-            <Text type="secondary" strong style={{ display: "block", marginBottom: 4 }}>
+            <Text
+              type="secondary"
+              strong
+              style={{ display: "block", marginBottom: 4 }}
+            >
               Contact:
             </Text>
             <Text style={{ display: "block", fontSize: "16px" }}>
@@ -68,15 +76,35 @@ const Profile = () => {
             </Text>
           </div>
 
-          {/* Edit Button */}
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            style={{ width: "100%", maxWidth: 200 }}
-            onClick={() => navigate('/users/editProfile')}
-          >
-            Edit Profile
-          </Button>
+          <div style={{ display: "flex", gap: 20 }}>
+            {/* Edit Button */}
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              style={{
+                width: "100%",
+                maxWidth: 200,
+                backgroundColor: "#1890ff",
+              }}
+              onClick={() => navigate("/users/editProfile")}
+            >
+              Edit Profile
+            </Button>
+
+            {/* Change Password Button */}
+            <Button
+              type="primary"
+              icon={<LockOutlined />}
+              style={{
+                width: "100%",
+                maxWidth: 200,
+                backgroundColor: "#52c41a",
+              }}
+              onClick={() => navigate("/users/changePassword")}
+            >
+              Change Password
+            </Button>
+          </div>
         </Col>
       </Row>
     </Card>

@@ -20,6 +20,7 @@ import { UserProvider } from "./context API/user.context";
 import { ToastContainer } from "react-toastify";
 import Profile from "./pages/User/Profile";
 import EditProfile from "./pages/User/EditProfile";
+import ChangePassword from "./pages/Auth/ChangePassword";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
             />
             <Route path="/users/profile" element={<Profile />}></Route>
             <Route path="/users/editProfile" element={<EditProfile />}></Route>
+            <Route path="/users/changePassword" element={<ChangePassword />} />
           </Route>
 
           <Route path="/admin/login" element={<AdminLogin />} />

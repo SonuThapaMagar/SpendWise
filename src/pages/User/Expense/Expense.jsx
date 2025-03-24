@@ -50,6 +50,70 @@ const Expense = () => {
     }));
   };
 
+  const showModal = (id) => {
+    setExpenseToDelete(id);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    if (expenseToDelete) {
+      axios
+        .delete(`http://localhost:4000/expenses/${expenseToDelete}`)
+        .then(() => {
+          fetchExpenses();
+          showSuccessToast("Expense deleted successfully!");
+        })
+        .catch((error) => {
+          console.error("Error deleting expense:", error);
+          showErrorToast("Failed to delete expense.");
+        })
+        .finally(() => {
+          setIsModalOpen(false);
+          setExpenseToDelete(null);
+        });
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setExpenseToDelete(null);
+  };
+
+  useEffect(() => {
+    fetchExpenses();
+    fetchBudgets();
+  }, []);
+
+  const fetchExpenses = () => {
+    axios
+      .get("http://localhost:4000/expenses")
+      .then((response) => {
+        setExpenses(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const fetchBudgets = () => {
+    axios
+      .get("http://localhost:4000/budgets")
+      .then((response) => {
+        setBudgets(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleEditExpense = (id) => {
+    navigate(`/users/expense/editExpense/${id}`);
+  };
+
+  const handleAddExpense = () => {
+    navigate("/users/expense/addExpense");
+  };
+
   // Export to Excel function
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(
@@ -66,9 +130,8 @@ const Expense = () => {
     XLSX.writeFile(workbook, "Expenses.xlsx");
   };
 
+  
   const chartData = prepareChartData();
-
-  // Rest of your existing logic (showModal, handleOk, handleCancel, useEffect, fetchExpenses, etc.)
 
   const columns = [
     {
@@ -215,8 +278,8 @@ const Expense = () => {
       <Modal
         title="Confirm Deletion"
         open={isModalOpen}
-        // onOk={handleOk}
-        // onCancel={handleCancel}
+        onOk={handleOk}
+        onCancel={handleCancel}
       >
         <p>Are you sure you want to delete this expense?</p>
       </Modal>

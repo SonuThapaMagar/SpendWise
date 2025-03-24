@@ -77,25 +77,29 @@
       "id": "cd89",
       "expenseName": "Fee",
       "expenseAmount": 9000,
-      "budgetId": "4bb4"
+      "budgetId": "4bb4",
+      "date": "2025-03-25"
     },
     {
       "id": "0120",
       "expenseName": "Drinks",
-      "expenseAmount": 180,
-      "budgetId": "1"
+      "expenseAmount": 1800,
+      "budgetId": "1",
+      "date": "2025-03-23"
     },
     {
       "id": "043a",
       "expenseName": "Lunch",
-      "expenseAmount": 290,
-      "budgetId": "e00a"
+      "expenseAmount": 5500,
+      "budgetId": "e00a",
+      "date": "2025-03-20"
     },
     {
       "id": "efef",
       "expenseName": "Stationery",
       "expenseAmount": 1700,
-      "budgetId": "4bb4"
+      "budgetId": "4bb4",
+      "date": "2025-03-25"
     },
     {
       "id": "a896",

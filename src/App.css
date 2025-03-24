@@ -1,5 +1,31 @@
 @import "tailwindcss";
 
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+* {
+    font-family: inherit;
+}
+
+.custom-menu .ant-menu-item {
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 16px; 
+    font-weight: 600;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+}
+
+.custom-menu .ant-menu-item .anticon {
+    font-size: 20px !important;
+  }
+.custom-menu .ant-menu-item:hover,
+.custom-menu .ant-menu-item-selected {
+    background-color: #7288fa !important;
+    color: white !important;
+}
+
 .bg-loginBackground {
     background-image: url('/src/assets//hero-bg.png');
     background-size: cover;

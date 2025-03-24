@@ -44,31 +44,31 @@ const UserLayout = () => {
   const menuItems = [
     {
       key: "1",
-      icon: <DashboardOutlined />,
+      icon: <DashboardOutlined style={{ fontSize: "18px" }} />, // Adjust icon size
       label: "Dashboard",
       onClick: () => navigate("/users/dashboard"),
     },
     {
       key: "2",
-      icon: <MoneyCollectOutlined />,
+      icon: <MoneyCollectOutlined style={{ fontSize: "18px" }} />,
       label: "Budget",
       onClick: () => navigate("/users/budget"),
     },
     {
       key: "3",
-      icon: <DollarOutlined />,
+      icon: <DollarOutlined style={{ fontSize: "18px" }} />,
       label: "Expense",
       onClick: () => navigate("/users/expense"),
     },
     {
       key: "4",
-      icon: <UserOutlined />,
+      icon: <UserOutlined style={{ fontSize: "18px" }} />,
       label: "My Profile",
       onClick: () => navigate("/users/profile"),
     },
     {
       key: "5",
-      icon: <LogoutOutlined />,
+      icon: <LogoutOutlined style={{ fontSize: "18px" }} />,
       label: "Logout",
       onClick: () => handleLogoutClick(),
     },
@@ -81,6 +81,7 @@ const UserLayout = () => {
         trigger={null}
         collapsible
         collapsed={collapsed}
+        width={230}
         style={{
           height: "100vh",
           position: "fixed",
@@ -88,6 +89,8 @@ const UserLayout = () => {
           top: 0,
           bottom: 0,
           zIndex: 1,
+          backgroundColor: "white",
+          color: "black",
         }}
       >
         <div
@@ -104,22 +107,26 @@ const UserLayout = () => {
             alt="Logo"
             style={{ width: "50px", height: "auto" }}
           />
-          <h2 style={{ color: "white", fontWeight: "bold", fontSize: "1rem" }}>
+          <h2
+            style={{ color: "#6875F5", fontWeight: "bold", fontSize: "1rem" }}
+          >
             SpendWise
           </h2>
         </div>
         <Menu
-          theme="dark"
+          theme="light"
           mode="inline"
           defaultSelectedKeys={["1"]}
           items={menuItems}
+          className="custom-menu"
+          style={{ fontWeight: "18px" }}
         />
       </Sider>
 
       {/* Content with padding to account for the fixed Sider */}
       <Layout
         style={{
-          marginLeft: collapsed ? 80 : 200, // Adjust based on collapsed state
+          marginLeft: collapsed ? 80 : 200,
           transition: "margin-left 0.2s",
           minHeight: "100vh",
         }}
@@ -129,7 +136,7 @@ const UserLayout = () => {
             padding: "0 16px",
             background: colorBgContainer,
             display: "flex",
-            height:"80px",
+            height: "80px",
             alignItems: "center",
             justifyContent: "space-between",
           }}
@@ -153,15 +160,14 @@ const UserLayout = () => {
                   display: "block",
                   fontSize: "16px",
                   lineHeight: "0",
-                   marginTop: "2rem"
+                  marginTop: "2rem",
                 }}
               >
                 {user?.username || "Username"}
               </Text>
               <Text
                 type="secondary"
-                style={{ fontSize: "14px", lineHeight: "0",
-                }}
+                style={{ fontSize: "14px", lineHeight: "0" }}
               >
                 {user?.email || "Email"}
               </Text>

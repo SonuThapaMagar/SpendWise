@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col, Typography, Table } from "antd";
+import { LineChartOutlined } from "@ant-design/icons";
 import axios from "axios";
 import ExpenseGraph from "./ExpenseGraph";
+import { PieChart, Pie, ResponsiveContainer } from "recharts";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const Dashboard = () => {
-  // const [budgets, setBudgets] = useState([]);
-
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [expensesByCategory, setExpensesByCategory] = useState([]);
@@ -145,6 +145,21 @@ const Dashboard = () => {
     },
   ];
 
+  const data01 = [
+    { name: "Group A", value: 400 },
+    { name: "Group B", value: 300 },
+    { name: "Group C", value: 300 },
+    { name: "Group D", value: 200 },
+    { name: "Group E", value: 278 },
+    { name: "Group F", value: 189 },
+  ];
+  const data02 = [
+    { name: "Category A", value: 240 },
+    { name: "Category B", value: 130 },
+    { name: "Category C", value: 190 },
+    { name: "Category D", value: 280 },
+  ];
+
   return (
     <div style={{ padding: "24px" }}>
       <h1
@@ -159,10 +174,24 @@ const Dashboard = () => {
             style={{
               borderRadius: "8px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              backgroundColor: "#C3DDFD",
             }}
           >
+            <LineChartOutlined
+              style={{
+                fontSize: "48px",
+                color: "#1C64F2",
+                backgroundColor: "#A4CAFE",
+                borderRadius: "50%",
+                padding: "8px",
+              }}
+            />
             <Text
-              style={{ fontSize: "24px", fontWeight: "bold", color: "#52c41a" }}
+              style={{
+                fontSize: "24px",
+                fontWeight: "bold",
+                color: "white",
+              }}
             >
               Rs. {totalBudget}
             </Text>
@@ -174,11 +203,10 @@ const Dashboard = () => {
             style={{
               borderRadius: "8px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              backgroundColor: "#E5E5FF",
             }}
           >
-            <Text
-              style={{ fontSize: "24px", fontWeight: "bold", color: "#ff4d4f" }}
-            >
+            <Text style={{ fontSize: "24px", fontWeight: "bold" }}>
               Rs. {totalExpenses}
             </Text>
           </Card>
@@ -191,11 +219,10 @@ const Dashboard = () => {
             style={{
               borderRadius: "8px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              backgroundColor: "#E5E5FF",
             }}
           >
-            <Text
-              style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}
-            >
+            <Text style={{ fontSize: "24px", fontWeight: "bold" }}>
               Rs. {remainingBalance}
             </Text>
           </Card>
@@ -211,7 +238,39 @@ const Dashboard = () => {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <ExpenseGraph data={expensesByCategory} />
+        <Row gutter={[16, 16]}>
+          {/* Left Column: Bar Graph */}
+          <Col xs={24} sm={24} md={16} lg={16} xl={16}>
+            <ExpenseGraph data={expensesByCategory} />
+          </Col>
+
+          {/* Right Column: Two Rows */}
+          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+            <ResponsiveContainer width="100%" height="100%" 
+            style={{borderColor:"#7288fa"}}>
+              <PieChart width={400} height={400}>
+                <Pie
+                  data={data01}
+                  dataKey="value"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={60}
+                  fill="#8884d8"
+                />
+                <Pie
+                  data={data02}
+                  dataKey="value"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={70}
+                  outerRadius={90}
+                  fill="#82ca9d"
+                  label
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </Col>
+        </Row>
       </Card>
 
       {/* Recent Expenses Table */}

@@ -44,14 +44,14 @@ const UserLayout = () => {
   const menuItems = [
     {
       key: "1",
-      icon: <DashboardOutlined style={{ fontSize: "18px" }} />, // Adjust icon size
-      label: "Dashboard",
+      icon: <DashboardOutlined style={{ fontSize: "18px", }} />, 
+      label: <span style={{ color: "#E5E7EB" }}>Dashboard</span>,
       onClick: () => navigate("/users/dashboard"),
     },
     {
       key: "2",
       icon: <MoneyCollectOutlined style={{ fontSize: "18px" }} />,
-      label: "Budget",
+      label: <span style={{ color: "#4B5563" }}>Budget</span>,
       onClick: () => navigate("/users/budget"),
     },
     {
@@ -90,7 +90,7 @@ const UserLayout = () => {
           bottom: 0,
           zIndex: 1,
           backgroundColor: "white",
-          color: "black",
+          color: "#99a3ab",
         }}
       >
         <div
@@ -119,14 +119,14 @@ const UserLayout = () => {
           defaultSelectedKeys={["1"]}
           items={menuItems}
           className="custom-menu"
-          style={{ fontWeight: "18px" }}
+          style={{ fontWeight: "18px",color: "#99a3ab", }}
         />
       </Sider>
 
       {/* Content with padding to account for the fixed Sider */}
       <Layout
         style={{
-          marginLeft: collapsed ? 80 : 200,
+          marginLeft: collapsed ? 100 : 200,
           transition: "margin-left 0.2s",
           minHeight: "100vh",
         }}
@@ -181,7 +181,7 @@ const UserLayout = () => {
         </Header>
         <Content
           style={{
-            margin: "24px 16px",
+            margin: "30px 16px 24px 50px",
             padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,

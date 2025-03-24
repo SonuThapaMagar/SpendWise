@@ -34,11 +34,6 @@ const ExpenseGraph = () => {
 
   return (
     <div style={{ marginTop: "24px" }}>
-      <h2
-        style={{ marginBottom: "16px", fontSize: "20px", fontWeight: "bold" }}
-      >
-        Expense Bar Graph
-      </h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />

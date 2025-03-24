@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col, Typography, Table } from "antd";
-import { LineChartOutlined } from "@ant-design/icons";
+import {
+  LineChartOutlined,
+  DollarOutlined,
+  WalletOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 import ExpenseGraph from "./ExpenseGraph";
-import { PieChart, Pie, ResponsiveContainer } from "recharts";
+import { CircularProgressbar } from "react-circular-progressbar";
+import { ResponsiveContainer } from "recharts";
 
 const { Text } = Typography;
 
@@ -14,6 +19,9 @@ const Dashboard = () => {
   const [remainingBalance, setRemainingBalance] = useState(0);
   const [recentExpenses, setRecentExpenses] = useState([]);
   const [budgets, setBudgets] = useState([]);
+
+  const percentage =
+    totalBudget > 0 ? Math.round((remainingBalance / totalBudget) * 100) : 0;
 
   useEffect(() => {
     fetchTotalBudget();
@@ -145,19 +153,9 @@ const Dashboard = () => {
     },
   ];
 
-  const data01 = [
-    { name: "Group A", value: 400 },
-    { name: "Group B", value: 300 },
-    { name: "Group C", value: 300 },
-    { name: "Group D", value: 200 },
-    { name: "Group E", value: 278 },
-    { name: "Group F", value: 189 },
-  ];
-  const data02 = [
-    { name: "Category A", value: 240 },
-    { name: "Category B", value: 130 },
-    { name: "Category C", value: 190 },
-    { name: "Category D", value: 280 },
+  const dataForPieChart = [
+    { name: "Remaining Balance", value: remainingBalance },
+    { name: "Spent", value: totalExpenses },
   ];
 
   return (
@@ -174,12 +172,12 @@ const Dashboard = () => {
             style={{
               borderRadius: "8px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              backgroundColor: "#C3DDFD",
+              backgroundColor: "#A4CAFE",
             }}
           >
             <LineChartOutlined
               style={{
-                fontSize: "48px",
+                fontSize: "32px",
                 color: "#1C64F2",
                 backgroundColor: "#A4CAFE",
                 borderRadius: "50%",
@@ -190,7 +188,6 @@ const Dashboard = () => {
               style={{
                 fontSize: "24px",
                 fontWeight: "bold",
-                color: "white",
               }}
             >
               Rs. {totalBudget}
@@ -203,9 +200,18 @@ const Dashboard = () => {
             style={{
               borderRadius: "8px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              backgroundColor: "#E5E5FF",
+              backgroundColor: "#F8BFBF",
             }}
           >
+            <DollarOutlined
+              style={{
+                fontSize: "32px",
+                color: "#D9534F",
+                backgroundColor: "#F8BFBF",
+                borderRadius: "50%",
+                padding: "8px",
+              }}
+            />
             <Text style={{ fontSize: "24px", fontWeight: "bold" }}>
               Rs. {totalExpenses}
             </Text>
@@ -219,9 +225,18 @@ const Dashboard = () => {
             style={{
               borderRadius: "8px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              backgroundColor: "#E5E5FF",
+              backgroundColor: "#ABEBC6",
             }}
           >
+            <WalletOutlined
+              style={{
+                fontSize: "32px",
+                color: "#28A745",
+                backgroundColor: "#ABEBC6",
+                borderRadius: "50%",
+                padding: "8px",
+              }}
+            />
             <Text style={{ fontSize: "24px", fontWeight: "bold" }}>
               Rs. {remainingBalance}
             </Text>
@@ -231,7 +246,11 @@ const Dashboard = () => {
 
       {/* Bar Graph for Expenses by Category */}
       <Card
-        title="Expenses by Category"
+        title={
+          <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+            Expenses Statistics
+          </h2>
+        }
         style={{
           marginBottom: "24px",
           borderRadius: "8px",
@@ -246,28 +265,64 @@ const Dashboard = () => {
 
           {/* Right Column: Two Rows */}
           <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-            <ResponsiveContainer width="100%" height="100%" 
-            style={{borderColor:"#7288fa"}}>
-              <PieChart width={400} height={400}>
-                <Pie
-                  data={data01}
-                  dataKey="value"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={60}
-                  fill="#8884d8"
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+              style={{
+                backgroundColor: "#7389fb",
+                borderRadius: "8px",
+                padding: "16px", // Add padding to the entire container
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow
+              }}
+            >
+              {/* Title with better spacing and typography */}
+              <h1
+                style={{
+                  color: "white",
+                  fontSize: "18px",
+                  fontWeight: "600",
+                  margin: "0 0 16px 0", // margin-bottom: 16px
+                  paddingLeft: "8px", // Slight left padding
+                }}
+              >
+                Remaining Balance
+              </h1>
+
+              {/* Progress bar container (centered and responsive) */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "calc(100% - 40px)", // Adjust for title space
+                }}
+              >
+                <CircularProgressbar
+                  value={percentage}
+                  text={`Rs. ${remainingBalance}`}
+                  styles={{
+                    root: {
+                      width: "80%", // Slightly smaller to fit padding
+                    },
+                    path: {
+                      stroke: "#fff",
+                      strokeWidth: 8,
+                      strokeLinecap: "round", // Rounded stroke ends
+                    },
+                    trail: {
+                      stroke: "#8DA2FB",
+                      strokeWidth: 8,
+                    },
+                    text: {
+                      fill: "#fff",
+                      fontSize: "16px", // Larger text for readability
+                      fontWeight: "bold",
+                      dominantBaseline: "middle", // Better vertical alignment
+                      textAnchor: "middle", // Better horizontal alignment
+                    },
+                  }}
                 />
-                <Pie
-                  data={data02}
-                  dataKey="value"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={70}
-                  outerRadius={90}
-                  fill="#82ca9d"
-                  label
-                />
-              </PieChart>
+              </div>
             </ResponsiveContainer>
           </Col>
         </Row>
@@ -275,9 +330,24 @@ const Dashboard = () => {
 
       {/* Recent Expenses Table */}
       <Card
-        title="Recent Expenses"
+        title={
+          <h2
+            style={{
+              fontSize: "24px",
+              fontWeight: "bold",
+              backgroundColor: "#7288fa",
+              color: "white",
+              padding: "10px",
+              borderRadius: "8px 8px 0 0",
+              marginTop: "20px",
+            }}
+          >
+            Recent Expenses
+          </h2>
+        }
         style={{
           borderRadius: "8px",
+          marginTop: "8px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >

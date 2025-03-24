@@ -74,13 +74,6 @@
   ],
   "expenses": [
     {
-      "id": "2",
-      "expenseName": "Vegetables",
-      "expenseAmount": 1000,
-      "budgetId": "2",
-      "date": "2025-03-23"
-    },
-    {
       "id": "cd89",
       "expenseName": "Fee",
       "expenseAmount": 9000,
@@ -103,6 +96,13 @@
       "expenseName": "Stationery",
       "expenseAmount": 1700,
       "budgetId": "4bb4"
+    },
+    {
+      "id": "a896",
+      "expenseName": "Vegetables",
+      "expenseAmount": 1000,
+      "budgetId": "9026",
+      "date": "2025-03-24"
     }
   ]
 }

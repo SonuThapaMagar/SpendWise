@@ -45,13 +45,13 @@ const UserLayout = () => {
     {
       key: "1",
       icon: <DashboardOutlined style={{ fontSize: "18px", }} />, 
-      label: <span style={{ color: "#E5E7EB" }}>Dashboard</span>,
+      label: <span style={{  }}>Dashboard</span>,
       onClick: () => navigate("/users/dashboard"),
     },
     {
       key: "2",
       icon: <MoneyCollectOutlined style={{ fontSize: "18px" }} />,
-      label: <span style={{ color: "#4B5563" }}>Budget</span>,
+      label: <span style={{  }}>Budget</span>,
       onClick: () => navigate("/users/budget"),
     },
     {

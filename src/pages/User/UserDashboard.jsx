@@ -269,7 +269,7 @@ const Dashboard = () => {
               width="100%"
               height="100%"
               style={{
-                backgroundColor: "#7389fb",
+                backgroundColor: "#6875F5",
                 borderRadius: "8px",
                 padding: "16px", // Add padding to the entire container
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow
@@ -281,8 +281,8 @@ const Dashboard = () => {
                   color: "white",
                   fontSize: "18px",
                   fontWeight: "600",
-                  margin: "0 0 16px 0", // margin-bottom: 16px
-                  paddingLeft: "8px", // Slight left padding
+                  margin: "0 0 16px 0", 
+                  paddingLeft: "8px", 
                 }}
               >
                 Remaining Balance
@@ -315,10 +315,10 @@ const Dashboard = () => {
                     },
                     text: {
                       fill: "#fff",
-                      fontSize: "16px", // Larger text for readability
+                      fontSize: "16px", 
                       fontWeight: "bold",
-                      dominantBaseline: "middle", // Better vertical alignment
-                      textAnchor: "middle", // Better horizontal alignment
+                      dominantBaseline: "middle", 
+                      textAnchor: "middle",
                     },
                   }}
                 />

@@ -12,7 +12,6 @@ import {
   Col,
   Card,
   Flex,
-  Tag,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import EmojiPicker from "emoji-picker-react";
@@ -25,8 +24,17 @@ import {
   SmileOutlined,
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-const { Title,Text } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
 const Budget = () => {
@@ -75,115 +83,115 @@ const Budget = () => {
       message.error("Failed to fetch budgets");
     }
   };
-// Budget CRUD operations
-const handleAddBudget = async (values) => {
-  try {
-    setLoading(true);
-    const response = await axios.post("http://localhost:4000/budgets", {
-      ...values,
-      budgetName: values.budgetName,
-      budgetAmount: values.amount,
-      date: values.date.format("YYYY-MM-DD"),
-      icon: selectedEmoji,
-    });
+  // Budget CRUD operations
+  const handleAddBudget = async (values) => {
+    try {
+      setLoading(true);
+      const response = await axios.post("http://localhost:4000/budgets", {
+        ...values,
+        budgetName: values.budgetName,
+        budgetAmount: values.amount,
+        date: values.date.format("YYYY-MM-DD"),
+        icon: selectedEmoji,
+      });
 
-    setBudgets([...budgets, response.data]);
-    message.success("Budget added successfully!");
-    return true;
-  } catch (error) {
-    console.error("Error adding budget:", error);
-    message.error("Failed to add budget");
-    return false;
-  } finally {
-    setLoading(false);
-  }
-};
+      setBudgets([...budgets, response.data]);
+      message.success("Budget added successfully!");
+      return true;
+    } catch (error) {
+      console.error("Error adding budget:", error);
+      message.error("Failed to add budget");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const handleDeleteBudget = async (id) => {
-  try {
-    setLoading(true);
-    await axios.delete(`http://localhost:4000/budgets/${id}`);
-    setBudgets(budgets.filter((budget) => budget.id !== id));
-    message.success("Budget deleted successfully!");
-  } catch (error) {
-    console.error("Error deleting budget:", error);
-    message.error("Failed to delete budget");
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleDeleteBudget = async (id) => {
+    try {
+      setLoading(true);
+      await axios.delete(`http://localhost:4000/budgets/${id}`);
+      setBudgets(budgets.filter((budget) => budget.id !== id));
+      message.success("Budget deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting budget:", error);
+      message.error("Failed to delete budget");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-// Modal handlers
-const showDeleteModal = (id) => {
-  setBudgetToDelete(id);
-  setDeleteModalVisible(true);
-};
+  // Modal handlers
+  const showDeleteModal = (id) => {
+    setBudgetToDelete(id);
+    setDeleteModalVisible(true);
+  };
 
-const handleDeleteConfirm = async () => {
-  if (budgetToDelete) {
-    await handleDeleteBudget(budgetToDelete);
+  const handleDeleteConfirm = async () => {
+    if (budgetToDelete) {
+      await handleDeleteBudget(budgetToDelete);
+      setDeleteModalVisible(false);
+      setBudgetToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
     setDeleteModalVisible(false);
     setBudgetToDelete(null);
-  }
-};
+  };
 
-const handleDeleteCancel = () => {
-  setDeleteModalVisible(false);
-  setBudgetToDelete(null);
-};
+  const showAddBudgetModal = () => {
+    setAddBudgetModalVisible(true);
+  };
 
-const showAddBudgetModal = () => {
-  setAddBudgetModalVisible(true);
-};
+  const handleAddBudgetSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      const success = await handleAddBudget(values);
 
-const handleAddBudgetSubmit = async () => {
-  try {
-    const values = await form.validateFields();
-    const success = await handleAddBudget(values);
-
-    if (success) {
-      form.resetFields();
-      setAddBudgetModalVisible(false);
-      setSelectedEmoji("💰");
+      if (success) {
+        form.resetFields();
+        setAddBudgetModalVisible(false);
+        setSelectedEmoji("💰");
+      }
+    } catch (error) {
+      console.log("Form validation failed:", error);
     }
-  } catch (error) {
-    console.log("Form validation failed:", error);
-  }
-};
+  };
 
-const handleAddBudgetCancel = () => {
-  form.resetFields();
-  setAddBudgetModalVisible(false);
-  setSelectedEmoji("💰");
-};
+  const handleAddBudgetCancel = () => {
+    form.resetFields();
+    setAddBudgetModalVisible(false);
+    setSelectedEmoji("💰");
+  };
 
-// Emoji picker
-const handleEmojiClick = (emojiData) => {
-  setSelectedEmoji(emojiData.emoji);
-  form.setFieldsValue({ icon: emojiData.emoji });
-  setEmojiPickerVisible(false);
-};
+  // Emoji picker
+  const handleEmojiClick = (emojiData) => {
+    setSelectedEmoji(emojiData.emoji);
+    form.setFieldsValue({ icon: emojiData.emoji });
+    setEmojiPickerVisible(false);
+  };
 
-// Other functions
-const handleEditBudget = (id) => {
-  navigate(`/users/budget/editBudget/${id}`);
-};
+  // Other functions
+  const handleEditBudget = (id) => {
+    navigate(`/users/budget/editBudget/${id}`);
+  };
 
-const exportToExcel = () => {
-  const worksheet = XLSX.utils.json_to_sheet(
-    budgets.map((budget) => ({
-      "Budget Name": budget.budgetName,
-      Amount: `Rs. ${budget.budgetAmount}`,
-      Category: budget.category,
-      Date: new Date(budget.date).toLocaleDateString(),
-      "Account Type": budget.accountType,
-      Icon: budget.icon,
-    }))
-  );
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Budgets");
-  XLSX.writeFile(workbook, "Budgets.xlsx");
-};
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      budgets.map((budget) => ({
+        "Budget Name": budget.budgetName,
+        Amount: `Rs. ${budget.budgetAmount}`,
+        Category: budget.category,
+        Date: new Date(budget.date).toLocaleDateString(),
+        "Account Type": budget.accountType,
+        Icon: budget.icon,
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Budgets");
+    XLSX.writeFile(workbook, "Budgets.xlsx");
+  };
 
   return (
     <div style={{ padding: 24 }}>
@@ -202,6 +210,24 @@ const exportToExcel = () => {
           Add Budget
         </Button>
       </Flex>
+
+      {/* Bar Chart */}
+      <Card style={{ marginBottom: 24 }}>
+        <Title level={4} style={{ marginBottom: 16 }}>
+          Budget Distribution
+        </Title>
+        <div style={{ height: 300 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={budgets}>
+              {/* <CartesianGrid strokeDasharray="3 3" /> */}
+              <XAxis dataKey="budgetName" />
+              <YAxis />
+              <Tooltip formatter={(value) => `Rs. ${value}`} />
+              <Bar dataKey="budgetAmount" fill="#7288fa" name="Budget Amount" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
 
       {/* Add Budget Modal */}
       <Modal

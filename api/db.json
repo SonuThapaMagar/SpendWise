@@ -2,10 +2,11 @@
   "users": [
     {
       "id": "admin1",
-      "username": "admin",
+      "username": "Test",
       "email": "admin@example.com",
-      "password": "admin",
-      "isAdmin": true
+      "password": "newone",
+      "isAdmin": true,
+      "contact": "98765432210"
     },
     {
       "id": "0a25",

@@ -60,9 +60,14 @@
       "budgetAmount": 5000
     },
     {
-      "id": "9026",
       "budgetName": "Fashion",
-      "budgetAmount": 1000
+      "amount": 1000,
+      "date": "2025-03-25",
+      "category": "Utilities",
+      "accountType": "Cash",
+      "budgetAmount": 1000,
+      "icon": "👗",
+      "id": "9026"
     },
     {
       "id": "e00a",
@@ -70,13 +75,14 @@
       "budgetAmount": 7500
     },
     {
-      "id": "4bb4",
       "budgetName": "Education",
-      "budgetAmount": 75000,
+      "amount": 75000,
       "date": "2025-03-22",
       "category": "other",
       "accountType": "cash",
-      "note": "Education Fee Expenses"
+      "budgetAmount": 75000,
+      "icon": "👩‍🎓",
+      "id": "4bb4"
     },
     {
       "id": "aaa5",

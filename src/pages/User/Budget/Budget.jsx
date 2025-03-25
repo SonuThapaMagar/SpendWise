@@ -19,9 +19,9 @@ import axios from "axios";
 import {
   PlusOutlined,
   DownloadOutlined,
-  EditOutlined,
   DeleteOutlined,
   SmileOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import {
@@ -33,6 +33,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -43,6 +44,8 @@ const Budget = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [budgetToDelete, setBudgetToDelete] = useState(null);
   const [addBudgetModalVisible, setAddBudgetModalVisible] = useState(false);
+  const [editBudgetModalVisible, setEditBudgetModalVisible] = useState(false);
+  const [budgetToEdit, setBudgetToEdit] = useState(null);
   const [form] = Form.useForm();
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState("💰");
@@ -69,21 +72,24 @@ const Budget = () => {
     "Other",
   ];
 
-  // Data fetching
   useEffect(() => {
     fetchBudgets();
   }, []);
 
   const fetchBudgets = async () => {
     try {
+      setLoading(true);
       const response = await axios.get("http://localhost:4000/budgets");
       setBudgets(response.data);
     } catch (error) {
       console.error("Error fetching budgets:", error);
       message.error("Failed to fetch budgets");
+    } finally {
+      setLoading(false);
     }
   };
-  // Budget CRUD operations
+
+  // CRUD Operations
   const handleAddBudget = async (values) => {
     try {
       setLoading(true);
@@ -94,13 +100,41 @@ const Budget = () => {
         date: values.date.format("YYYY-MM-DD"),
         icon: selectedEmoji,
       });
-
       setBudgets([...budgets, response.data]);
       message.success("Budget added successfully!");
       return true;
     } catch (error) {
       console.error("Error adding budget:", error);
       message.error("Failed to add budget");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditBudget = async (values) => {
+    try {
+      setLoading(true);
+      const response = await axios.put(
+        `http://localhost:4000/budgets/${budgetToEdit.id}`,
+        {
+          ...values,
+          budgetName: values.budgetName,
+          budgetAmount: values.amount,
+          date: values.date.format("YYYY-MM-DD"),
+          icon: selectedEmoji,
+        }
+      );
+      setBudgets(
+        budgets.map((budget) =>
+          budget.id === budgetToEdit.id ? response.data : budget
+        )
+      );
+      message.success("Budget updated successfully!");
+      return true;
+    } catch (error) {
+      console.error("Error updating budget:", error);
+      message.error("Failed to update budget");
       return false;
     } finally {
       setLoading(false);
@@ -121,60 +155,90 @@ const Budget = () => {
     }
   };
 
-  // Modal handlers
-  const showDeleteModal = (id) => {
-    setBudgetToDelete(id);
-    setDeleteModalVisible(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (budgetToDelete) {
-      await handleDeleteBudget(budgetToDelete);
-      setDeleteModalVisible(false);
-      setBudgetToDelete(null);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setDeleteModalVisible(false);
-    setBudgetToDelete(null);
-  };
-
-  const showAddBudgetModal = () => {
-    setAddBudgetModalVisible(true);
-  };
-
-  const handleAddBudgetSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      const success = await handleAddBudget(values);
-
-      if (success) {
+  // Modal Handlers
+  const modalHandlers = {
+    delete: {
+      show: (id) => {
+        setBudgetToDelete(id);
+        setDeleteModalVisible(true);
+      },
+      confirm: async () => {
+        if (budgetToDelete) {
+          await handleDeleteBudget(budgetToDelete);
+          setDeleteModalVisible(false);
+          setBudgetToDelete(null);
+        }
+      },
+      cancel: () => {
+        setDeleteModalVisible(false);
+        setBudgetToDelete(null);
+      },
+    },
+    add: {
+      show: () => {
+        setSelectedEmoji("💰");
+        setAddBudgetModalVisible(true);
+      },
+      submit: async () => {
+        try {
+          const values = await form.validateFields();
+          const success = await handleAddBudget(values);
+          if (success) {
+            form.resetFields();
+            setAddBudgetModalVisible(false);
+            setSelectedEmoji("💰");
+          }
+        } catch (error) {
+          console.log("Form validation failed:", error);
+        }
+      },
+      cancel: () => {
         form.resetFields();
         setAddBudgetModalVisible(false);
         setSelectedEmoji("💰");
-      }
-    } catch (error) {
-      console.log("Form validation failed:", error);
-    }
+      },
+    },
+    edit: {
+      show: (budget) => {
+        setBudgetToEdit(budget);
+        setSelectedEmoji(budget.icon || "💰");
+        form.setFieldsValue({
+          budgetName: budget.budgetName,
+          amount: budget.budgetAmount,
+          date: dayjs(budget.date),
+          category: budget.category,
+          accountType: budget.accountType,
+        });
+        setEditBudgetModalVisible(true);
+      },
+      submit: async () => {
+        try {
+          const values = await form.validateFields();
+          const success = await handleEditBudget(values);
+          if (success) {
+            form.resetFields();
+            setEditBudgetModalVisible(false);
+            setBudgetToEdit(null);
+            setSelectedEmoji("💰");
+          }
+        } catch (error) {
+          console.log("Form validation failed:", error);
+        }
+      },
+      cancel: () => {
+        form.resetFields();
+        setEditBudgetModalVisible(false);
+        setBudgetToEdit(null);
+        setSelectedEmoji("💰");
+      },
+    },
   };
 
-  const handleAddBudgetCancel = () => {
-    form.resetFields();
-    setAddBudgetModalVisible(false);
-    setSelectedEmoji("💰");
-  };
-
-  // Emoji picker
+  // Emoji Handler
   const handleEmojiClick = (emojiData) => {
     setSelectedEmoji(emojiData.emoji);
     form.setFieldsValue({ icon: emojiData.emoji });
     setEmojiPickerVisible(false);
-  };
-
-  // Other functions
-  const handleEditBudget = (id) => {
-    navigate(`/users/budget/editBudget/${id}`);
   };
 
   const exportToExcel = () => {
@@ -202,7 +266,7 @@ const Budget = () => {
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={showAddBudgetModal}
+          onClick={modalHandlers.add.show}
           size="large"
           style={{ borderRadius: 6, backgroundColor: "#7288fa" }}
           loading={loading}
@@ -219,7 +283,7 @@ const Budget = () => {
         <div style={{ height: 300 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={budgets}>
-              {/* <CartesianGrid strokeDasharray="3 3" /> */}
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="budgetName" />
               <YAxis />
               <Tooltip formatter={(value) => `Rs. ${value}`} />
@@ -233,11 +297,9 @@ const Budget = () => {
       <Modal
         title="Add New Budget"
         open={addBudgetModalVisible}
-        onOk={handleAddBudgetSubmit}
-        onCancel={handleAddBudgetCancel}
+        onOk={modalHandlers.add.submit}
+        onCancel={modalHandlers.add.cancel}
         confirmLoading={loading}
-        okText="Add Budget"
-        cancelText="Cancel"
       >
         <Form form={form} layout="vertical" name="add_budget_form">
           <div style={{ marginBottom: "16px" }}>
@@ -259,7 +321,6 @@ const Budget = () => {
               </div>
             )}
           </div>
-
           <Form.Item
             name="budgetName"
             label="Budget Name"
@@ -269,7 +330,6 @@ const Budget = () => {
           >
             <Input placeholder="Enter budget name" />
           </Form.Item>
-
           <Form.Item
             name="amount"
             label="Amount"
@@ -277,7 +337,6 @@ const Budget = () => {
           >
             <Input type="number" prefix="Rs." />
           </Form.Item>
-
           <Form.Item
             name="date"
             label="Date"
@@ -285,7 +344,6 @@ const Budget = () => {
           >
             <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
           </Form.Item>
-
           <Form.Item
             name="category"
             label="Category"
@@ -299,7 +357,6 @@ const Budget = () => {
               ))}
             </Select>
           </Form.Item>
-
           <Form.Item
             name="accountType"
             label="Account Type"
@@ -317,8 +374,91 @@ const Budget = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* Edit Budget Modal */}
+      <Modal
+        title="Edit Budget"
+        open={editBudgetModalVisible}
+        onOk={modalHandlers.edit.submit}
+        onCancel={modalHandlers.edit.cancel}
+        confirmLoading={loading}
+      >
+        <Form form={form} layout="vertical" name="edit_budget_form">
+          <div style={{ marginBottom: "16px" }}>
+            <Button
+              icon={<SmileOutlined />}
+              onClick={() => setEmojiPickerVisible(!emojiPickerVisible)}
+              style={{
+                background: "#F3E8FF",
+                color: "#6C4AB6",
+                borderRadius: "8px",
+                padding: "8px 12px",
+              }}
+            >
+              {selectedEmoji}
+            </Button>
+            {emojiPickerVisible && (
+              <div style={{ position: "absolute", zIndex: 10 }}>
+                <EmojiPicker onEmojiClick={handleEmojiClick} />
+              </div>
+            )}
+          </div>
+          <Form.Item
+            name="budgetName"
+            label="Budget Name"
+            rules={[
+              { required: true, message: "Please input the budget name" },
+            ]}
+          >
+            <Input placeholder="Enter budget name" />
+          </Form.Item>
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[{ required: true, message: "Please input the amount" }]}
+          >
+            <Input type="number" prefix="Rs." />
+          </Form.Item>
+          <Form.Item
+            name="date"
+            label="Date"
+            rules={[{ required: true, message: "Please select the date" }]}
+          >
+            <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item
+            name="category"
+            label="Category"
+            rules={[{ required: true, message: "Please select a category" }]}
+          >
+            <Select placeholder="Select a category">
+              {categories.map((category) => (
+                <Option key={category} value={category}>
+                  {category}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="accountType"
+            label="Account Type"
+            rules={[
+              { required: true, message: "Please select an account type" },
+            ]}
+          >
+            <Select placeholder="Select an account type">
+              {accountTypes.map((type) => (
+                <Option key={type} value={type}>
+                  {type}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+
       {/* Budgets List */}
-      <Card style={{ marginTop: 24 }}>
+      <Card>
         <Flex
           justify="space-between"
           align="center"
@@ -334,92 +474,88 @@ const Budget = () => {
             Export to Excel
           </Button>
         </Flex>
-        <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-          {budgets.map((budget) => {
-            const formattedDate = new Date(budget.date).toLocaleDateString(
-              "en-US",
-              {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              }
-            );
-
-            return (
-              <Col xs={24} sm={12} key={budget.id}>
-                <Card
-                  style={{
-                    boxShadow: "0 1px 2px 0 rgba(0,0,0,0.05)",
-                    marginBottom: 8,
-                  }}
-                >
-                  <Flex justify="space-between" align="center">
-                    <Flex
-                      align="center"
-                      gap={16}
-                      style={{ flex: 1, minWidth: 0 }}
+        <Row gutter={[16, 16]}>
+          {budgets.map((budget) => (
+            <Col xs={24} sm={12} key={budget.id}>
+              <Card
+                style={{
+                  boxShadow: "0 1px 2px 0 rgba(0,0,0,0.05)",
+                  marginBottom: 8,
+                }}
+              >
+                <Flex justify="space-between" align="center">
+                  <Flex
+                    align="center"
+                    gap={16}
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 8,
+                        backgroundColor: "#F3F4F6",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 20,
+                        flexShrink: 0,
+                      }}
                     >
-                      <div
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: 8,
-                          backgroundColor: "#F3F4F6",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: 20,
-                          flexShrink: 0,
-                        }}
-                      >
-                        {budget.icon || "💰"}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <Text
-                          strong
-                          style={{
-                            display: "block",
-                            fontSize: 16,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {budget.budgetName}
-                        </Text>
-                        <Text type="secondary" style={{ fontSize: 14 }}>
-                          {formattedDate} | {budget.category}
-                        </Text>
-                      </div>
-                    </Flex>
-                    <Flex align="center" gap={8}>
+                      {budget.icon || "💰"}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <Text
                         strong
                         style={{
+                          display: "block",
                           fontSize: 16,
-                          color: "#10B981",
                           whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
                         }}
                       >
-                        Rs. {budget.budgetAmount}
+                        {budget.budgetName}
                       </Text>
-                      <Button
-                        icon={<DeleteOutlined />}
-                        type="text"
-                        danger
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          showDeleteModal(budget.id);
-                        }}
-                        loading={loading && budgetToDelete === budget.id}
-                        style={{ marginLeft: 8 }}
-                      />
-                    </Flex>
+                      <Text type="secondary" style={{ fontSize: 14 }}>
+                        {new Date(budget.date).toLocaleDateString("en-US", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}{" "}
+                        | {budget.category}
+                      </Text>
+                    </div>
                   </Flex>
-                </Card>
-              </Col>
-            );
-          })}
+                  <Flex align="center" gap={8}>
+                    <Text
+                      strong
+                      style={{
+                        fontSize: 16,
+                        color: "#10B981",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Rs. {budget.budgetAmount}
+                    </Text>
+                    <Button
+                      icon={<EditOutlined />}
+                      type="text"
+                      onClick={() => modalHandlers.edit.show(budget)}
+                      loading={loading && budgetToEdit?.id === budget.id}
+                    />
+                    <Button
+                      icon={<DeleteOutlined />}
+                      type="text"
+                      danger
+                      onClick={() => modalHandlers.delete.show(budget.id)}
+                      loading={loading && budgetToDelete === budget.id}
+                    />
+                  </Flex>
+                </Flex>
+              </Card>
+            </Col>
+          ))}
         </Row>
       </Card>
 
@@ -427,8 +563,8 @@ const Budget = () => {
       <Modal
         title="Confirm Deletion"
         open={deleteModalVisible}
-        onOk={handleDeleteConfirm}
-        onCancel={handleDeleteCancel}
+        onOk={modalHandlers.delete.confirm}
+        onCancel={modalHandlers.delete.cancel}
         confirmLoading={loading}
       >
         <p>Are you sure you want to delete this budget?</p>

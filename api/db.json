@@ -77,6 +77,16 @@
       "category": "other",
       "accountType": "cash",
       "note": "Education Fee Expenses"
+    },
+    {
+      "id": "aaa5",
+      "budgetName": "Party",
+      "amount": "7000",
+      "date": "2025-03-10",
+      "category": "Entertainment",
+      "accountType": "Cash",
+      "budgetAmount": "7000",
+      "icon": "🍕"
     }
   ],
   "expenses": [

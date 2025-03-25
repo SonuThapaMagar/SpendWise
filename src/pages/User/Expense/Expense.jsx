@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
   Typography,
-  Table,
   Button,
   Modal,
+  Form,
+  Input,
+  Select,
+  DatePicker,
   Row,
   Col,
   Card,
@@ -11,9 +14,16 @@ import {
   Tag,
 } from "antd";
 import { useNavigate } from "react-router-dom";
+import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
 import { showErrorToast, showSuccessToast } from "../../../utils/toastify.util";
-import { PlusOutlined, DownloadOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  DownloadOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  SmileOutlined,
+} from "@ant-design/icons";
 import {
   LineChart,
   Line,
@@ -27,15 +37,131 @@ import {
 import * as XLSX from "xlsx";
 
 const { Title, Text } = Typography;
+const { Option } = Select;
 
 const Expense = () => {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [budgets, setBudgets] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState(null);
+  const [addExpenseModalVisible, setAddExpenseModalVisible] = useState(false);
+  const [form] = Form.useForm();
+  const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
+  const [selectedEmoji, setSelectedEmoji] = useState("💰");
 
-  // Transform expenses data for the chart
+  const categories = [
+    "Rent",
+    "Groceries",
+    "Utilities",
+    "Transportation",
+    "Entertainment",
+    "Dining Out",
+    "Healthcare",
+    "Education",
+    "Other",
+  ];
+
+  // Data fetching
+  useEffect(() => {
+    fetchExpenses();
+    fetchBudgets();
+  }, []);
+
+  const fetchExpenses = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/expenses");
+      setExpenses(response.data);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    }
+  };
+
+  const fetchBudgets = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/budgets");
+      setBudgets(response.data);
+    } catch (error) {
+      console.error("Error fetching budgets:", error);
+    }
+  };
+
+  // Modal handlers
+  const showDeleteModal = (id) => {
+    setExpenseToDelete(id);
+    setDeleteModalVisible(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!expenseToDelete) return;
+    
+    try {
+      await axios.delete(`http://localhost:4000/expenses/${expenseToDelete}`);
+      await fetchExpenses();
+      showSuccessToast("Expense deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      showErrorToast("Failed to delete expense.");
+    } finally {
+      setDeleteModalVisible(false);
+      setExpenseToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalVisible(false);
+    setExpenseToDelete(null);
+  };
+
+  const showAddExpenseModal = () => {
+    setAddExpenseModalVisible(true);
+  };
+
+  const handleAddExpenseSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      console.log("Expense data:", values);
+      // Add your API call here to save the expense
+      form.resetFields();
+      setAddExpenseModalVisible(false);
+      setSelectedEmoji("💰"); // Reset to default emoji
+    } catch (error) {
+      console.log("Form validation failed:", error);
+    }
+  };
+
+  const handleAddExpenseCancel = () => {
+    form.resetFields();
+    setAddExpenseModalVisible(false);
+    setSelectedEmoji("💰"); // Reset to default emoji
+  };
+
+  // Emoji picker
+  const handleEmojiClick = (emojiData) => {
+    setSelectedEmoji(emojiData.emoji);
+    form.setFieldsValue({ icon: emojiData.emoji });
+    setEmojiPickerVisible(false);
+  };
+
+  // Other functions
+  const handleEditExpense = (id) => {
+    navigate(`/users/expense/editExpense/${id}`);
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      expenses.map((expense) => ({
+        "Expense Name": expense.expenseName,
+        Amount: `Rs. ${expense.expenseAmount}`,
+        Category: budgets.find((b) => b.id === expense.budgetId)?.budgetName || "N/A",
+        Date: new Date(expense.date).toLocaleDateString(),
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
+    XLSX.writeFile(workbook, "Expenses.xlsx");
+  };
+
   const prepareChartData = () => {
     const dailyExpenses = expenses.reduce((acc, expense) => {
       const date = new Date(expense.date).toLocaleDateString();
@@ -50,144 +176,7 @@ const Expense = () => {
     }));
   };
 
-  const showModal = (id) => {
-    setExpenseToDelete(id);
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    if (expenseToDelete) {
-      axios
-        .delete(`http://localhost:4000/expenses/${expenseToDelete}`)
-        .then(() => {
-          fetchExpenses();
-          showSuccessToast("Expense deleted successfully!");
-        })
-        .catch((error) => {
-          console.error("Error deleting expense:", error);
-          showErrorToast("Failed to delete expense.");
-        })
-        .finally(() => {
-          setIsModalOpen(false);
-          setExpenseToDelete(null);
-        });
-    }
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setExpenseToDelete(null);
-  };
-
-  useEffect(() => {
-    fetchExpenses();
-    fetchBudgets();
-  }, []);
-
-  const fetchExpenses = () => {
-    axios
-      .get("http://localhost:4000/expenses")
-      .then((response) => {
-        setExpenses(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const fetchBudgets = () => {
-    axios
-      .get("http://localhost:4000/budgets")
-      .then((response) => {
-        setBudgets(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleEditExpense = (id) => {
-    navigate(`/users/expense/editExpense/${id}`);
-  };
-
-  const handleAddExpense = () => {
-    navigate("/users/expense/addExpense");
-  };
-
-  // Export to Excel function
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(
-      expenses.map((expense) => ({
-        "Expense Name": expense.expenseName,
-        Amount: `Rs. ${expense.expenseAmount}`,
-        Category:
-          budgets.find((b) => b.id === expense.budgetId)?.budgetName || "N/A",
-        Date: new Date(expense.date).toLocaleDateString(),
-      }))
-    );
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
-    XLSX.writeFile(workbook, "Expenses.xlsx");
-  };
-
-  
   const chartData = prepareChartData();
-
-  const columns = [
-    {
-      title: "Category",
-      dataIndex: "budgetId",
-      key: "category",
-      render: (budgetId, record) => {
-        const budget = budgets.find((b) => b.id === budgetId);
-        return (
-          <div>
-            <Tag
-              color="#7288fa"
-              style={{ fontSize: "1rem", padding: "4px 8px" }}
-            >
-              {budget ? budget.budgetName : "N/A"}
-            </Tag>
-            <div style={{ marginTop: 4 }}>
-              <Text type="secondary">
-                {new Date(record.date).toLocaleDateString()}
-              </Text>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      title: "Details",
-      key: "details",
-      render: (_, record) => (
-        <div>
-          <Text strong style={{ fontSize: "1rem" }}>
-            {record.expenseName}
-          </Text>
-          <div>
-            <Text type="danger" strong style={{ fontSize: "1.1rem" }}>
-              Rs. {record.expenseAmount}
-            </Text>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, item) => (
-        <Flex gap="small">
-          <Button size="small" onClick={() => handleEditExpense(item.id)}>
-            Edit
-          </Button>
-          <Button size="small" danger onClick={() => showModal(item.id)}>
-            Delete
-          </Button>
-        </Flex>
-      ),
-    },
-  ];
 
   return (
     <div style={{ padding: 24 }}>
@@ -201,13 +190,75 @@ const Expense = () => {
             type="primary"
             icon={<PlusOutlined />}
             size="large"
-            // onClick={handleAddExpense}
+            onClick={showAddExpenseModal}
             style={{ backgroundColor: "#7288fa" }}
           >
             Add Expense
           </Button>
         </Flex>
       </Flex>
+
+      {/* Add Expense Modal */}
+      <Modal
+        title="Add Expense"
+        open={addExpenseModalVisible}
+        onOk={handleAddExpenseSubmit}
+        onCancel={handleAddExpenseCancel}
+        okText="Add Expense"
+        cancelText="Cancel"
+      >
+        <Form form={form} layout="vertical" name="add_expense_form">
+          <div style={{ marginBottom: "16px" }}>
+            <Button
+              icon={<SmileOutlined />}
+              onClick={() => setEmojiPickerVisible(!emojiPickerVisible)}
+              style={{
+                background: "#F3E8FF",
+                color: "#6C4AB6",
+                borderRadius: "8px",
+                padding: "8px 12px",
+              }}
+            >
+              {selectedEmoji}
+            </Button>
+            {emojiPickerVisible && (
+              <div style={{ position: "absolute", zIndex: 10 }}>
+                <EmojiPicker onEmojiClick={handleEmojiClick} />
+              </div>
+            )}
+          </div>
+
+          <Form.Item
+            name="category"
+            label="Category"
+            rules={[{ required: true, message: "Please select a category" }]}
+          >
+            <Select placeholder="Select a category">
+              {categories.map((category) => (
+                <Option key={category} value={category}>
+                  {category}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[{ required: true, message: "Please input the amount" }]}
+          >
+            <Input type="number" prefix="$" />
+          </Form.Item>
+
+          <Form.Item
+            name="date"
+            label="Date"
+            rules={[{ required: true, message: "Please select the date" }]}
+          >
+            <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
+          </Form.Item>
+        </Form>
+      </Modal>
 
       {/* Chart Section */}
       <Card style={{ marginTop: 24 }}>
@@ -244,42 +295,71 @@ const Expense = () => {
         </div>
       </Card>
 
-      {/* Expenses List Below the Chart */}
+      {/* Expenses List */}
       <Card style={{ marginTop: 24 }}>
-        <Flex
-          justify="space-between"
-          align="center"
-          style={{ marginBottom: 16 }}
-        >
-          <Title level={4} style={{ marginBottom: 16 }}>
-            Recent Expenses
-          </Title>
-          <Flex gap={12}>
-            <Button
-              icon={<DownloadOutlined />}
-              size="large"
-              onClick={exportToExcel}
-            >
-              Export to Excel
-            </Button>
-          </Flex>
+        <Flex justify="space-between" align="center" style={{ marginBottom: 16 }}>
+          <Title level={4}>Recent Expenses</Title>
+          <Button icon={<DownloadOutlined />} size="large" onClick={exportToExcel}>
+            Export to Excel
+          </Button>
         </Flex>
 
-        <Table
-          dataSource={expenses}
-          columns={columns}
-          rowKey="id"
-          pagination={{ pageSize: 10 }}
-          style={{ marginTop: 16 }}
-        />
+        <Row gutter={[16, 16]}>
+          {expenses.map((expense) => {
+            const budget = budgets.find((b) => b.id === expense.budgetId);
+            return (
+              <Col xs={24} sm={12} md={8} lg={6} key={expense.id}>
+                <Card style={{ borderLeft: `4px solid #7288fa`, borderRadius: 4 }}>
+                  <Flex justify="space-between" align="flex-start">
+                    <div>
+                      <Tag color="#7288fa" style={{ marginBottom: 8 }}>
+                        {budget?.budgetName || "Other"}
+                      </Tag>
+                      <Text strong style={{ display: "block", fontSize: 16 }}>
+                        {expense.expenseName}
+                      </Text>
+                      <Text type="secondary">
+                        {new Date(expense.date).toLocaleDateString()}
+                      </Text>
+                      <Text
+                        strong
+                        style={{
+                          display: "block",
+                          fontSize: 18,
+                          color: "#ff4d4f",
+                          marginTop: 8,
+                        }}
+                      >
+                        Rs. {expense.expenseAmount}
+                      </Text>
+                    </div>
+                    <Flex gap="small">
+                      <Button
+                        shape="circle"
+                        icon={<EditOutlined />}
+                        onClick={() => handleEditExpense(expense.id)}
+                      />
+                      <Button
+                        shape="circle"
+                        icon={<DeleteOutlined />}
+                        danger
+                        onClick={() => showDeleteModal(expense.id)}
+                      />
+                    </Flex>
+                  </Flex>
+                </Card>
+              </Col>
+            );
+          })}
+        </Row>
       </Card>
 
-      {/* Confirmation Modal */}
+      {/* Delete Confirmation Modal */}
       <Modal
         title="Confirm Deletion"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        open={deleteModalVisible}
+        onOk={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
       >
         <p>Are you sure you want to delete this expense?</p>
       </Modal>

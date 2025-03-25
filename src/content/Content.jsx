@@ -14,7 +14,7 @@ const Content = () => {
         <div className="container relative mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mt-8">
             {/* Content */}
-            <div className="text-center md:text-left">
+            <div className="text-center md:text-left mx-8">
               <h2 className="text-4xl text-gray-600 md:text-4xl font-bold text-blue mb-4 leading-tight">
                 <span className="block text-blue-600 text-5xl">Save money,</span>
                 <span className="block text-5xl mt-2">without thinking about it.</span>

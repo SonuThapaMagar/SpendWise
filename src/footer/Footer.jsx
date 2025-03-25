@@ -3,7 +3,7 @@ import { FacebookOutlined, TwitterOutlined, InstagramOutlined, LinkedinOutlined 
 
 const Footer = () => {
   return (
-    <footer className="bg-blue-500 rounded-xl text-white py-8 px-4">
+    <footer className="bg-[#6875F5] rounded-xl text-white py-8 px-4">
       <div className="container mx-auto px-4">
         {/* Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

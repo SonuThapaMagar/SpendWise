@@ -5,7 +5,7 @@
       "username": "admin",
       "email": "admin@example.com",
       "password": "admin",
-      "isAdmin": true 
+      "isAdmin": true
     },
     {
       "id": "0a25",
@@ -81,13 +81,6 @@
   ],
   "expenses": [
     {
-      "id": "cd89",
-      "expenseName": "Fee",
-      "expenseAmount": 9000,
-      "budgetId": "4bb4",
-      "date": "2025-03-25"
-    },
-    {
       "id": "043a",
       "expenseName": "Lunch",
       "expenseAmount": 5500,
@@ -125,6 +118,15 @@
       "expenseName": "Entertainment",
       "expenseAmount": "6800",
       "icon": "🏖️"
+    },
+    {
+      "id": "661a",
+      "category": "Utilities",
+      "amount": "1500",
+      "date": "2025-03-09",
+      "expenseName": "Utilities",
+      "expenseAmount": "1500",
+      "icon": "👗"
     }
   ]
 }

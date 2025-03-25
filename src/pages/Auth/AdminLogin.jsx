@@ -1,33 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import Logo from "/src/assets/logo.png";
+import { UserContext } from "../../context API/user.context";
 
-const AdminLogin = ({ login }) => {
+const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const { adminLogin } = useContext(UserContext);
 
   const onFinish = async (values) => {
+    console.log("Form submitted with values:", values);
+
     const { username, password } = values;
 
     try {
       setLoading(true);
+      const success = await adminLogin(username, password);
 
-      // Static admin credentials (replace with your logic if needed)
-      if (username === "admin" && password === "admin") {
-        localStorage.setItem("user", JSON.stringify({ role: "admin" }));
-        login("admin"); // Set user role to admin
+      if (success) {
         message.success("Admin login successful!");
         navigate("/admin/dashboard");
       } else {
         message.error("Invalid admin credentials");
       }
     } catch (error) {
+      console.error("Login error:", error);
       message.error("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Form submission failed:", errorInfo);
+    message.error("Please fill in all required fields correctly");
   };
 
   return (
@@ -38,34 +47,38 @@ const AdminLogin = ({ login }) => {
           Admin Login
         </h2>
         <Form
+          form={form}
           name="adminLogin"
-          initialValues={{
-            remember: true,
-          }}
+          initialValues={{ remember: true }}
           onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
         >
           <Form.Item
             name="username"
             rules={[
-              {
-                required: true,
-                message: "Please input your Username!",
-              },
+              { required: true, message: "Please input your username!" },
+              { min: 3, message: "Username must be at least 3 characters" },
             ]}
           >
-            <Input prefix={<UserOutlined />} placeholder="Username" />
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Username"
+              autoComplete="username"
+            />
           </Form.Item>
 
           <Form.Item
             name="password"
             rules={[
-              {
-                required: true,
-                message: "Please input your Password!",
-              },
+              { required: true, message: "Please input your password!" },
+              { min: 4, message: "Password must be at least 4 characters" },
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Password"
+              autoComplete="current-password"
+            />
           </Form.Item>
 
           <Form.Item>
@@ -74,8 +87,9 @@ const AdminLogin = ({ login }) => {
               htmlType="submit"
               className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 mb-4"
               loading={loading}
+              disabled={loading}
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </Form.Item>
         </Form>

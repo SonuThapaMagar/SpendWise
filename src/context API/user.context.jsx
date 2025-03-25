@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { createContext, useContext, useState,useEffect  } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 // Create the context
 const UserContext = createContext();
@@ -10,6 +10,33 @@ export const UserProvider = ({ children }) => {
       ? JSON.parse(localStorage.getItem("user"))
       : null
   );
+
+  //Admin login function
+  const adminLogin = async (username, password) => {
+    try {
+      const response = await axios.get("http://localhost:4000/users");
+      const adminUser = response.data.find(
+        (user) =>
+          user.username === username &&
+          user.password === password &&
+          (user.isAdmin === true || user.isAdmin === "true")
+      );
+
+      if (adminUser) {
+        const userData = {
+          ...adminUser,
+          role: "admin",
+        };
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Admin login error:", error);
+      return false;
+    }
+  };
 
   //Fetching user from the server
   const fetchUserData = async (userId) => {
@@ -55,7 +82,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, signup, setUser }}>
+    <UserContext.Provider value={{ user, signup, setUser,adminLogin }}>
       {children}
     </UserContext.Provider>
   );

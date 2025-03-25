@@ -21,18 +21,28 @@ import { ToastContainer } from "react-toastify";
 import Profile from "./pages/User/Profile";
 import EditProfile from "./pages/User/EditProfile";
 import ChangePassword from "./pages/Auth/ChangePassword";
+import AdminLayout from "./layout/AdminLayout";
 
 function App() {
   return (
     <UserProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/about" element={<About />} />
           <Route path="/features" element={<Services />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+
+          {/* Admin routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+          </Route>
+
+          {/* User routes */}
           <Route path="/users" element={<UserLayout />}>
             <Route path="/users/dashboard" element={<UserDashboard />} />
             <Route path="/users/budget" element={<Budget />}></Route>
@@ -58,11 +68,6 @@ function App() {
             <Route path="/users/editProfile" element={<EditProfile />}></Route>
             <Route path="/users/changePassword" element={<ChangePassword />} />
           </Route>
-
-          <Route path="/admin/login" element={<AdminLogin />} />
-          {/* <Route path="/admin/" element={AdminLayout}> */}
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          {/* </Route> */}
         </Routes>
       </BrowserRouter>
       <ToastContainer />

@@ -1,30 +1,24 @@
-import React, { useContext } from "react";
+import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Flex } from "antd";
 import Logo from "/src/assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { showSuccessToast, showErrorToast } from "../../utils/toastify.util";
-import { UserContext } from "../../context API/user.context";
-
+import { useUser } from "../../context API/user.context";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext); 
+  const { login } = useUser();
+  const [loading, setLoading] = useState(false);
 
   const onFinish = async (values) => {
-    
-    const { username, password } = values;
+    setLoading(true);
 
     try {
-      // Fetch users from JSON server
-      const response = await axios.get("http://localhost:4000/users", {
-        params: { username, password },
-      });
-      if (response.data.length > 0) {
-        const user = response.data[0];
-        localStorage.setItem("user", JSON.stringify(user)); // Save user data to localStorage
-        localStorage.setItem("is_login", "1");
+      const success = await login(values.username, values.password);
+
+      if (success) {
         showSuccessToast("Login successful!");
         navigate("/users/dashboard");
       } else {
@@ -32,6 +26,8 @@ const Login = () => {
       }
     } catch (error) {
       showErrorToast("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,30 +36,20 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 bg-indigo-50 bg-loginBackground ">
-      {/* Login Form */}
-      <div
-        className="w-full max-w-sm bg-white shadow-lg rounded-lg p-6 relative z-10" // Add z-index to bring the form above the overlay
-      >
+    <div className="flex justify-center items-center min-h-screen p-4 bg-indigo-50 bg-loginBackground">
+      <div className="w-full max-w-sm bg-white shadow-lg rounded-lg p-6 relative z-10">
         <img src={Logo} alt="Logo" className="mx-auto w-18 h-18 mb-4" />
         <h2 className="text-2xl font-semibold text-center mb-4 text-blue-600">
           Login
         </h2>
         <Form
           name="login"
-          initialValues={{
-            remember: true,
-          }}
+          initialValues={{ remember: true }}
           onFinish={onFinish}
         >
           <Form.Item
             name="username"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Username!",
-              },
-            ]}
+            rules={[{ required: true, message: "Please input your Username!" }]}
           >
             <Input
               prefix={<UserOutlined className="text-gray-600 font-medium" />}
@@ -74,12 +60,7 @@ const Login = () => {
 
           <Form.Item
             name="password"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Password!",
-              },
-            ]}
+            rules={[{ required: true, message: "Please input your Password!" }]}
           >
             <Input.Password
               prefix={<LockOutlined className="text-gray-600 font-md" />}
@@ -87,6 +68,7 @@ const Login = () => {
               className="rounded-lg"
             />
           </Form.Item>
+
           <Form.Item>
             <Flex justify="space-between" align="center">
               <a href="" className="text-blue-500 hover:text-blue-700">
@@ -108,8 +90,10 @@ const Login = () => {
                 fontSize: "large",
                 fontFamily: "Nunito, sans-serif",
               }}
+              loading={loading}
+              disabled={loading}
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </Button>
 
             <p className="text-center mt-4 text-medium text-gray-600">

@@ -1,42 +1,33 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import Logo from "/src/assets/logo.png";
-import { UserContext } from "../../context API/user.context";
+import { useUser } from "../../context API/user.context";
+import { showSuccessToast, showErrorToast } from "../../utils/toastify.util";
 
 const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [form] = Form.useForm();
-  const { adminLogin } = useContext(UserContext);
+  const { adminLogin } = useUser();
 
   const onFinish = async (values) => {
+    setLoading(true);
     console.log("Form submitted with values:", values);
 
-    const { username, password } = values;
-
     try {
-      setLoading(true);
-      const success = await adminLogin(username, password);
-
+      const success = await adminLogin(values.username, values.password);
       if (success) {
-        message.success("Admin login successful!");
+        showSuccessToast("Admin login successful!");
         navigate("/admin/dashboard");
       } else {
-        message.error("Invalid admin credentials");
+        showErrorToast("Invalid admin credentials");
       }
     } catch (error) {
-      console.error("Login error:", error);
-      message.error("Login failed. Please try again.");
+      showErrorToast("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Form submission failed:", errorInfo);
-    message.error("Please fill in all required fields correctly");
   };
 
   return (
@@ -47,11 +38,9 @@ const AdminLogin = () => {
           Admin Login
         </h2>
         <Form
-          form={form}
           name="adminLogin"
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
         >
           <Form.Item
             name="username"

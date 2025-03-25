@@ -109,6 +109,15 @@
       "expenseName": "Dining Out",
       "expenseAmount": "1000",
       "icon": "🍉"
+    },
+    {
+      "id": "ba5e",
+      "category": "Entertainment",
+      "amount": "6800",
+      "date": "2025-03-11",
+      "expenseName": "Entertainment",
+      "expenseAmount": "6800",
+      "icon": "🏖️"
     }
   ]
 }

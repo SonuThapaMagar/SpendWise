@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import Logo from "../assets/spend.png";
 import {
   DashboardOutlined,
@@ -12,75 +12,76 @@ import {
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme, Typography, Avatar } from "antd";
 import { showSuccessToast } from "../utils/toastify.util";
-import { UserContext } from "../context API/user.context";
+import { useUser } from "../context API/user.context";
+import { useMediaQuery } from "react-responsive";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
 const UserLayout = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const location = useLocation();
+  const [collapsed, setCollapsed] = useState(isMobile);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const { user, logout } = useUser();
 
   useEffect(() => {
-    const isLogin = localStorage.getItem("is_login");
-
-    if (isLogin !== "1" || !user) {
-      // Redirecting to landing page if not logged in
+    // If user is not logged in, redirect to landing page
+    if (!user) {
       navigate("/");
     }
-  }, [navigate, user]);
+  }, [user, navigate]);
 
   const handleLogoutClick = () => {
-    localStorage.setItem("is_login", 0);
+    logout();
     showSuccessToast("Logout Successful!");
     navigate("/login");
   };
 
   const menuItems = [
     {
-      key: "1",
-      icon: <DashboardOutlined style={{ fontSize: "18px", }} />, 
-      label: <span style={{  }}>Dashboard</span>,
+      key: "/users/dashboard",
+      icon: <DashboardOutlined style={{ fontSize: "18px" }} />,
+      label: "Dashboard",
       onClick: () => navigate("/users/dashboard"),
     },
     {
-      key: "2",
+      key: "/users/budget",
       icon: <MoneyCollectOutlined style={{ fontSize: "18px" }} />,
-      label: <span style={{  }}>Budget</span>,
+      label: "Budget",
       onClick: () => navigate("/users/budget"),
     },
     {
-      key: "3",
+      key: "/users/expense",
       icon: <DollarOutlined style={{ fontSize: "18px" }} />,
       label: "Expense",
       onClick: () => navigate("/users/expense"),
     },
     {
-      key: "4",
+      key: "/users/profile",
       icon: <UserOutlined style={{ fontSize: "18px" }} />,
       label: "My Profile",
       onClick: () => navigate("/users/profile"),
     },
     {
-      key: "5",
+      key: "logout",
       icon: <LogoutOutlined style={{ fontSize: "18px" }} />,
       label: "Logout",
-      onClick: () => handleLogoutClick(),
+      onClick: handleLogoutClick,
     },
   ];
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* Fixed Sider */}
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
+        collapsedWidth={isMobile ? 0 : 80}
         width={230}
         style={{
           height: "100vh",
@@ -90,15 +91,15 @@ const UserLayout = () => {
           bottom: 0,
           zIndex: 1,
           backgroundColor: "white",
-          color: "#99a3ab",
+          boxShadow: "2px 0 8px 0 rgba(0, 0, 0, 0.1)",
         }}
       >
         <div
-          className="demo-logo-vertical"
           style={{
             padding: "16px",
             display: "flex",
             alignItems: "center",
+            justifyContent: collapsed ? "center" : "flex-start",
             gap: "8px",
           }}
         >
@@ -107,38 +108,63 @@ const UserLayout = () => {
             alt="Logo"
             style={{ width: "50px", height: "auto" }}
           />
-          <h2
-            style={{ color: "#6875F5", fontWeight: "bold", fontSize: "1rem" }}
-          >
-            SpendWise
-          </h2>
+          {!collapsed && (
+            <Text strong style={{ color: "#6875F5", fontSize: "1rem" }}>
+              SpendWise
+            </Text>
+          )}
         </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "8px",
+            marginBottom: "16px",
+            padding: isMobile ? "0 16px" : "0",
+          }}
+        >
+          <Avatar
+            size="large"
+            icon={<UserOutlined />}
+            style={{ backgroundColor: "#1890ff" }}
+          />
+          {!collapsed && (
+            <Text strong style={{ fontSize: "16px", textAlign: "center" }}>
+              {user?.username || "Username"}
+            </Text>
+          )}
+        </div>
+
         <Menu
           theme="light"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          selectedKeys={[location.pathname]}
           items={menuItems}
+          style={{
+            borderRight: 0,
+            padding: isMobile ? "0 4px" : "0 16px",
+          }}
           className="custom-menu"
-          style={{ fontWeight: "18px",color: "#99a3ab", }}
+          // className={`custom-menu ${isMobile ? "mobile-menu" : ""}`}
         />
       </Sider>
 
-      {/* Content with padding to account for the fixed Sider */}
       <Layout
         style={{
-          marginLeft: collapsed ? 100 : 200,
+          marginLeft: collapsed ? 80 : 230,
           transition: "margin-left 0.2s",
           minHeight: "100vh",
         }}
       >
         <Header
           style={{
-            padding: "0 16px",
+            padding: 0,
             background: colorBgContainer,
             display: "flex",
-            height: "80px",
             alignItems: "center",
-            justifyContent: "space-between",
+            height: "64px",
           }}
         >
           <Button
@@ -151,44 +177,16 @@ const UserLayout = () => {
               height: 64,
             }}
           />
-
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{ textAlign: "right" }}>
-              <Text
-                strong
-                style={{
-                  display: "block",
-                  fontSize: "16px",
-                  lineHeight: "0",
-                  marginTop: "2rem",
-                }}
-              >
-                {user?.username || "Username"}
-              </Text>
-              <Text
-                type="secondary"
-                style={{ fontSize: "14px", lineHeight: "0" }}
-              >
-                {user?.email || "Email"}
-              </Text>
-            </div>
-            <Avatar
-              size="large"
-              icon={<UserOutlined />}
-              style={{ backgroundColor: "#1890ff" }}
-            />
-          </div>
         </Header>
         <Content
           style={{
-            margin: "30px 16px 24px 50px",
+            margin: "16px",
             padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
-            overflow: "auto",
+            minHeight: "calc(100vh - 96px)",
           }}
         >
-          {/* Render nested routes here */}
           <Outlet />
         </Content>
       </Layout>

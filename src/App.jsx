@@ -44,29 +44,16 @@ function App() {
 
           {/* User routes */}
           <Route path="/users" element={<UserLayout />}>
-            <Route path="/users/dashboard" element={<UserDashboard />} />
-            <Route path="/users/budget" element={<Budget />}></Route>
-            <Route
-              path="/users/budget/addBudget"
-              element={<AddBudget />}
-            ></Route>
-            <Route
-              path="/users/budget/editBudget/:id"
-              element={<EditBudget />}
-            ></Route>
-
-            <Route path="/users/expense" element={<Expense />}></Route>
-            <Route
-              path="/users/expense/addExpense"
-              element={<AddExpense />}
-            ></Route>
-            <Route
-              path="/users/expense/editExpense/:id"
-              element={<AddExpense />}
-            />
-            <Route path="/users/profile" element={<Profile />}></Route>
-            <Route path="/users/editProfile" element={<EditProfile />}></Route>
-            <Route path="/users/changePassword" element={<ChangePassword />} />
+            <Route path="dashboard" element={<UserDashboard />} />
+            <Route path="budget" element={<Budget />} />
+            <Route path="budget/addBudget" element={<AddBudget />} />
+            <Route path="budget/editBudget/:id" element={<EditBudget />} />
+            <Route path="expense" element={<Expense />} />
+            <Route path="expense/addExpense" element={<AddExpense />} />
+            <Route path="expense/editExpense/:id" element={<AddExpense />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="editProfile" element={<EditProfile />} />
+            <Route path="changePassword" element={<ChangePassword />} />
           </Route>
         </Routes>
       </BrowserRouter>

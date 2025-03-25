@@ -3,7 +3,6 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Flex } from "antd";
 import Logo from "/src/assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { showSuccessToast, showErrorToast } from "../../utils/toastify.util";
 import { useUser } from "../../context API/user.context";
 
@@ -13,8 +12,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values) => {
+    
     setLoading(true);
-
     try {
       const success = await login(values.username, values.password);
 

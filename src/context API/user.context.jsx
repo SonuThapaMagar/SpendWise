@@ -1,5 +1,11 @@
 import axios from "axios";
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 
 // Create the context
 const UserContext = createContext();
@@ -14,10 +20,14 @@ export const UserProvider = ({ children }) => {
   const fetchUserData = useCallback(async (userId) => {
     try {
       const response = await axios.get(`http://localhost:4000/users/${userId}`);
-      setUser((prevUser) => ({
-        ...prevUser, // Preserve properties like role
-        ...response.data,
-      }));
+      setUser((prevUser) => {
+        const updatedUser = {
+          ...prevUser,
+          ...response.data,
+        };
+        console.log("Updated user after fetchUserData:", updatedUser);
+        return updatedUser;
+      });
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -25,6 +35,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     if (user?.id) {
+      console.log("Fetching user data for ID:", user.id);
       fetchUserData(user.id);
     }
   }, [user?.id, fetchUserData]);
@@ -43,6 +54,7 @@ export const UserProvider = ({ children }) => {
       if (adminUser) {
         const userData = { ...adminUser, role: "admin" };
         localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("is_login", "1");
         setUser(userData);
         return true;
       }
@@ -67,7 +79,9 @@ export const UserProvider = ({ children }) => {
       if (foundUser) {
         const userData = { ...foundUser, role: "user" };
         localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("is_login", "1");
         setUser(userData);
+        console.log("User logged in:", userData);
         return true;
       }
       return false;
@@ -97,6 +111,7 @@ export const UserProvider = ({ children }) => {
 
       const newUser = { ...signupResponse.data, role: "user" };
       setUser(newUser);
+      localStorage.setItem("is_login", "1");
       return newUser;
     } catch (error) {
       throw error;
@@ -108,6 +123,7 @@ export const UserProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("is_login");
+    console.log("User logged out");
   }, []);
 
   return (

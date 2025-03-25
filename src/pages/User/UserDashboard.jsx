@@ -50,63 +50,129 @@ const UserDashboard = () => {
       {/* Financial Summary Cards */}
       <Row gutter={[16, 16]} className="mb-6">
         <Col xs={24} sm={12} md={8}>
-          <Card className="shadow-lg rounded-lg flex items-center p-4">
-            <Avatar
-              size={50}
-              icon={<WalletOutlined />}
-              style={{
-                backgroundColor:"#6875F5"
-              }}
-              className="mr-4"
-            />
-            <div>
-              <Text className="text-gray-500 text-sm uppercase">
-                Total Balance
-              </Text>
-              <Title level={4} className="text-blue-600 m-0">
-                Rs.{remainingBalance.toLocaleString()}
-              </Title>
-            </div>
+          <Card
+            className="shadow-lg rounded-lg p-4"
+            style={{
+              border: "none",
+              backgroundColor: "#fff",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Row align="middle">
+              <Col span={6}>
+                <Avatar
+                  size={50}
+                  icon={<WalletOutlined />}
+                  style={{
+                    backgroundColor: "#6875F5", // Purple for Total Balance
+                  }}
+                />
+              </Col>
+              <Col span={18}>
+                <Text
+                  className="text-gray-500 text-sm uppercase"
+                  style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
+                >
+                  Total Balance
+                </Text>
+                <Title
+                  level={4}
+                  style={{
+                    fontFamily: "Poppins, sans-serif",
+                    fontWeight: 500,
+                    color: "#000",
+                    margin: 0,
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  Rs.{remainingBalance.toLocaleString()}
+                </Title>
+              </Col>
+            </Row>
           </Card>
         </Col>
         <Col xs={24} sm={12} md={8}>
-          <Card className="shadow-lg rounded-lg flex items-center p-4">
-            <Avatar
-              size={50}
-              icon={<DollarOutlined />}
-              style={{
-                backgroundColor:"#0E9F6E"
-              }}
-              className="mr-4"
-            />
-            <div>
-              <Text className="text-gray-500 text-sm uppercase">
-                Total Income
-              </Text>
-              <Title level={4} className="text-orange-600 m-0">
-                Rs.{totalBudget.toLocaleString()}
-              </Title>
-            </div>
+          <Card
+            className="shadow-lg rounded-lg p-4"
+            style={{
+              border: "none",
+              backgroundColor: "#fff",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Row align="middle">
+              <Col span={6}>
+                <Avatar
+                  size={50}
+                  icon={<DollarOutlined />}
+                  style={{
+                    backgroundColor: "#F5A623", // Orange for Total Income
+                  }}
+                />
+              </Col>
+              <Col span={18}>
+                <Text
+                  className="text-gray-500 text-sm uppercase"
+                  style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
+                >
+                  Total Income
+                </Text>
+                <Title
+                  level={4}
+                  style={{
+                    fontFamily: "Poppins, sans-serif",
+                    fontWeight: 500,
+                    color: "#000",
+                    margin: 0,
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  Rs.{totalBudget.toLocaleString()}
+                </Title>
+              </Col>
+            </Row>
           </Card>
         </Col>
         <Col xs={24} sm={12} md={8}>
-          <Card className="shadow-lg rounded-lg flex items-center p-4">
-            <Avatar
-              size={50}
-              icon={<DollarOutlined />}
-              style={{
-                backgroundColor:"#3F83F8"
-              }}
-              className="mr-4 mb-2"
-            />
-            <div>
-              <Text className="text-gray-500 text-sm uppercase">
-                Total Expenses
-              </Text>
-              <Title level={4} className="text-red-600 m-0">
-                Rs.{totalExpenses.toLocaleString()}
-              </Title>
-            </div>
+          <Card
+            className="shadow-lg rounded-lg p-4"
+            style={{
+              border: "none",
+              backgroundColor: "#fff",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Row align="middle">
+              <Col span={6}>
+                <Avatar
+                  size={50}
+                  icon={<DollarOutlined />}
+                  style={{
+                    backgroundColor: "#D9534F", // Red for Total Expenses
+                  }}
+                />
+              </Col>
+              <Col span={18}>
+                <Text
+                  className="text-gray-500 text-sm uppercase"
+                  style={{ fontFamily: "Poppins, sans-serif", fontWeight: 300 }}
+                >
+                  Total Expenses
+                </Text>
+                <Title
+                  level={4}
+                  style={{
+                    fontFamily: "Poppins, sans-serif",
+                    fontWeight: 500,
+                    color: "#000",
+                    margin: 0,
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  Rs.{totalExpenses.toLocaleString()}
+                </Title>
+              </Col>
+            </Row>
           </Card>
         </Col>
       </Row>
@@ -122,11 +188,14 @@ const UserDashboard = () => {
               </Title>
             }
             extra={
-              <Button type="link" onClick={() => navigate("/users/expense")}
-              style={{
-                backgroundColor:"#CDDBFE",
-                color:"#5850EC"
-              }}>
+              <Button
+                type="link"
+                onClick={() => navigate("/users/expense")}
+                style={{
+                  backgroundColor: "#CDDBFE",
+                  color: "#5850EC",
+                }}
+              >
                 See All
               </Button>
             }

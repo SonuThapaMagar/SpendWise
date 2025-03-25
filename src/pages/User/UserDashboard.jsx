@@ -21,7 +21,11 @@ const UserDashboard = () => {
 
   // Data for the donut chart
   const chartData = [
-    { name: "Total Balance", value: remainingBalance, color: "#6875F5" },
+    {
+      name: "Total Balance",
+      value: remainingBalance,
+      backgroundColor: "#6875F5",
+    },
     { name: "Total Income", value: totalBudget, color: "#F5A623" },
     { name: "Total Expenses", value: totalExpenses, color: "#D9534F" },
   ];
@@ -50,7 +54,10 @@ const UserDashboard = () => {
             <Avatar
               size={50}
               icon={<WalletOutlined />}
-              className="bg-blue-500 mr-4"
+              style={{
+                backgroundColor:"#6875F5"
+              }}
+              className="mr-4"
             />
             <div>
               <Text className="text-gray-500 text-sm uppercase">
@@ -67,7 +74,10 @@ const UserDashboard = () => {
             <Avatar
               size={50}
               icon={<DollarOutlined />}
-              className="bg-orange-500 mr-4"
+              style={{
+                backgroundColor:"#0E9F6E"
+              }}
+              className="mr-4"
             />
             <div>
               <Text className="text-gray-500 text-sm uppercase">
@@ -84,7 +94,10 @@ const UserDashboard = () => {
             <Avatar
               size={50}
               icon={<DollarOutlined />}
-              className="bg-red-500 mr-4"
+              style={{
+                backgroundColor:"#3F83F8"
+              }}
+              className="mr-4 mb-2"
             />
             <div>
               <Text className="text-gray-500 text-sm uppercase">
@@ -109,7 +122,11 @@ const UserDashboard = () => {
               </Title>
             }
             extra={
-              <Button type="link" onClick={() => navigate("/users/expense")}>
+              <Button type="link" onClick={() => navigate("/users/expense")}
+              style={{
+                backgroundColor:"#CDDBFE",
+                color:"#5850EC"
+              }}>
                 See All
               </Button>
             }

@@ -12,11 +12,11 @@ import {
   Card,
   Flex,
   Tag,
+  message,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
-import { showErrorToast, showSuccessToast } from "../../../utils/toastify.util";
 import {
   PlusOutlined,
   DownloadOutlined,
@@ -49,6 +49,7 @@ const Expense = () => {
   const [form] = Form.useForm();
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState("💰");
+  const [loading, setLoading] = useState(false);
 
   const categories = [
     "Rent",
@@ -74,6 +75,7 @@ const Expense = () => {
       setExpenses(response.data);
     } catch (error) {
       console.error("Error fetching expenses:", error);
+      message.error("Failed to fetch expenses");
     }
   };
 
@@ -83,6 +85,45 @@ const Expense = () => {
       setBudgets(response.data);
     } catch (error) {
       console.error("Error fetching budgets:", error);
+      message.error("Failed to fetch budgets");
+    }
+  };
+
+  // Expense CRUD operations
+  const handleAddExpense = async (values) => {
+    try {
+      setLoading(true);
+      const response = await axios.post("http://localhost:4000/expenses", {
+        ...values,
+        expenseName: values.category, // Using category as name for now
+        expenseAmount: values.amount,
+        date: values.date.format("YYYY-MM-DD"), // Format date for backend
+        icon: selectedEmoji,
+      });
+
+      setExpenses([...expenses, response.data]);
+      message.success("Expense added successfully!");
+      return true;
+    } catch (error) {
+      console.error("Error adding expense:", error);
+      message.error("Failed to add expense");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteExpense = async (id) => {
+    try {
+      setLoading(true);
+      await axios.delete(`http://localhost:4000/expenses/${id}`);
+      setExpenses(expenses.filter((expense) => expense.id !== id));
+      message.success("Expense deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      message.error("Failed to delete expense");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,16 +134,8 @@ const Expense = () => {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!expenseToDelete) return;
-    
-    try {
-      await axios.delete(`http://localhost:4000/expenses/${expenseToDelete}`);
-      await fetchExpenses();
-      showSuccessToast("Expense deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting expense:", error);
-      showErrorToast("Failed to delete expense.");
-    } finally {
+    if (expenseToDelete) {
+      await handleDeleteExpense(expenseToDelete);
       setDeleteModalVisible(false);
       setExpenseToDelete(null);
     }
@@ -120,11 +153,13 @@ const Expense = () => {
   const handleAddExpenseSubmit = async () => {
     try {
       const values = await form.validateFields();
-      console.log("Expense data:", values);
-      // Add your API call here to save the expense
-      form.resetFields();
-      setAddExpenseModalVisible(false);
-      setSelectedEmoji("💰"); // Reset to default emoji
+      const success = await handleAddExpense(values);
+
+      if (success) {
+        form.resetFields();
+        setAddExpenseModalVisible(false);
+        setSelectedEmoji("💰"); // Reset to default emoji
+      }
     } catch (error) {
       console.log("Form validation failed:", error);
     }
@@ -133,7 +168,7 @@ const Expense = () => {
   const handleAddExpenseCancel = () => {
     form.resetFields();
     setAddExpenseModalVisible(false);
-    setSelectedEmoji("💰"); // Reset to default emoji
+    setSelectedEmoji("💰");
   };
 
   // Emoji picker
@@ -153,8 +188,10 @@ const Expense = () => {
       expenses.map((expense) => ({
         "Expense Name": expense.expenseName,
         Amount: `Rs. ${expense.expenseAmount}`,
-        Category: budgets.find((b) => b.id === expense.budgetId)?.budgetName || "N/A",
+        Category:
+          budgets.find((b) => b.id === expense.budgetId)?.budgetName || "N/A",
         Date: new Date(expense.date).toLocaleDateString(),
+        Icon: expense.icon,
       }))
     );
     const workbook = XLSX.utils.book_new();
@@ -192,6 +229,7 @@ const Expense = () => {
             size="large"
             onClick={showAddExpenseModal}
             style={{ backgroundColor: "#7288fa" }}
+            loading={loading}
           >
             Add Expense
           </Button>
@@ -206,6 +244,7 @@ const Expense = () => {
         onCancel={handleAddExpenseCancel}
         okText="Add Expense"
         cancelText="Cancel"
+        confirmLoading={loading}
       >
         <Form form={form} layout="vertical" name="add_expense_form">
           <div style={{ marginBottom: "16px" }}>
@@ -247,7 +286,7 @@ const Expense = () => {
             label="Amount"
             rules={[{ required: true, message: "Please input the amount" }]}
           >
-            <Input type="number" prefix="$" />
+            <Input type="number" prefix="Rs." />
           </Form.Item>
 
           <Form.Item
@@ -297,53 +336,102 @@ const Expense = () => {
 
       {/* Expenses List */}
       <Card style={{ marginTop: 24 }}>
-        <Flex justify="space-between" align="center" style={{ marginBottom: 16 }}>
+        <Flex
+          justify="space-between"
+          align="center"
+          style={{ marginBottom: 16 }}
+        >
           <Title level={4}>Recent Expenses</Title>
-          <Button icon={<DownloadOutlined />} size="large" onClick={exportToExcel}>
+          <Button
+            icon={<DownloadOutlined />}
+            size="large"
+            onClick={exportToExcel}
+            loading={loading}
+          >
             Export to Excel
           </Button>
         </Flex>
-
-        <Row gutter={[16, 16]}>
+        <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
           {expenses.map((expense) => {
-            const budget = budgets.find((b) => b.id === expense.budgetId);
+            const formattedDate = new Date(expense.date).toLocaleDateString(
+              "en-US",
+              {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              }
+            );
+
             return (
-              <Col xs={24} sm={12} md={8} lg={6} key={expense.id}>
-                <Card style={{ borderLeft: `4px solid #7288fa`, borderRadius: 4 }}>
-                  <Flex justify="space-between" align="flex-start">
-                    <div>
-                      <Tag color="#7288fa" style={{ marginBottom: 8 }}>
-                        {budget?.budgetName || "Other"}
-                      </Tag>
-                      <Text strong style={{ display: "block", fontSize: 16 }}>
-                        {expense.expenseName}
-                      </Text>
-                      <Text type="secondary">
-                        {new Date(expense.date).toLocaleDateString()}
-                      </Text>
+              <Col xs={24} sm={12} key={expense.id}>
+                <Card
+                  variant={false}
+                  style={{
+                    boxShadow: "0 1px 2px 0 rgba(0,0,0,0.05)",
+                    marginBottom: 8,
+                  }}
+                  stylesbody={{ padding: "16px" }}
+                >
+                  <Flex justify="space-between" align="center">
+                    <Flex
+                      align="center"
+                      gap={16}
+                      style={{ flex: 1, minWidth: 0 }}
+                    >
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 8,
+                          backgroundColor: "#F3F4F6",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 20,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {expense.icon || "💰"}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <Text
+                          strong
+                          style={{
+                            display: "block",
+                            fontSize: 16,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {expense.expenseName}
+                        </Text>
+                        <Text type="secondary" style={{ fontSize: 14 }}>
+                          {formattedDate}
+                        </Text>
+                      </div>
+                    </Flex>
+                    <Flex align="center" gap={8}>
                       <Text
                         strong
                         style={{
-                          display: "block",
-                          fontSize: 18,
-                          color: "#ff4d4f",
-                          marginTop: 8,
+                          fontSize: 16,
+                          color: "#EF4444",
+                          whiteSpace: "nowrap",
                         }}
                       >
-                        Rs. {expense.expenseAmount}
+                        ${expense.expenseAmount}
                       </Text>
-                    </div>
-                    <Flex gap="small">
                       <Button
-                        shape="circle"
-                        icon={<EditOutlined />}
-                        onClick={() => handleEditExpense(expense.id)}
-                      />
-                      <Button
-                        shape="circle"
                         icon={<DeleteOutlined />}
+                        type="text"
                         danger
-                        onClick={() => showDeleteModal(expense.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          showDeleteModal(expense.id);
+                        }}
+                        loading={loading && expenseToDelete === expense.id}
+                        style={{ marginLeft: 8 }}
                       />
                     </Flex>
                   </Flex>
@@ -360,6 +448,7 @@ const Expense = () => {
         open={deleteModalVisible}
         onOk={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
+        confirmLoading={loading}
       >
         <p>Are you sure you want to delete this expense?</p>
       </Modal>

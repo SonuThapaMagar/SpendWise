@@ -9,6 +9,8 @@ export const BudgetProvider = ({ children }) => {
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [remainingBalance, setRemainingBalance] = useState(0);
   const [recentTransactions, setRecentTransactions] = useState([]);
+  const [last30DaysExpenses, setLast30DaysExpenses] = useState([]);
+  const [last30DaysChartData, setLast30DaysChartData] = useState([]);
   const [budgets, setBudgets] = useState([]);
 
   useEffect(() => {
@@ -17,6 +19,7 @@ export const BudgetProvider = ({ children }) => {
       await fetchTotalBudget();
       await fetchTotalExpenses();
       await fetchRecentTransactions();
+      await fetchLast30DaysExpenses();
     };
     fetchData();
   }, []);
@@ -98,6 +101,60 @@ export const BudgetProvider = ({ children }) => {
     }
   };
 
+  const fetchLast30DaysExpenses = async () => {
+    try {
+      // Fetch expenses
+      const response = await axios.get("http://localhost:4000/expenses");
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      // Filter expenses from the last 30 days
+      const filteredExpenses = response.data
+        .filter((expense) => {
+          const expenseDate = new Date(expense.date);
+          return (
+            expenseDate >= thirtyDaysAgo &&
+            expense.expenseAmount !== undefined &&
+            expense.expenseAmount !== null
+          );
+        })
+        .map((expense) => ({
+          ...expense,
+          category: expense.category || expense.expenseName || "Uncategorized",
+          amount: parseFloat(expense.expenseAmount) || 0,
+          date: expense.date || new Date().toISOString(),
+          icon: expense.icon || "💸",
+        }));
+
+      // Sort by date (most recent first)
+      const sortedExpenses = filteredExpenses.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+      setLast30DaysExpenses(sortedExpenses);
+
+      // Prepare chart data: Aggregate expenses by day
+      const dailyExpenses = {};
+      filteredExpenses.forEach((expense) => {
+        const date = new Date(expense.date).toLocaleDateString();
+        if (!dailyExpenses[date]) {
+          dailyExpenses[date] = 0;
+        }
+        dailyExpenses[date] += expense.amount;
+      });
+
+      const chartData = Object.keys(dailyExpenses).map((date, index) => ({
+        date,
+        amount: dailyExpenses[date],
+        key: `chart-bar-${index}`, // Add a unique key
+      }));
+      setLast30DaysChartData(chartData);
+    } catch (error) {
+      console.error("Error fetching last 30 days expenses:", error);
+      setLast30DaysExpenses([]);
+      setLast30DaysChartData([]);
+    }
+  };
+
   const fetchBudgets = async () => {
     try {
       const response = await axios.get("http://localhost:4000/budgets");
@@ -118,10 +175,13 @@ export const BudgetProvider = ({ children }) => {
         totalExpenses,
         remainingBalance,
         recentTransactions,
+        last30DaysExpenses,
+        last30DaysChartData,
         budgets,
         fetchTotalBudget,
         fetchTotalExpenses,
         fetchRecentTransactions,
+        fetchLast30DaysExpenses,
         fetchBudgets,
       }}
     >

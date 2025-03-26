@@ -3,11 +3,19 @@ import { Row } from "antd";
 import SummaryCards from "../../components/SummaryCards";
 import RecentTransactions from "../../components/RecentTransactions";
 import FinancialOverview from "../../components/FinancialOverview";
+import Last30DaysExpenses from "../../components/Last30DaysExpenses";
+import ExpensesBarChart from "../../components/ExpensesBarChart";
 import { useBudget } from "../../context API/BudgetContext";
 
 const UserDashboard = () => {
-  const { totalBudget, totalExpenses, remainingBalance, recentTransactions } =
-    useBudget();
+  const {
+    totalBudget,
+    totalExpenses,
+    remainingBalance,
+    recentTransactions,
+    last30DaysExpenses,
+    last30DaysChartData,
+  } = useBudget();
 
   // Data for the donut chart
   const chartData = [
@@ -40,12 +48,19 @@ const UserDashboard = () => {
         remainingBalance={remainingBalance}
       />
 
+      {/* Recent Transactions and Financial Overview */}
       <Row gutter={[16, 16]}>
         <RecentTransactions recentTransactions={recentTransactions} />
         <FinancialOverview
           chartData={chartData}
           remainingBalance={remainingBalance}
         />
+      </Row>
+
+      {/* Last 30 Days Expenses and Bar Chart */}
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Last30DaysExpenses expenses={last30DaysExpenses} />
+        <ExpensesBarChart chartData={last30DaysChartData} />
       </Row>
     </div>
   );

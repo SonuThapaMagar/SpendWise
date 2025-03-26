@@ -1,11 +1,11 @@
 import React from "react";
-import { Card, List, Button, Avatar, Typography,Col } from "antd";
+import { Card, List, Button, Avatar, Typography, Col, Empty } from "antd";
 import { useNavigate } from "react-router-dom";
-import categoryIcons from "../utils/categoryIcons";
+import { DollarOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
-const RecentTransactions = ({ recentExpenses }) => {
+const RecentTransactions = ({ recentTransactions }) => {
   const navigate = useNavigate();
 
   return (
@@ -32,34 +32,47 @@ const RecentTransactions = ({ recentExpenses }) => {
         style={{ minHeight: "380px" }}
       >
         <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-          <List
-            dataSource={recentExpenses}
-            renderItem={(item) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={
-                    <Avatar
-                      icon={categoryIcons[item.category] || <DollarOutlined />}
-                      className={
-                        item.category === "Salary" ? "bg-green-500" : "bg-red-500"
-                      }
-                    />
-                  }
-                  title={item.category}
-                  description={new Date(item.date).toLocaleDateString()}
-                />
-                <Text
-                  className={
-                    item.category === "Salary" ? "text-green-500" : "text-red-500"
-                  }
-                >
-                  {item.category === "Salary"
-                    ? `+Rs.${item.expenseAmount.toLocaleString()}`
-                    : `-Rs.${item.expenseAmount.toLocaleString()}`}
-                </Text>
-              </List.Item>
-            )}
-          />
+          {recentTransactions && recentTransactions.length > 0 ? (
+            <List
+              dataSource={recentTransactions}
+              renderItem={(item) => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        icon={item.icon ? <span>{item.icon}</span> : <DollarOutlined />}
+                        className={
+                          item.type === "budget" ? "bg-green-500" : "bg-red-500"
+                        }
+                      />
+                    }
+                    title={item.category}
+                    description={
+                      item.date
+                        ? new Date(item.date).toLocaleDateString()
+                        : "No date"
+                    }
+                  />
+                  <Text
+                    className={
+                      item.type === "budget" ? "text-green-500" : "text-red-500"
+                    }
+                  >
+                    {item.amount !== undefined && item.amount !== null
+                      ? item.type === "budget"
+                        ? `+Rs.${item.amount.toLocaleString()}`
+                        : `-Rs.${item.amount.toLocaleString()}`
+                      : "N/A"}
+                  </Text>
+                </List.Item>
+              )}
+            />
+          ) : (
+            <Empty
+              description="No recent transactions"
+              style={{ marginTop: "50px" }}
+            />
+          )}
         </div>
       </Card>
     </Col>

@@ -8,18 +8,18 @@ export const BudgetProvider = ({ children }) => {
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [remainingBalance, setRemainingBalance] = useState(0);
-  const [recentExpenses, setRecentExpenses] = useState([]);
+  const [recentTransactions, setRecentTransactions] = useState([]);
   const [budgets, setBudgets] = useState([]);
 
   useEffect(() => {
-    fetchBudgets();
+    const fetchData = async () => {
+      await fetchBudgets();
+      await fetchTotalBudget();
+      await fetchTotalExpenses();
+      await fetchRecentTransactions();
+    };
+    fetchData();
   }, []);
-
-  useEffect(() => {
-    fetchTotalBudget();
-    fetchTotalExpenses();
-    fetchRecentExpenses();
-  }, [budgets]);
 
   const fetchTotalBudget = async () => {
     try {
@@ -47,22 +47,54 @@ export const BudgetProvider = ({ children }) => {
     }
   };
 
-  const fetchRecentExpenses = async () => {
+  const fetchRecentTransactions = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/expenses");
-      const expensesWithCategory = response.data.map((expense) => {
-        const budget = budgets.find((b) => b.id === expense.budgetId);
-        return {
+      // Fetching expenses
+      const expensesResponse = await axios.get(
+        "http://localhost:4000/expenses"
+      );
+      const expenses = expensesResponse.data
+        .filter(
+          (expense) =>
+            expense.expenseAmount !== undefined &&
+            expense.expenseAmount !== null
+        )
+        .map((expense) => ({
           ...expense,
-          category: budget ? budget.budgetName : expense.category || "Uncategorized",
-        };
-      });
-      const sortedExpenses = expensesWithCategory.sort(
+          type: "expense",
+          category: expense.category || expense.expenseName || "Uncategorized",
+          amount: parseFloat(expense.expenseAmount) || 0,
+          date: expense.date || new Date().toISOString(),
+          icon: expense.icon || "💸",
+        }));
+
+      // Fetch budgets
+      const budgetsResponse = await axios.get("http://localhost:4000/budgets");
+      const budgetsData = budgetsResponse.data
+        .filter(
+          (budget) =>
+            budget.budgetAmount !== undefined && budget.budgetAmount !== null
+        )
+        .map((budget) => ({
+          ...budget,
+          type: "budget",
+          category: budget.budgetName || "Budget",
+          amount: parseFloat(budget.budgetAmount) || 0,
+          date: budget.date || new Date().toISOString(),
+          icon: budget.icon || "💰", // Fallback emoji for budgets
+        }));
+
+      // Combining expenses and budgets
+      const allTransactions = [...expenses, ...budgetsData];
+
+      // Sort by date (most recent first) and take the top 5
+      const sortedTransactions = allTransactions.sort(
         (a, b) => new Date(b.date) - new Date(a.date)
       );
-      setRecentExpenses(sortedExpenses.slice(0, 5));
+      setRecentTransactions(sortedTransactions.slice(0, 5));
     } catch (error) {
-      console.error("Error fetching recent expenses:", error);
+      console.error("Error fetching recent transactions:", error);
+      setRecentTransactions([]);
     }
   };
 
@@ -85,11 +117,11 @@ export const BudgetProvider = ({ children }) => {
         totalBudget,
         totalExpenses,
         remainingBalance,
-        recentExpenses,
+        recentTransactions,
         budgets,
         fetchTotalBudget,
         fetchTotalExpenses,
-        fetchRecentExpenses,
+        fetchRecentTransactions,
         fetchBudgets,
       }}
     >

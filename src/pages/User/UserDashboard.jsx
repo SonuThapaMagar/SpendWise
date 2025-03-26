@@ -6,7 +6,7 @@ import FinancialOverview from "../../components/FinancialOverview";
 import { useBudget } from "../../context API/BudgetContext";
 
 const UserDashboard = () => {
-  const { totalBudget, totalExpenses, remainingBalance, recentExpenses } =
+  const { totalBudget, totalExpenses, remainingBalance, recentTransactions } =
     useBudget();
 
   // Data for the donut chart
@@ -41,7 +41,7 @@ const UserDashboard = () => {
       />
 
       <Row gutter={[16, 16]}>
-        <RecentTransactions recentExpenses={recentExpenses} />
+        <RecentTransactions recentTransactions={recentTransactions} />
         <FinancialOverview
           chartData={chartData}
           remainingBalance={remainingBalance}

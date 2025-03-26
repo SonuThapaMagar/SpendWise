@@ -58,9 +58,14 @@
       "id": "1"
     },
     {
-      "id": "2",
       "budgetName": "Groceries",
-      "budgetAmount": 5000
+      "amount": 5000,
+      "date": "2025-03-21",
+      "category": "Groceries",
+      "accountType": "Cash",
+      "budgetAmount": 5000,
+      "icon": "💰",
+      "id": "2"
     },
     {
       "budgetName": "Fashion",
@@ -73,9 +78,14 @@
       "id": "9026"
     },
     {
-      "id": "e00a",
       "budgetName": "Household",
-      "budgetAmount": 7500
+      "amount": 7500,
+      "date": "2025-03-26",
+      "category": "Rent",
+      "accountType": "Cash",
+      "budgetAmount": 7500,
+      "icon": "💰",
+      "id": "e00a"
     },
     {
       "budgetName": "Education",

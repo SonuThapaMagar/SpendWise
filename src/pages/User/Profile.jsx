@@ -165,22 +165,7 @@ const Profile = () => {
           position: "relative",
           marginBottom: 80,
         }}
-      >
-        <Button
-          type="primary"
-          icon={<CameraOutlined />}
-          style={{
-            position: "absolute",
-            right: 16,
-            top: 16,
-            backgroundColor: "#6875F5",
-            width: "auto",
-            height: 50,
-          }}
-        >
-          Change Cover
-        </Button>
-      </div>
+      ></div>
 
       {/* Profile Content */}
       <Row gutter={[24, 24]} style={{ marginTop: -120 }}>
@@ -326,18 +311,27 @@ const Profile = () => {
         okText="Update Password"
         cancelText="Cancel"
       >
-        <Form form={passwordForm} layout="vertical" onFinish={handleChangePassword}>
+        <Form
+          form={passwordForm}
+          layout="vertical"
+          onFinish={handleChangePassword}
+        >
           <Form.Item
             name="currentPassword"
             label="Current Password"
             rules={[
-              { required: true, message: "Please input your current password!" },
+              {
+                required: true,
+                message: "Please input your current password!",
+              },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || value === user?.password) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error("Current password is incorrect!"));
+                  return Promise.reject(
+                    new Error("Current password is incorrect!")
+                  );
                 },
               }),
             ]}
@@ -349,7 +343,10 @@ const Profile = () => {
             label="New Password"
             rules={[
               { required: true, message: "Please input your new password!" },
-              { min: 6, message: "Password must be at least 6 characters long!" },
+              {
+                min: 6,
+                message: "Password must be at least 6 characters long!",
+              },
             ]}
           >
             <Input.Password />

@@ -16,7 +16,7 @@ import { useUser } from "../context API/user.context";
 import { useMediaQuery } from "react-responsive";
 
 const { Header, Sider, Content } = Layout;
-const { Text } = Typography;
+const { Text,Title  } = Typography;
 
 const UserLayout = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -30,7 +30,6 @@ const UserLayout = () => {
   const { user, logout } = useUser();
 
   useEffect(() => {
-    // If user is not logged in, redirect to landing page
     if (!user) {
       navigate("/");
     }
@@ -147,25 +146,34 @@ const UserLayout = () => {
             padding: isMobile ? "0 4px" : "0 16px",
           }}
           className="custom-menu"
-          // className={`custom-menu ${isMobile ? "mobile-menu" : ""}`}
         />
       </Sider>
 
       <Layout
         style={{
-          marginLeft: collapsed ? 80 : 230,
+          marginLeft: collapsed ? (isMobile ? 0 : 80) : 230,
           transition: "margin-left 0.2s",
           minHeight: "100vh",
         }}
       >
         <Header
+          title="Dashboard"
           style={{
             padding: 0,
+            background: "#E0E7FF",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
             background: colorBgContainer,
             display: "flex",
             alignItems: "center",
             height: "64px",
+            position: "fixed",
+            top: 0,
+            left: collapsed ? (isMobile ? 0 : 80) : 230,
+            right: 0,
+            zIndex: 1,
+            transition: "left 0.2s",
           }}
+          
         >
           <Button
             type="text"
@@ -177,10 +185,13 @@ const UserLayout = () => {
               height: 64,
             }}
           />
+          <Title level={4} style={{ margin: 0, color: "#1F2A44" }}>
+            Dashboard
+          </Title>
         </Header>
         <Content
           style={{
-            margin: "16px",
+            margin: "80px 16px 16px 16px",
             padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,

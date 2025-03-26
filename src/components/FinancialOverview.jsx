@@ -42,7 +42,7 @@ const FinancialOverview = ({ chartData, remainingBalance }) => {
             <svg>
               <text
                 x="50%"
-                y="35%"
+                y="40%"
                 textAnchor="middle"
                 dominantBaseline="middle"
                 className="text-md font-medium"
@@ -52,7 +52,7 @@ const FinancialOverview = ({ chartData, remainingBalance }) => {
               </text>
               <text
                 x="50%"
-                y="45%"
+                y="50%"
                 textAnchor="middle"
                 dominantBaseline="middle"
                 className="text-xl font-semi-bold"

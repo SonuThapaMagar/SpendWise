@@ -11,6 +11,10 @@ export const BudgetProvider = ({ children }) => {
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [last30DaysExpenses, setLast30DaysExpenses] = useState([]);
   const [last30DaysChartData, setLast30DaysChartData] = useState([]);
+  const [last60DaysBudgets, setLast60DaysBudgets] = useState([]);
+  const [last60DaysIncomeChartData, setLast60DaysIncomeChartData] = useState(
+    []
+  );
   const [budgets, setBudgets] = useState([]);
 
   useEffect(() => {
@@ -20,6 +24,7 @@ export const BudgetProvider = ({ children }) => {
       await fetchTotalExpenses();
       await fetchRecentTransactions();
       await fetchLast30DaysExpenses();
+      await fetchLast60DaysBudgets();
     };
     fetchData();
   }, []);
@@ -155,6 +160,72 @@ export const BudgetProvider = ({ children }) => {
     }
   };
 
+  const fetchLast60DaysBudgets = async () => {
+    try {
+      // Fetch budgets
+      const response = await axios.get("http://localhost:4000/budgets");
+      const sixtyDaysAgo = new Date();
+      sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+      // Filter budgets from the last 60 days
+      const filteredBudgets = response.data
+        .filter((budget) => {
+          const budgetDate = new Date(budget.date);
+          return (
+            budgetDate >= sixtyDaysAgo &&
+            budget.budgetAmount !== undefined &&
+            budget.budgetAmount !== null
+          );
+        })
+        .map((budget) => ({
+          ...budget,
+          category: budget.budgetName || "Budget",
+          amount: parseFloat(budget.budgetAmount) || 0,
+          date: budget.date || new Date().toISOString(),
+          icon: budget.icon || "💰",
+        }));
+
+      // Sort by date (most recent first)
+      const sortedBudgets = filteredBudgets.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+      setLast60DaysBudgets(sortedBudgets);
+
+      // Prepare chart data: Aggregate budgets by category
+      const categoryTotals = {};
+      filteredBudgets.forEach((budget) => {
+        const category = budget.category;
+        if (!categoryTotals[category]) {
+          categoryTotals[category] = 0;
+        }
+        categoryTotals[category] += budget.amount;
+      });
+
+      // Define colors for each category (matching the image)
+      const categoryColors = {
+        Salary: "#6b48ff", // Purple
+        "Interest from Savings": "#ff4d4f", // Red
+        "E-commerce Sales": "#ff7a45", // Orange
+        "Graphic Design": "#1890ff", // Blue
+        "Affiliate Marketing": "#13c2c2", // Cyan (not in image, but added for additional categories)
+        Budget: "#13c2c2", // Default color for "Budget" category
+      };
+
+      const chartData = Object.keys(categoryTotals).map((category, index) => ({
+        name: category,
+        value: categoryTotals[category],
+        color:
+          categoryColors[category] ||
+          `#${Math.floor(Math.random() * 16777215).toString(16)}`, // Fallback random color
+      }));
+      setLast60DaysIncomeChartData(chartData);
+    } catch (error) {
+      console.error("Error fetching last 60 days budgets:", error);
+      setLast60DaysBudgets([]);
+      setLast60DaysIncomeChartData([]);
+    }
+  };
+
   const fetchBudgets = async () => {
     try {
       const response = await axios.get("http://localhost:4000/budgets");
@@ -177,11 +248,14 @@ export const BudgetProvider = ({ children }) => {
         recentTransactions,
         last30DaysExpenses,
         last30DaysChartData,
+        last60DaysBudgets,
+        last60DaysIncomeChartData,
         budgets,
         fetchTotalBudget,
         fetchTotalExpenses,
         fetchRecentTransactions,
         fetchLast30DaysExpenses,
+        fetchLast60DaysBudgets,
         fetchBudgets,
       }}
     >

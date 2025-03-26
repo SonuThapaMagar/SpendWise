@@ -5,6 +5,8 @@ import RecentTransactions from "../../components/RecentTransactions";
 import FinancialOverview from "../../components/FinancialOverview";
 import Last30DaysExpenses from "../../components/Last30DaysExpenses";
 import ExpensesBarChart from "../../components/ExpensesBarChart";
+import Last60DaysIncomeChart from "../../components/Last60DaysIncomeChart";
+import RecentBudgets from "../../components/RecentBudgets";
 import { useBudget } from "../../context API/BudgetContext";
 
 const UserDashboard = () => {
@@ -15,6 +17,8 @@ const UserDashboard = () => {
     recentTransactions,
     last30DaysExpenses,
     last30DaysChartData,
+    last60DaysBudgets,
+    last60DaysIncomeChartData,
   } = useBudget();
 
   // Data for the donut chart
@@ -61,6 +65,11 @@ const UserDashboard = () => {
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
         <Last30DaysExpenses expenses={last30DaysExpenses} />
         <ExpensesBarChart chartData={last30DaysChartData} />
+      </Row>
+
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Last60DaysIncomeChart chartData={last60DaysIncomeChartData} />
+        <RecentBudgets budgets={last60DaysBudgets} />
       </Row>
     </div>
   );

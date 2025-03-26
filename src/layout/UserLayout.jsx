@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import Logo from "../assets/spend.png";
 import {
@@ -10,13 +10,14 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme, Typography, Avatar } from "antd";
+import { Button, Layout, Menu, theme, Typography, Avatar, Divider } from "antd";
 import { showSuccessToast } from "../utils/toastify.util";
 import { useUser } from "../context API/user.context";
 import { useMediaQuery } from "react-responsive";
+// import "./App.css"
 
 const { Header, Sider, Content } = Layout;
-const { Text,Title  } = Typography;
+const { Text, Title } = Typography;
 
 const UserLayout = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -80,7 +81,7 @@ const UserLayout = () => {
         trigger={null}
         collapsible
         collapsed={collapsed}
-        collapsedWidth={isMobile ? 0 : 80}
+        collapsedWidth={isMobile ? 60 : 80}
         width={230}
         style={{
           height: "100vh",
@@ -95,7 +96,7 @@ const UserLayout = () => {
       >
         <div
           style={{
-            padding: "16px",
+            padding: "24px 16px",
             display: "flex",
             alignItems: "center",
             justifyContent: collapsed ? "center" : "flex-start",
@@ -104,11 +105,18 @@ const UserLayout = () => {
         >
           <img
             src={Logo}
-            alt="Logo"
-            style={{ width: "50px", height: "auto" }}
+            alt="SpendWise Logo"
+            style={{ width: collapsed ? "40px" : "50px", height: "auto" }}
           />
           {!collapsed && (
-            <Text strong style={{ color: "#6875F5", fontSize: "1rem" }}>
+            <Text
+              strong
+              style={{
+                color: "#6875F5",
+                fontSize: "1.2rem",
+                fontFamily: "'Poppins', sans-serif",
+              }}
+            >
               SpendWise
             </Text>
           )}
@@ -119,22 +127,31 @@ const UserLayout = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "8px",
-            marginBottom: "16px",
+            gap: "12px",
+            marginBottom: "24px",
             padding: isMobile ? "0 16px" : "0",
           }}
         >
           <Avatar
-            size="large"
+            size={collapsed ? "medium" : "large"}
             icon={<UserOutlined />}
             style={{ backgroundColor: "#1890ff" }}
           />
           {!collapsed && (
-            <Text strong style={{ fontSize: "16px", textAlign: "center" }}>
+            <Text
+              strong
+              style={{
+                fontSize: "16px",
+                textAlign: "center",
+                color: "#1F2A44",
+              }}
+            >
               {user?.username || "Username"}
             </Text>
           )}
         </div>
+
+        <Divider style={{ margin: "0 16px 16px 16px", borderColor: "#e8e8e8" }} />
 
         <Menu
           theme="light"
@@ -143,7 +160,8 @@ const UserLayout = () => {
           items={menuItems}
           style={{
             borderRight: 0,
-            padding: isMobile ? "0 4px" : "0 16px",
+            padding: isMobile ? "0 8px" : "0 16px",
+            fontSize: "14px",
           }}
           className="custom-menu"
         />
@@ -151,13 +169,12 @@ const UserLayout = () => {
 
       <Layout
         style={{
-          marginLeft: collapsed ? (isMobile ? 0 : 80) : 230,
+          marginLeft: collapsed ? (isMobile ? 60 : 80) : 230,
           transition: "margin-left 0.2s",
           minHeight: "100vh",
         }}
       >
         <Header
-          title="Dashboard"
           style={{
             padding: 0,
             background: "#E0E7FF",
@@ -168,12 +185,11 @@ const UserLayout = () => {
             height: "64px",
             position: "fixed",
             top: 0,
-            left: collapsed ? (isMobile ? 0 : 80) : 230,
+            left: collapsed ? (isMobile ? 60 : 80) : 230,
             right: 0,
             zIndex: 1,
             transition: "left 0.2s",
           }}
-          
         >
           <Button
             type="text"
@@ -184,6 +200,7 @@ const UserLayout = () => {
               width: 64,
               height: 64,
             }}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           />
           <Title level={4} style={{ margin: 0, color: "#1F2A44" }}>
             Dashboard

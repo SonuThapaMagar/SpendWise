@@ -48,12 +48,14 @@
   ],
   "budgets": [
     {
-      "id": "1",
       "budgetName": "Travel",
-      "budgetAmount": 6700,
+      "amount": "30500",
       "date": "2025-03-24",
       "category": "transport",
-      "accountType": "cash"
+      "accountType": "cash",
+      "budgetAmount": "30500",
+      "icon": "💰",
+      "id": "1"
     },
     {
       "id": "2",
@@ -62,11 +64,11 @@
     },
     {
       "budgetName": "Fashion",
-      "amount": 1000,
+      "amount": "55000",
       "date": "2025-03-25",
       "category": "Utilities",
       "accountType": "Cash",
-      "budgetAmount": 1000,
+      "budgetAmount": "55000",
       "icon": "👗",
       "id": "9026"
     },

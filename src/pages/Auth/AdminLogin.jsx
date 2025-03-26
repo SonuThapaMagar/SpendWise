@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import Logo from "/src/assets/logo.png";
 import { useUser } from "../../context API/user.context";

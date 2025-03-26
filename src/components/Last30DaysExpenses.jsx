@@ -9,7 +9,7 @@ const Last30DaysExpenses = ({ expenses }) => {
   const navigate = useNavigate();
 
   return (
-    <Col xs={24} md={12}>
+    <Col xs={24} md={12} style={{ display: "flex", flexDirection: "column" }}>
       <Card
         title={
           <Title level={4} className="m-0">
@@ -23,35 +23,64 @@ const Last30DaysExpenses = ({ expenses }) => {
             style={{
               backgroundColor: "#CDDBFE",
               color: "#5850EC",
+              fontSize: "12px",
+              padding: "4px 8px",
             }}
           >
             See All
           </Button>
         }
         className="shadow-lg rounded-lg"
-        style={{ minHeight: "380px" }}
+        style={{
+          minHeight: "380px",
+          flex: 1, // Ensure the card stretches to fill available space
+          display: "flex",
+          flexDirection: "column",
+        }}
+        styles={{
+          body: {
+            flex: 1, // Ensure the card body takes up remaining space
+            display: "flex",
+            flexDirection: "column",
+            padding: "16px", // Consistent padding
+          },
+        }}
       >
-        <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+        <div
+          style={{
+            flex: 1,
+            minHeight: "300px",
+            maxHeight: "300px",
+            overflowY: "auto",
+          }}
+        >
           {expenses && expenses.length > 0 ? (
             <List
               dataSource={expenses}
               renderItem={(item) => (
-                <List.Item>
+                <List.Item style={{ padding: "8px 0" }}>
                   <List.Item.Meta
                     avatar={
                       <Avatar
-                        icon={item.icon ? <span>{item.icon}</span> : <DollarOutlined />}
+                        icon={
+                          item.icon ? <span>{item.icon}</span> : <DollarOutlined />
+                        }
                         className="bg-red-500"
+                        size="small"
                       />
                     }
-                    title={item.category}
+                    title={
+                      <span style={{ fontSize: "14px" }}>{item.category}</span>
+                    }
                     description={
-                      item.date
-                        ? new Date(item.date).toLocaleDateString()
-                        : "No date"
+                      <span style={{ fontSize: "12px" }}>
+                        {item.date
+                          ? new Date(item.date).toLocaleDateString()
+                          : "No date"}
+                      </span>
                     }
                   />
-                  <Text className="text-red-500">
+                  <Text className="text-red-500" style={{ fontSize: "14px" }}>
                     {item.amount !== undefined && item.amount !== null
                       ? `-Rs.${item.amount.toLocaleString()}`
                       : "N/A"}
@@ -61,7 +90,7 @@ const Last30DaysExpenses = ({ expenses }) => {
             />
           ) : (
             <Empty
-              description="No expenses in the last 30 days"
+              description={<span style={{ fontSize: "14px" }}>No expenses in the last 30 days</span>}
               style={{ marginTop: "50px" }}
             />
           )}

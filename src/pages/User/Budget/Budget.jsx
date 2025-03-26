@@ -15,7 +15,6 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import EmojiPicker from "emoji-picker-react";
-import axios from "axios";
 import {
   PlusOutlined,
   DownloadOutlined,
@@ -34,13 +33,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import dayjs from "dayjs";
+import { useBudget } from "../../../context API/BudgetContext";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const Budget = () => {
+const Budget = React.memo(() => {
   const navigate = useNavigate();
-  const [budgets, setBudgets] = useState([]);
+  const { addBudget, editBudget, deleteBudget, budgets } = useBudget();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [budgetToDelete, setBudgetToDelete] = useState(null);
   const [addBudgetModalVisible, setAddBudgetModalVisible] = useState(false);
@@ -72,39 +72,21 @@ const Budget = () => {
     "Other",
   ];
 
-  useEffect(() => {
-    fetchBudgets();
-  }, []);
-
-  const fetchBudgets = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("http://localhost:4000/budgets");
-      setBudgets(response.data);
-    } catch (error) {
-      console.error("Error fetching budgets:", error);
-      message.error("Failed to fetch budgets");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // CRUD Operations
   const handleAddBudget = async (values) => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:4000/budgets", {
-        ...values,
+      const budgetData = {
         budgetName: values.budgetName,
         budgetAmount: values.amount,
         date: values.date.format("YYYY-MM-DD"),
+        category: values.category,
+        accountType: values.accountType,
         icon: selectedEmoji,
-      });
-      setBudgets([...budgets, response.data]);
+      };
+      await addBudget(budgetData);
       message.success("Budget added successfully!");
       return true;
     } catch (error) {
-      console.error("Error adding budget:", error);
       message.error("Failed to add budget");
       return false;
     } finally {
@@ -115,25 +97,18 @@ const Budget = () => {
   const handleEditBudget = async (values) => {
     try {
       setLoading(true);
-      const response = await axios.put(
-        `http://localhost:4000/budgets/${budgetToEdit.id}`,
-        {
-          ...values,
-          budgetName: values.budgetName,
-          budgetAmount: values.amount,
-          date: values.date.format("YYYY-MM-DD"),
-          icon: selectedEmoji,
-        }
-      );
-      setBudgets(
-        budgets.map((budget) =>
-          budget.id === budgetToEdit.id ? response.data : budget
-        )
-      );
+      const budgetData = {
+        budgetName: values.budgetName,
+        budgetAmount: values.amount,
+        date: values.date.format("YYYY-MM-DD"),
+        category: values.category,
+        accountType: values.accountType,
+        icon: selectedEmoji,
+      };
+      await editBudget(budgetToEdit.id, budgetData);
       message.success("Budget updated successfully!");
       return true;
     } catch (error) {
-      console.error("Error updating budget:", error);
       message.error("Failed to update budget");
       return false;
     } finally {
@@ -144,18 +119,15 @@ const Budget = () => {
   const handleDeleteBudget = async (id) => {
     try {
       setLoading(true);
-      await axios.delete(`http://localhost:4000/budgets/${id}`);
-      setBudgets(budgets.filter((budget) => budget.id !== id));
+      await deleteBudget(id);
       message.success("Budget deleted successfully!");
     } catch (error) {
-      console.error("Error deleting budget:", error);
       message.error("Failed to delete budget");
     } finally {
       setLoading(false);
     }
   };
 
-  // Modal Handlers
   const modalHandlers = {
     delete: {
       show: (id) => {
@@ -234,7 +206,6 @@ const Budget = () => {
     },
   };
 
-  // Emoji Handler
   const handleEmojiClick = (emojiData) => {
     setSelectedEmoji(emojiData.emoji);
     form.setFieldsValue({ icon: emojiData.emoji });
@@ -275,7 +246,6 @@ const Budget = () => {
         </Button>
       </Flex>
 
-      {/* Bar Chart */}
       <Card style={{ marginBottom: 24 }}>
         <Title level={4} style={{ marginBottom: 16 }}>
           Budget Distribution
@@ -293,7 +263,6 @@ const Budget = () => {
         </div>
       </Card>
 
-      {/* Add Budget Modal */}
       <Modal
         title="Add New Budget"
         open={addBudgetModalVisible}
@@ -324,9 +293,7 @@ const Budget = () => {
           <Form.Item
             name="budgetName"
             label="Budget Name"
-            rules={[
-              { required: true, message: "Please input the budget name" },
-            ]}
+            rules={[{ required: true, message: "Please input the budget name" }]}
           >
             <Input placeholder="Enter budget name" />
           </Form.Item>
@@ -360,9 +327,7 @@ const Budget = () => {
           <Form.Item
             name="accountType"
             label="Account Type"
-            rules={[
-              { required: true, message: "Please select an account type" },
-            ]}
+            rules={[{ required: true, message: "Please select an account type" }]}
           >
             <Select placeholder="Select an account type">
               {accountTypes.map((type) => (
@@ -375,7 +340,6 @@ const Budget = () => {
         </Form>
       </Modal>
 
-      {/* Edit Budget Modal */}
       <Modal
         title="Edit Budget"
         open={editBudgetModalVisible}
@@ -406,9 +370,7 @@ const Budget = () => {
           <Form.Item
             name="budgetName"
             label="Budget Name"
-            rules={[
-              { required: true, message: "Please input the budget name" },
-            ]}
+            rules={[{ required: true, message: "Please input the budget name" }]}
           >
             <Input placeholder="Enter budget name" />
           </Form.Item>
@@ -442,9 +404,7 @@ const Budget = () => {
           <Form.Item
             name="accountType"
             label="Account Type"
-            rules={[
-              { required: true, message: "Please select an account type" },
-            ]}
+            rules={[{ required: true, message: "Please select an account type" }]}
           >
             <Select placeholder="Select an account type">
               {accountTypes.map((type) => (
@@ -457,7 +417,6 @@ const Budget = () => {
         </Form>
       </Modal>
 
-      {/* Budgets List */}
       <Card>
         <Flex
           justify="space-between"
@@ -559,7 +518,6 @@ const Budget = () => {
         </Row>
       </Card>
 
-      {/* Delete Confirmation Modal */}
       <Modal
         title="Confirm Deletion"
         open={deleteModalVisible}
@@ -571,6 +529,6 @@ const Budget = () => {
       </Modal>
     </div>
   );
-};
+});
 
 export default Budget;

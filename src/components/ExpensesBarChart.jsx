@@ -8,7 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Cell, // Import Cell component
+  Cell,
 } from "recharts";
 
 const { Title } = Typography;
@@ -22,7 +22,7 @@ const ExpensesBarChart = ({ chartData }) => {
   }));
 
   return (
-    <Col xs={24} md={12}>
+    <Col xs={24} md={12} style={{ display: "flex", flexDirection: "column" }}>
       <Card
         title={
           <Title level={4} className="m-0">
@@ -30,20 +30,33 @@ const ExpensesBarChart = ({ chartData }) => {
           </Title>
         }
         className="shadow-lg rounded-lg"
-        style={{ minHeight: "380px" }}
+        style={{
+          minHeight: "380px",
+          flex: 1, // Ensure the card stretches to fill available space
+          display: "flex",
+          flexDirection: "column",
+        }}
+        styles={{
+          body: {
+            flex: 1, // Ensure the card body takes up remaining space
+            display: "flex",
+            flexDirection: "column",
+            padding: "16px", // Consistent padding
+          },
+        }}
       >
-        <div style={{ height: "300px" }}>
+        <div style={{ flex: 1, minHeight: "300px", maxHeight: "300px" }}>
           {dataWithIndex && dataWithIndex.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={dataWithIndex}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis tick={false} />
                 <YAxis
                   tickFormatter={(value) => `Rs. ${value}`}
-                  tick={{ fill: "#666" }}
+                  tick={{ fill: "#666", fontSize: "12px" }}
                   domain={[0, 800]}
                 />
                 <Tooltip
@@ -58,8 +71,8 @@ const ExpensesBarChart = ({ chartData }) => {
                 >
                   {dataWithIndex.map((entry, index) => (
                     <Cell
-                      key={entry.key} // Use the unique key
-                      fill={index % 2 === 0 ? "#9061F9" : "#5850EC"} 
+                      key={entry.key}
+                      fill={index % 2 === 0 ? "#9061F9" : "#5850EC"}
                     />
                   ))}
                 </Bar>
@@ -67,7 +80,7 @@ const ExpensesBarChart = ({ chartData }) => {
             </ResponsiveContainer>
           ) : (
             <Empty
-              description="No expenses data for the last 30 days"
+              description={<span style={{ fontSize: "14px" }}>No expenses data for the last 30 days</span>}
               style={{ marginTop: "50px" }}
             />
           )}

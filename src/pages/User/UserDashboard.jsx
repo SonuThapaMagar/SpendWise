@@ -53,7 +53,7 @@ const UserDashboard = () => {
       />
 
       {/* Recent Transactions and Financial Overview */}
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
         <RecentTransactions recentTransactions={recentTransactions} />
         <FinancialOverview
           chartData={chartData}
@@ -67,6 +67,7 @@ const UserDashboard = () => {
         <ExpensesBarChart chartData={last30DaysChartData} />
       </Row>
 
+      {/* Last 60 Days Income and Recent Budgets */}
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
         <Last60DaysIncomeChart chartData={last60DaysIncomeChartData} />
         <RecentBudgets budgets={last60DaysBudgets} />

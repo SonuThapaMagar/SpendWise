@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Typography,
   Button,
@@ -11,16 +11,13 @@ import {
   Col,
   Card,
   Flex,
-  Tag,
   message,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import EmojiPicker from "emoji-picker-react";
-import axios from "axios";
 import {
   PlusOutlined,
   DownloadOutlined,
-  EditOutlined,
   DeleteOutlined,
   SmileOutlined,
 } from "@ant-design/icons";
@@ -35,14 +32,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import * as XLSX from "xlsx";
+import { useBudget } from "../../../context API/BudgetContext";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const Expense = () => {
+const Expense = React.memo(() => {
   const navigate = useNavigate();
-  const [expenses, setExpenses] = useState([]);
-  const [budgets, setBudgets] = useState([]);
+  const { addExpense, deleteExpense, expenses, budgets } = useBudget();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState(null);
   const [addExpenseModalVisible, setAddExpenseModalVisible] = useState(false);
@@ -63,49 +60,20 @@ const Expense = () => {
     "Other",
   ];
 
-  // Data fetching
-  useEffect(() => {
-    fetchExpenses();
-    fetchBudgets();
-  }, []);
-
-  const fetchExpenses = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/expenses");
-      setExpenses(response.data);
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-      message.error("Failed to fetch expenses");
-    }
-  };
-
-  const fetchBudgets = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/budgets");
-      setBudgets(response.data);
-    } catch (error) {
-      console.error("Error fetching budgets:", error);
-      message.error("Failed to fetch budgets");
-    }
-  };
-
-  // Expense CRUD operations
   const handleAddExpense = async (values) => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:4000/expenses", {
-        ...values,
-        expenseName: values.category, // Using category as name for now
+      const expenseData = {
+        expenseName: values.category,
         expenseAmount: values.amount,
-        date: values.date.format("YYYY-MM-DD"), // Format date for backend
+        date: values.date.format("YYYY-MM-DD"),
+        category: values.category,
         icon: selectedEmoji,
-      });
-
-      setExpenses([...expenses, response.data]);
+      };
+      await addExpense(expenseData);
       message.success("Expense added successfully!");
       return true;
     } catch (error) {
-      console.error("Error adding expense:", error);
       message.error("Failed to add expense");
       return false;
     } finally {
@@ -116,18 +84,15 @@ const Expense = () => {
   const handleDeleteExpense = async (id) => {
     try {
       setLoading(true);
-      await axios.delete(`http://localhost:4000/expenses/${id}`);
-      setExpenses(expenses.filter((expense) => expense.id !== id));
+      await deleteExpense(id);
       message.success("Expense deleted successfully!");
     } catch (error) {
-      console.error("Error deleting expense:", error);
       message.error("Failed to delete expense");
     } finally {
       setLoading(false);
     }
   };
 
-  // Modal handlers
   const showDeleteModal = (id) => {
     setExpenseToDelete(id);
     setDeleteModalVisible(true);
@@ -154,11 +119,10 @@ const Expense = () => {
     try {
       const values = await form.validateFields();
       const success = await handleAddExpense(values);
-
       if (success) {
         form.resetFields();
         setAddExpenseModalVisible(false);
-        setSelectedEmoji("💰"); // Reset to default emoji
+        setSelectedEmoji("💰");
       }
     } catch (error) {
       console.log("Form validation failed:", error);
@@ -171,16 +135,10 @@ const Expense = () => {
     setSelectedEmoji("💰");
   };
 
-  // Emoji picker
   const handleEmojiClick = (emojiData) => {
     setSelectedEmoji(emojiData.emoji);
     form.setFieldsValue({ icon: emojiData.emoji });
     setEmojiPickerVisible(false);
-  };
-
-  // Other functions
-  const handleEditExpense = (id) => {
-    navigate(`/users/expense/editExpense/${id}`);
   };
 
   const exportToExcel = () => {
@@ -199,11 +157,12 @@ const Expense = () => {
     XLSX.writeFile(workbook, "Expenses.xlsx");
   };
 
-  const prepareChartData = () => {
+  // Memoize chart data to prevent recalculation on every render
+  const chartData = useMemo(() => {
     const dailyExpenses = expenses.reduce((acc, expense) => {
       const date = new Date(expense.date).toLocaleDateString();
       if (!acc[date]) acc[date] = 0;
-      acc[date] += expense.expenseAmount;
+      acc[date] += parseFloat(expense.expenseAmount) || 0;
       return acc;
     }, {});
 
@@ -211,13 +170,10 @@ const Expense = () => {
       date,
       amount: dailyExpenses[date],
     }));
-  };
-
-  const chartData = prepareChartData();
+  }, [expenses]);
 
   return (
     <div style={{ padding: 24 }}>
-      {/* Header with Title and Buttons */}
       <Flex justify="space-between" align="center" style={{ marginBottom: 16 }}>
         <Title level={3} style={{ margin: 0 }}>
           All Expenses
@@ -236,7 +192,6 @@ const Expense = () => {
         </Flex>
       </Flex>
 
-      {/* Add Expense Modal */}
       <Modal
         title="Add Expense"
         open={addExpenseModalVisible}
@@ -299,7 +254,6 @@ const Expense = () => {
         </Form>
       </Modal>
 
-      {/* Chart Section */}
       <Card style={{ marginTop: 24 }}>
         <Title level={4} style={{ marginBottom: 16 }}>
           Expense Trends
@@ -334,7 +288,6 @@ const Expense = () => {
         </div>
       </Card>
 
-      {/* Expenses List */}
       <Card style={{ marginTop: 24 }}>
         <Flex
           justify="space-between"
@@ -420,7 +373,7 @@ const Expense = () => {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        ${expense.expenseAmount}
+                        Rs. {expense.expenseAmount}
                       </Text>
                       <Button
                         icon={<DeleteOutlined />}
@@ -442,7 +395,6 @@ const Expense = () => {
         </Row>
       </Card>
 
-      {/* Delete Confirmation Modal */}
       <Modal
         title="Confirm Deletion"
         open={deleteModalVisible}
@@ -454,6 +406,6 @@ const Expense = () => {
       </Modal>
     </div>
   );
-};
+});
 
 export default Expense;

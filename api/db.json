@@ -48,114 +48,31 @@
   ],
   "budgets": [
     {
-      "budgetName": "Travel",
-      "amount": "30500",
-      "date": "2025-03-24",
-      "category": "transport",
-      "accountType": "cash",
-      "budgetAmount": "30500",
-      "icon": "💰",
-      "id": "1"
-    },
-    {
-      "budgetName": "Groceries",
-      "amount": 5000,
-      "date": "2025-03-21",
-      "category": "Groceries",
-      "accountType": "Cash",
-      "budgetAmount": 5000,
-      "icon": "💰",
-      "id": "2"
-    },
-    {
+      "id": "74c3",
       "budgetName": "Fashion",
-      "amount": "55000",
-      "date": "2025-03-25",
-      "category": "Utilities",
-      "accountType": "Cash",
-      "budgetAmount": "55000",
-      "icon": "👗",
-      "id": "9026"
-    },
-    {
-      "budgetName": "Household",
-      "amount": 7500,
-      "date": "2025-03-26",
-      "category": "Rent",
-      "accountType": "Cash",
-      "budgetAmount": 7500,
-      "icon": "💰",
-      "id": "e00a"
-    },
-    {
-      "budgetName": "Education",
-      "amount": 75000,
-      "date": "2025-03-22",
-      "category": "other",
-      "accountType": "cash",
-      "budgetAmount": 75000,
-      "icon": "👩‍🎓",
-      "id": "4bb4"
-    },
-    {
-      "id": "aaa5",
-      "budgetName": "Party",
-      "amount": "7000",
-      "date": "2025-03-10",
+      "budgetAmount": "10000",
+      "date": "2025-03-01",
       "category": "Entertainment",
       "accountType": "Cash",
-      "budgetAmount": "7000",
-      "icon": "🍕"
+      "icon": "👗"
     }
   ],
   "expenses": [
     {
-      "id": "043a",
-      "expenseName": "Lunch",
-      "expenseAmount": 5500,
-      "budgetId": "e00a",
-      "date": "2025-03-20"
+      "id": "de62",
+      "expenseName": "Other",
+      "expenseAmount": "3500",
+      "date": "2025-03-16",
+      "category": "Other",
+      "icon": "👜"
     },
     {
-      "id": "efef",
-      "expenseName": "Stationery",
-      "expenseAmount": 1700,
-      "budgetId": "4bb4",
-      "date": "2025-03-16"
-    },
-    {
-      "id": "a896",
-      "expenseName": "Vegetables",
-      "expenseAmount": 1000,
-      "budgetId": "9026",
-      "date": "2025-03-24"
-    },
-    {
-      "id": "4517",
-      "category": "Dining Out",
-      "amount": "1000",
-      "date": "2025-03-01",
-      "expenseName": "Dining Out",
-      "expenseAmount": "1000",
-      "icon": "🍉"
-    },
-    {
-      "id": "ba5e",
-      "category": "Entertainment",
-      "amount": "6800",
-      "date": "2025-03-11",
-      "expenseName": "Entertainment",
-      "expenseAmount": "6800",
-      "icon": "🏖️"
-    },
-    {
-      "id": "661a",
-      "category": "Utilities",
-      "amount": "1500",
-      "date": "2025-03-09",
-      "expenseName": "Utilities",
+      "id": "9c1b",
+      "expenseName": "Other",
       "expenseAmount": "1500",
-      "icon": "👗"
+      "date": "2025-03-10",
+      "category": "Other",
+      "icon": "🕶️"
     }
   ]
 }

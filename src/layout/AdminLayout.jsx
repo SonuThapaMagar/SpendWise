@@ -82,20 +82,32 @@ const AdminLayout = () => {
   ];
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh", overflow: "hidden" }}>
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
-        collapsedWidth={isMobile ? 60 : 80}
+        collapsedWidth={isMobile ? 0 : 80}
         width={250}
         theme="light"
-        className="h-screen fixed left-0 top-0 bottom-0 z-10 bg-white shadow-md"
+        style={{
+          height: "100vh",
+          position: "fixed",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: 100,
+          boxShadow: "2px 0 8px 0 rgba(29, 35, 41, 0.05)",
+          overflow: "hidden",
+        }}
       >
         <div
           className={`flex items-center ${
             collapsed ? "justify-center" : "justify-start"
           } gap-2 p-6`}
+          style={{
+            padding: collapsed ? "24px 0" : "24px 0 24px 24px",
+          }}
         >
           <img
             src={Logo}
@@ -103,7 +115,7 @@ const AdminLayout = () => {
             className={collapsed ? "w-10" : "w-12"}
             style={{
               marginTop: "18px",
-              marginLeft: "20px",
+              marginLeft: collapsed ? "0" : "20px",
             }}
           />
           {!collapsed && (
@@ -140,9 +152,11 @@ const AdminLayout = () => {
       </Sider>
 
       <Layout
-        className={`transition-all duration-200 ${
-          collapsed ? (isMobile ? "ml-[60px]" : "ml-[80px]") : "ml-[230px]"
-        } min-h-screen`}
+        style={{
+          marginLeft: collapsed ? (isMobile ? 0 : 80) : 250,
+          transition: "margin-left 0.2s",
+          minHeight: "100vh",
+        }}
       >
         <Header
           style={{
@@ -152,25 +166,24 @@ const AdminLayout = () => {
             display: "flex",
             alignItems: "center",
             height: "64px",
-            position: "fixed",
+            position: "sticky",
             top: 0,
-            left: collapsed ? (isMobile ? 60 : 80) : 250,
-            right: 0,
-            zIndex: 1,
-            transition: "left 0.2s",
+            zIndex: 10,
           }}
         >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          />
+          {isMobile && (
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                fontSize: "16px",
+                width: 64,
+                height: 64,
+              }}
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            />
+          )}
           <Title level={4} style={{ margin: 0, color: "#1F2A44" }}>
             Admin Dashboard
           </Title>
@@ -179,11 +192,10 @@ const AdminLayout = () => {
           style={{
             margin: "24px 16px",
             padding: 24,
-            marginTop: 80,
+            minHeight: "calc(100vh - 112px)",
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
-            minHeight: "calc(100vh - 96px)",
-            overflowY: "auto",
+            overflow: "auto",
           }}
         >
           <Outlet />

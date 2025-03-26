@@ -23,6 +23,7 @@ import EditProfile from "./pages/User/EditProfile";
 import ChangePassword from "./pages/Auth/ChangePassword";
 import AdminLayout from "./layout/AdminLayout";
 import { BudgetProvider } from "./context API/BudgetContext";
+import { AdminProvider } from "./context API/admin.context";
 
 function App() {
   return (
@@ -40,7 +41,14 @@ function App() {
 
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route
+              path="/admin"
+              element={
+                <AdminProvider>
+                  <AdminLayout />
+                </AdminProvider>
+              }
+            >
               <Route path="dashboard" element={<AdminDashboard />} />
             </Route>
 

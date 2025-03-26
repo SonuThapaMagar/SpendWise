@@ -1,9 +1,12 @@
 import React from "react";
+import { Card, Col, Row, Typography, Button, Space } from "antd";
+import AdminCards from "./adminComponents/AdminCards";
+const { Title, Text } = Typography;
 
 const AdminDashboard = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+    <div className="admin-dashboard-container">
+      <AdminCards />
     </div>
   );
 };

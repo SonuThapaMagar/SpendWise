@@ -151,7 +151,9 @@ const UserLayout = () => {
           )}
         </div>
 
-        <Divider style={{ margin: "0 16px 16px 16px", borderColor: "#e8e8e8" }} />
+        <Divider
+          style={{ margin: "0 16px 16px 16px", borderColor: "#e8e8e8" }}
+        />
 
         <Menu
           theme="light"
@@ -207,12 +209,14 @@ const UserLayout = () => {
           </Title>
         </Header>
         <Content
+          className="mt-20 mx-4 p-6 bg-white rounded-lg overflow-y-auto"
           style={{
-            margin: "80px 16px 16px 16px",
+            // margin: "80px 16px 16px 16px",
             padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
             minHeight: "calc(100vh - 96px)",
+            maxHeight: "calc(100vh - 96px)",
           }}
         >
           <Outlet />

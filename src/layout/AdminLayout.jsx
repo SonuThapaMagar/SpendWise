@@ -32,7 +32,7 @@ const AdminLayout = () => {
 
   useEffect(() => {
     if (!user || user.role !== "admin") {
-      navigate("/"); // Redirect non-admins to the homepage
+      navigate("/");
     }
   }, [user, navigate]);
 
@@ -102,8 +102,8 @@ const AdminLayout = () => {
             alt="SpendWise Logo"
             className={collapsed ? "w-10" : "w-12"}
             style={{
-              marginTop:"18px",
-              marginLeft:"20px"
+              marginTop: "18px",
+              marginLeft: "20px",
             }}
           />
           {!collapsed && (
@@ -128,7 +128,6 @@ const AdminLayout = () => {
 
         <Divider className="mx-4 my-0 border-[#e8e8e8]" />
 
-        {/* Make the menu scrollable if it overflows */}
         <div style={{ height: "calc(100vh - 220px)", overflowY: "auto" }}>
           <Menu
             theme="light"
@@ -146,31 +145,45 @@ const AdminLayout = () => {
         } min-h-screen`}
       >
         <Header
-          className="p-0 bg-[#E0E7FF] shadow-md flex items-center h-16 fixed top-0 z-10 transition-all duration-200"
           style={{
-            background: colorBgContainer,
+            padding: 0,
+            background: "#E0E7FF",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+            display: "flex",
+            alignItems: "center",
+            height: "64px",
+            position: "fixed",
+            top: 0,
             left: collapsed ? (isMobile ? 60 : 80) : 250,
             right: 0,
+            zIndex: 1,
+            transition: "left 0.2s",
           }}
         >
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            className="text-lg w-16 h-16"
+            style={{
+              fontSize: "16px",
+              width: 64,
+              height: 64,
+            }}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           />
-          <Title level={4} className="m-0 text-[#1F2A44]">
+          <Title level={4} style={{ margin: 0, color: "#1F2A44" }}>
             Admin Dashboard
           </Title>
         </Header>
         <Content
-          className="mt-20 mx-4 p-6 bg-white rounded-lg overflow-y-auto"
           style={{
+            margin: "24px 16px",
+            padding: 24,
+            marginTop: 80,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
-            minHeight: "calc(100vh - 96px)", 
-            maxHeight: "calc(100vh - 96px)", 
+            minHeight: "calc(100vh - 96px)",
+            overflowY: "auto",
           }}
         >
           <Outlet />

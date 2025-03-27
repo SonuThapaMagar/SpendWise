@@ -1,0 +1,43 @@
+.admin-dashboard-container {
+  height: 100vh; /* Full viewport height */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box; /* Include padding in height calculation */
+}
+
+.dashboard-section {
+  flex: 0 0 auto; /* Don’t grow or shrink unless specified */
+}
+
+.cards-section {
+  margin-bottom: 20px;
+}
+
+.trends-section {
+  flex: 1; /* Take up remaining space */
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  margin-bottom: 16px;
+}
+
+.trends-section .ant-row {
+  flex: 1; /* Row takes up remaining space in trends-section */
+  width: 100%;
+}
+
+.trends-section .ant-col {
+  display: flex;
+  justify-content: center; /* Center charts horizontally */
+  align-items: center; /* Center charts vertically */
+}
+
+.chart-container {
+  width: all;
+  width: 100%;
+  height: 100%; /* Fill the column height */
+  max-width: 500px; /* Consistent max width */
+}

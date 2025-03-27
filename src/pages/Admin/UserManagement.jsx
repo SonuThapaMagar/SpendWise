@@ -123,13 +123,17 @@ const UserManagement = () => {
   ];
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
+    <div className="p-4 sm:p-6 md:p-8 bg-[#F0F5FF]">
       <Card
         title={
-          <span className="text-xl sm:text-2xl font-semibold">
+          <span className="text-md sm:text-2xl font-semibold">
             User Management
           </span>
+       
         }
+        style={{
+            // backgroundColor:"#6875f5",
+        }}
         className="shadow-md rounded-lg"
       >
         <Spin spinning={loading}>

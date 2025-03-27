@@ -17,11 +17,14 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastify.util";
 const { Text } = Typography;
 
 const UserManagement = () => {
-    const { users, loading, deleteUser, updateUser } = useAdmin(); // Destructure updateUser
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
-    const [form] = Form.useForm();
+  const { users, loading, deleteUser, updateUser } = useAdmin();
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false); // Edit modal
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false); // Delete confirmation modal
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null); // Track user to delete
+  const [form] = Form.useForm();
 
+  // Edit Modal Functions
   const showEditModal = (user) => {
     setSelectedUser(user);
     form.setFieldsValue({
@@ -29,18 +32,18 @@ const UserManagement = () => {
       email: user.email,
       contact: user.contact || "",
     });
-    setIsModalVisible(true);
+    setIsEditModalVisible(true);
   };
 
-  const handleOk = async () => {
+  const handleEditOk = async () => {
     try {
-      const values = await form.validateFields(); // Validate form inputs
+      const values = await form.validateFields();
       await updateUser(selectedUser.id, {
-        ...selectedUser, // Preserve other fields (e.g., password, isAdmin)
-        ...values, // Update with new values
+        ...selectedUser,
+        ...values,
       });
       showSuccessToast("User updated successfully");
-      setIsModalVisible(false);
+      setIsEditModalVisible(false);
       setSelectedUser(null);
       form.resetFields();
     } catch (error) {
@@ -49,10 +52,33 @@ const UserManagement = () => {
     }
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  const handleEditCancel = () => {
+    setIsEditModalVisible(false);
     setSelectedUser(null);
     form.resetFields();
+  };
+
+  // Delete Modal Functions
+  const showDeleteModal = (user) => {
+    setUserToDelete(user);
+    setIsDeleteModalVisible(true);
+  };
+
+  const handleDeleteOk = async () => {
+    try {
+      await deleteUser(userToDelete.id);
+      showSuccessToast("User deleted successfully");
+      setIsDeleteModalVisible(false);
+      setUserToDelete(null);
+    } catch (error) {
+      showErrorToast("Failed to delete user");
+      console.error("Delete error:", error);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalVisible(false);
+    setUserToDelete(null);
   };
 
   const columns = [
@@ -89,14 +115,7 @@ const UserManagement = () => {
             danger
             icon={<DeleteOutlined />}
             className="text-red-600 hover:text-red-800"
-            onClick={async () => {
-              try {
-                await deleteUser(record.id);
-                showSuccessToast("User deleted successfully");
-              } catch (error) {
-                showErrorToast("Failed to delete user");
-              }
-            }}
+            onClick={() => showDeleteModal(record)} // Trigger delete modal
           />
         </Space>
       ),
@@ -133,13 +152,9 @@ const UserManagement = () => {
       {/* Edit User Modal */}
       <Modal
         title="Edit User"
-        open={isModalVisible}
-        onOk={(handleOk)} // Placeholder for now
-        onCancel={() => {
-          setIsModalVisible(false);
-          setSelectedUser(null);
-          form.resetFields();
-        }}
+        open={isEditModalVisible}
+        onOk={handleEditOk}
+        onCancel={handleEditCancel}
         okText="Save"
         cancelText="Cancel"
         okButtonProps={{ className: "bg-blue-600 hover:bg-blue-700" }}
@@ -166,6 +181,23 @@ const UserManagement = () => {
             <Input placeholder="Enter contact (optional)" />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        title="Confirm Deletion"
+        open={isDeleteModalVisible}
+        onOk={handleDeleteOk}
+        onCancel={handleDeleteCancel}
+        okText="Yes"
+        cancelText="No"
+        okButtonProps={{ danger: true, className: "bg-red-600 hover:bg-red-700" }}
+      >
+        <p>
+          Are you sure you want to delete{" "}
+          <Text strong>{userToDelete?.username}</Text>? This action cannot be
+          undone.
+        </p>
       </Modal>
     </div>
   );

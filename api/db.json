@@ -70,6 +70,14 @@
       "date": "2025-03-12",
       "category": "Groceries",
       "icon": "🥦"
+    },
+    {
+      "id": "64a0",
+      "expenseName": "Entertainment",
+      "expenseAmount": "7500",
+      "date": "2025-02-18",
+      "category": "Entertainment",
+      "icon": "🏖️"
     }
   ]
 }

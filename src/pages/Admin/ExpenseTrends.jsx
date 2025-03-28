@@ -1,60 +1,71 @@
 import React from "react";
-import { BarChart, Bar, ResponsiveContainer } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from "recharts";
 import { useBudget } from "../../context API/BudgetContext";
 
 const ExpenseTrends = () => {
   const { expenses, loading } = useBudget();
 
-  console.log("Expenses from BudgetContext:", expenses);
-  console.log("Loading state:", loading);
-
-  const monthlyAverages = () => {
-    if (!expenses || expenses.length === 0) {
-      console.log("No expenses data available");
-      return [];
-    }
-
-    const monthlyTotals = {};
-    const monthlyCounts = {};
-
-    expenses.forEach((expense) => {
+  // Process data to get monthly averages
+  const getMonthlyAverages = () => {
+    const safeExpenses = Array.isArray(expenses) ? expenses : [];
+    
+    // 1. Group by month and calculate totals
+    const monthlyData = safeExpenses.reduce((acc, expense) => {
+      if (!expense.date) return acc;
+      
       const date = new Date(expense.date);
-      const monthYear = date.toLocaleString("default", {
-        month: "short",
-        year: "numeric",
-      });
+      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       const amount = parseFloat(expense.expenseAmount) || 0;
-      if (!monthlyTotals[monthYear]) {
-        monthlyTotals[monthYear] = 0;
-        monthlyCounts[monthYear] = 0;
+      
+      if (!acc[monthYear]) {
+        acc[monthYear] = { total: 0, count: 0 };
       }
-      monthlyTotals[monthYear] += amount;
-      monthlyCounts[monthYear] += 1;
-    });
+      
+      acc[monthYear].total += amount;
+      acc[monthYear].count += 1;
+      return acc;
+    }, {});
 
-    const data = Object.keys(monthlyTotals).map((monthYear) => ({
-      month: monthYear,
-      averageExpenses: monthlyTotals[monthYear] / monthlyCounts[monthYear],
-    }));
-
-    const sortedData = data.sort((a, b) => {
-      const dateA = new Date(a.month);
-      const dateB = new Date(b.month);
-      return dateA - dateB;
-    });
-
-    console.log("Processed Chart Data:", sortedData);
-    return sortedData;
+    // 2. Calculate averages and format for chart
+    return Object.keys(monthlyData)
+      .map(monthYear => {
+        const [year, month] = monthYear.split('-');
+        return {
+          monthYear,
+          name: new Date(year, month-1).toLocaleString('default', { month: 'short', year: 'numeric' }),
+          average: monthlyData[monthYear].count > 0 
+            ? monthlyData[monthYear].total / monthlyData[monthYear].count 
+            : 0
+        };
+      })
+      .sort((a, b) => a.monthYear.localeCompare(b.monthYear)); // Sort chronologically
   };
 
-  const chartData = monthlyAverages();
-
-  console.log("Chart Data Length:", chartData.length);
-  console.log("Rendering Data:", chartData);
+  const chartData = getMonthlyAverages();
 
   if (loading) {
-    console.log("Rendering loading state");
-    return <div>Loading expenses...</div>;
+    return <div className="p-4 text-center text-gray-600">Loading...</div>;
+  }
+
+  if (chartData.length === 0) {
+    return (
+      <div className="w-full h-full flex flex-col">
+        <h3 className="text-lg font-medium text-gray-700 mb-4">
+          Average Monthly Expense Trends
+        </h3>
+        <div className="flex-1 flex items-center justify-center text-gray-500">
+          No expense data available
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -62,16 +73,32 @@ const ExpenseTrends = () => {
       <h3 className="text-lg font-medium text-gray-700 mb-4">
         Average Monthly Expense Trends
       </h3>
-      <div className="flex-1" style={{ minHeight: "300px" }}>
-        {chartData.length === 0 ? (
-          <p>No data available to display</p>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <Bar dataKey="averageExpenses" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
+      <div style={{ width: '100%', height: '400px' }}>
+        <ResponsiveContainer>
+          <AreaChart
+            data={chartData}
+            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+            <XAxis dataKey="name" />
+            <YAxis 
+              tickFormatter={(value) => `Rs.${value.toFixed(0)}`}
+            />
+            <Tooltip 
+              formatter={(value) => [`$${value.toFixed(2)}`, "Average"]}
+              labelFormatter={(label) => `Month: ${label}`}
+            />
+            <Area
+              type="monotone"
+              dataKey="average"
+              name="Average Expense"
+              stroke="#8884d8"
+              fill="#8884d8"
+              fillOpacity={0.2}
+              strokeWidth={2}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

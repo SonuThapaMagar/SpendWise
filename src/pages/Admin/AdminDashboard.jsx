@@ -63,15 +63,26 @@ const AdminDashboard = () => {
           User Retention
         </h2>
         <Row gutter={[16, 16]} className="w-full">
-          <Col xs={24} lg={12} className="w-full h-full">
-            <Card className="bg-white p-4 rounded-lg shadow-sm h-full">
+          <Col xs={24} lg={12} className="w-full">
+            <Card
+              className="bg-white p-4 rounded-lg shadow-sm h-full"
+              bodyStyle={{
+                height: "400px", // Fixed height for consistency
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               <UserRetention />
             </Card>
           </Col>
-          <Col xs={24} lg={12} className="w-full h-full">
+          <Col xs={24} lg={12} className="w-full">
             <Card
-              className="bg-white p-4 rounded-lg shadow-sm"
-              stylesbody={{ padding: 0, height: "400px" }}
+              className="bg-white p-4 rounded-lg shadow-sm h-full"
+              stylesbody={{
+                height: "400px", 
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
               <TopExpense />
             </Card>

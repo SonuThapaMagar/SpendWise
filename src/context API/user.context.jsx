@@ -103,10 +103,6 @@ export const UserProvider = ({ children }) => {
     console.log("User logged out");
   }, []);
 
-  // Remove the useEffect that causes the infinite loop
-  // Fetch user data only on login/signup, not on every render
-  // If you need to refresh user data, call fetchUserData explicitly
-
   return (
     <UserContext.Provider
       value={{
@@ -126,7 +122,6 @@ export const UserProvider = ({ children }) => {
 
 export { UserContext };
 export const useUser = () => useContext(UserContext);
-
 
 // import axios from "axios";
 // import React, {
@@ -276,5 +271,3 @@ export const useUser = () => useContext(UserContext);
 // export { UserContext };
 
 // export const useUser = () => useContext(UserContext);
-
-

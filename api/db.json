@@ -62,6 +62,14 @@
       "date": "2025-03-10",
       "category": "Other",
       "icon": "🕶️"
+    },
+    {
+      "id": "34f5",
+      "expenseName": "Groceries",
+      "expenseAmount": "1250",
+      "date": "2025-03-12",
+      "category": "Groceries",
+      "icon": "🥦"
     }
   ]
 }

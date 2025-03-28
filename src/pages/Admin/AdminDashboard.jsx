@@ -44,7 +44,10 @@ const AdminDashboard = () => {
             </Card>
           </Col>
           <Col xs={24} lg={12} className="w-full h-full">
-            <Card className="bg-white p-4 rounded-lg shadow-sm h-full">
+            <Card
+              className="bg-white p-4 rounded-lg shadow-sm"
+              stylesbody={{ padding: 0, height: "400px" }}
+            >
               <CategoryBreakdown />
             </Card>
           </Col>

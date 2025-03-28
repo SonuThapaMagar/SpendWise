@@ -4,21 +4,48 @@ const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false); // Start as false, only true during fetch
+  const [metrics, setMetrics] = useState({
+    totalUsers: 0,
+    totalExpenses: 0,
+    totalBudgets: 0,
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
 
-  const fetchUsers = async () => {
+  const fetchAdminData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch("http://localhost:4000/users");
-      if (!response.ok) throw new Error("Failed to fetch users");
-      const data = await response.json();
-      setUsers(data);
+
+      const [usersResponse, expensesResponse, budgetsResponse] = await Promise.all([
+        fetch("http://localhost:4000/users"),
+        fetch("http://localhost:4000/expenses"),
+        fetch("http://localhost:4000/budgets"),
+      ]);
+
+      if (!usersResponse.ok) throw new Error("Failed to fetch users");
+      if (!expensesResponse.ok) throw new Error("Failed to fetch expenses");
+      if (!budgetsResponse.ok) throw new Error("Failed to fetch budgets");
+
+      const usersData = await usersResponse.json();
+      const expensesData = await expensesResponse.json();
+      const budgetsData = await budgetsResponse.json();
+
+      const totalUsers = usersData.length;
+      const totalExpenses = expensesData.reduce(
+        (sum, expense) => sum + parseFloat(expense.expenseAmount || 0),
+        0
+      );
+      const totalBudgets = budgetsData.reduce(
+        (sum, budget) => sum + parseFloat(budget.budgetAmount || 0),
+        0
+      );
+
+      setUsers(usersData);
+      setMetrics({ totalUsers, totalExpenses, totalBudgets });
     } catch (error) {
       setError(error.message);
-      console.error("Error fetching users:", error);
+      console.error("Error fetching admin data:", error);
     } finally {
       setLoading(false);
     }
@@ -31,6 +58,7 @@ export const AdminProvider = ({ children }) => {
       });
       if (!response.ok) throw new Error("Failed to delete user");
       setUsers((prev) => prev.filter((user) => user.id !== userId));
+      setMetrics((prev) => ({ ...prev, totalUsers: prev.totalUsers - 1 }));
       return true;
     } catch (error) {
       setError(error.message);
@@ -61,20 +89,20 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
-  // Fetch users only once on mount
   useEffect(() => {
-    fetchUsers();
-  }, []); // Empty array ensures it runs only once
+    fetchAdminData();
+  }, []);
 
   return (
     <AdminContext.Provider
       value={{
         users,
+        metrics,
         loading,
         error,
-        fetchUsers,
+        fetchAdminData, // Renamed for clarity
         deleteUser,
-        updateUser, // Add updateUser to context
+        updateUser,
       }}
     >
       {children}

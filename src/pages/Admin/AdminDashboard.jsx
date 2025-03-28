@@ -5,9 +5,14 @@ import ExpenseTrends from "./ExpenseTrends";
 import CategoryBreakdown from "./CategoryBreakdown";
 import RecentUsers from "./RecentUsers";
 import { useNavigate } from "react-router-dom";
+import { useAdmin } from "../../context API/admin.context";
 
 const AdminDashboard = () => {
+  const { metrics, loading, error } = useAdmin();
   const navigate = useNavigate();
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="bg-gray-50 min-h-screen p-4 sm:p-6 md:p-8">
@@ -24,7 +29,11 @@ const AdminDashboard = () => {
             backgroundColor: "#E5EDFF",
           }}
         >
-          <AdminCards />
+          <AdminCards
+            totalUsers={metrics.totalUsers}
+            totalExpenses={metrics.totalExpenses}
+            totalBudgets={metrics.totalBudgets}
+          />
         </Card>
       </div>
 

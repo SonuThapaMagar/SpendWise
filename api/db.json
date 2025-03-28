@@ -17,9 +17,10 @@
     },
     {
       "id": "eaa5",
-      "username": "abc",
-      "email": "abc@gmail.com",
-      "password": "abc@123"
+      "username": "Andres",
+      "email": "andres@gmail.com",
+      "password": "abc@123",
+      "contact": "98765432210"
     },
     {
       "id": "22f2",
@@ -32,18 +33,6 @@
       "username": "sonu",
       "email": "sonu@gmail.com",
       "password": "sonu@123"
-    },
-    {
-      "id": "2172",
-      "username": "new",
-      "email": "new@gmail.com",
-      "password": "new@123"
-    },
-    {
-      "id": "fa5a",
-      "username": "zen",
-      "email": "zen@gmail.com",
-      "password": "zen@123"
     }
   ],
   "budgets": [

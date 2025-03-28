@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+} from "react";
 import axios from "axios";
 
 // Create the context
@@ -12,21 +18,28 @@ export const BudgetProvider = ({ children }) => {
   const [last30DaysExpenses, setLast30DaysExpenses] = useState([]);
   const [last30DaysChartData, setLast30DaysChartData] = useState([]);
   const [last60DaysBudgets, setLast60DaysBudgets] = useState([]);
-  const [last60DaysIncomeChartData, setLast60DaysIncomeChartData] = useState([]);
+  const [last60DaysIncomeChartData, setLast60DaysIncomeChartData] = useState(
+    []
+  );
   const [budgets, setBudgets] = useState([]);
   const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Fetch initial data only once on mount
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
         const [budgetsResponse, expensesResponse] = await Promise.all([
           axios.get("http://localhost:4000/budgets"),
           axios.get("http://localhost:4000/expenses"),
         ]);
 
-        const budgetsData = budgetsResponse.data;
-        const expensesData = expensesResponse.data;
+        const budgetsData = budgetsResponse.data || [];
+        const expensesData = expensesResponse.data || [];
 
         setBudgets(budgetsData);
         setExpenses(expensesData);
@@ -50,6 +63,9 @@ export const BudgetProvider = ({ children }) => {
         updateLast60DaysBudgets(budgetsData);
       } catch (error) {
         console.error("Error fetching initial data:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchInitialData();
@@ -197,11 +213,16 @@ export const BudgetProvider = ({ children }) => {
 
   const addBudget = async (budgetData) => {
     try {
-      const response = await axios.post("http://localhost:4000/budgets", budgetData);
+      const response = await axios.post(
+        "http://localhost:4000/budgets",
+        budgetData
+      );
       const newBudget = response.data;
       const updatedBudgets = [...budgets, newBudget];
       setBudgets(updatedBudgets);
-      setTotalBudget((prev) => prev + (parseFloat(newBudget.budgetAmount) || 0));
+      setTotalBudget(
+        (prev) => prev + (parseFloat(newBudget.budgetAmount) || 0)
+      );
       updateRecentTransactions(updatedBudgets, expenses);
       updateLast60DaysBudgets(updatedBudgets);
       return newBudget;
@@ -213,7 +234,10 @@ export const BudgetProvider = ({ children }) => {
 
   const editBudget = async (id, budgetData) => {
     try {
-      const response = await axios.put(`http://localhost:4000/budgets/${id}`, budgetData);
+      const response = await axios.put(
+        `http://localhost:4000/budgets/${id}`,
+        budgetData
+      );
       const updatedBudget = response.data;
       const updatedBudgets = budgets.map((budget) =>
         budget.id === id ? updatedBudget : budget
@@ -253,11 +277,16 @@ export const BudgetProvider = ({ children }) => {
 
   const addExpense = async (expenseData) => {
     try {
-      const response = await axios.post("http://localhost:4000/expenses", expenseData);
+      const response = await axios.post(
+        "http://localhost:4000/expenses",
+        expenseData
+      );
       const newExpense = response.data;
       const updatedExpenses = [...expenses, newExpense];
       setExpenses(updatedExpenses);
-      setTotalExpenses((prev) => prev + (parseFloat(newExpense.expenseAmount) || 0));
+      setTotalExpenses(
+        (prev) => prev + (parseFloat(newExpense.expenseAmount) || 0)
+      );
       updateRecentTransactions(budgets, updatedExpenses);
       updateLast30DaysExpenses(updatedExpenses);
       return newExpense;

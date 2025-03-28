@@ -24,6 +24,8 @@ import ChangePassword from "./pages/Auth/ChangePassword";
 import AdminLayout from "./layout/AdminLayout";
 import { BudgetProvider } from "./context API/BudgetContext";
 import { AdminProvider } from "./context API/admin.context";
+import UserManagement from "./pages/Admin/UserManagement";
+import Reports from "./pages/Admin/Reports";
 
 function App() {
   return (
@@ -50,6 +52,9 @@ function App() {
               }
             >
               <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="users" element={<UserManagement />} />
+              <Route path="reports" element={<Reports />} />
+
             </Route>
 
             {/* User routes */}

@@ -9,11 +9,10 @@ import Contact from "./Contact";
 const Content = () => {
   return (
     <div className="flex-grow">
-      {/* Hero Section */}
-      <section className="relative py-8 md:py-20 px-4 sm:px-6 md:px-20 overflow-hidden bg-indigo-50">
+      {/* Home Section */}
+      <section id="home" className="relative py-8 md:py-20 px-4 sm:px-6 md:px-20 overflow-hidden bg-indigo-50">
         <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center mt-6 md:mt-8">
-            {/* Content */}
             <div className="text-center md:text-left mx-0 sm:mx-8 pt-6 sm:pt-8 md:pt-0">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-600 mb-4 sm:mb-6 leading-tight">
                 <span className="block text-blue-600 text-3xl sm:text-4xl mt-12 md:text-5xl lg:text-6xl">
@@ -33,7 +32,6 @@ const Content = () => {
                 </button>
               </div>
             </div>
-            {/* Image */}
             <div className="flex justify-center mt-6 md:mt-0">
               <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md h-[250px] sm:h-[300px] md:h-[400px] rounded-xl overflow-hidden">
                 <img
@@ -45,8 +43,6 @@ const Content = () => {
             </div>
           </div>
         </div>
-
-        {/* Wave Divider at the Bottom of Hero Section */}
         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
           <svg
             className="relative block w-full h-12 sm:h-16 md:h-20"
@@ -63,11 +59,21 @@ const Content = () => {
         </div>
       </section>
 
-      {/* Ensure imported components are responsive in their own files */}
-      <Cards />
-      <About />
-      <Services />
-      <Contact />
+      {/* Features Section */}
+      <section id="features">
+        <Cards />
+        <Services />
+      </section>
+
+      {/* About Section */}
+      <section id="about">
+        <About />
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact">
+        <Contact />
+      </section>
     </div>
   );
 };

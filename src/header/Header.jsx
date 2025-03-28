@@ -1,22 +1,39 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import Logo from "../assets/logo-transparent.png";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ user, logout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const navigate = useNavigate();
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const headerOffset = 80; // Adjust this value based on your header height
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+      setIsMobileMenuOpen(false); // Close mobile menu after click
+    }
+  };
 
   return (
-    <nav className="bg-white text-black fixed w-full z-20 top-0 start-0 border-b border-gray-200 ">
+    <nav className="bg-white text-black fixed w-full z-20 top-0 start-0 border-b border-gray-200">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 shadow-gray-200">
-        <Link
-          to="/"
+        <a
+          href="#home"
+          onClick={(e) => {
+            e.preventDefault();
+            scrollToSection("home");
+          }}
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <img src={Logo} className="h-8" alt="SpendWise Logo" />
@@ -26,7 +43,7 @@ const Header = ({ user, logout }) => {
           >
             SpendWise
           </span>
-        </Link>
+        </a>
         <div className="flex md:order-2 space-x-4 rtl:space-x-reverse">
           <button
             type="button"
@@ -47,7 +64,7 @@ const Header = ({ user, logout }) => {
             type="button"
             className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
             aria-controls="navbar-sticky"
-            aria-expanded="false"
+            aria-expanded={isMobileMenuOpen}
             onClick={toggleMobileMenu}
           >
             <span className="sr-only">Open main menu</span>
@@ -79,37 +96,52 @@ const Header = ({ user, logout }) => {
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             <li>
-              <Link
-                to="/"
+              <a
+                href="#home"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection("home");
+                }}
                 className="block py-2 px-3 text-gray-500 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
-                aria-current="page"
               >
                 Home
-              </Link>
+              </a>
             </li>
             <li>
-              <Link
-                to="/about"
+              <a
+                href="#about"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection("about");
+                }}
                 className="block py-2 px-3 text-gray-500 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
               >
                 About
-              </Link>
+              </a>
             </li>
             <li>
-              <Link
-                to="/features"
+              <a
+                href="#features"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection("features");
+                }}
                 className="block py-2 px-3 text-gray-500 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
               >
                 Features
-              </Link>
+              </a>
             </li>
             <li>
-              <Link
-                to="/contact"
+              <a
+                href="#contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection("contact");
+                }}
                 className="block py-2 px-3 text-gray-500 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
               >
                 Contact
-              </Link>
+              </a>
             </li>
           </ul>
         </div>

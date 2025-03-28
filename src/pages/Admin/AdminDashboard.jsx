@@ -32,24 +32,20 @@ const AdminDashboard = () => {
 
       {/* Section 2: Expense Analysis */}
       <div className="mb-6 sm:mb-8 md:mb-10">
-        <Card
-          style={{
-            backgroundColor: "#E5EDFF",
-          }}
-        >
+        <Card style={{ backgroundColor: "#E5EDFF" }} className="p-4">
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">
             Expense Analysis
           </h2>
           <Row gutter={[16, 16]} className="w-full">
-            <Col xs={24} lg={16} className="w-full h-full">
-              <div className="bg-white p-4 rounded-lg shadow-sm h-full">
+            <Col xs={24} lg={12} className="w-full h-full">
+              <Card className="bg-white p-4 rounded-lg shadow-sm h-full">
                 <ExpenseTrends />
-              </div>
+              </Card>
             </Col>
-            <Col xs={24} lg={8} className="w-full h-full">
-              <div className="bg-white p-4 rounded-lg shadow-sm h-full">
+            <Col xs={24} lg={12} className="w-full h-full">
+              <Card className="bg-white p-4 rounded-lg shadow-sm h-full">
                 <CategoryBreakdown />
-              </div>
+              </Card>
             </Col>
           </Row>
         </Card>

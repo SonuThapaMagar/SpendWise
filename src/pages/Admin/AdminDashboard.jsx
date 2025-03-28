@@ -6,6 +6,8 @@ import CategoryBreakdown from "./CategoryBreakdown";
 import RecentUsers from "./RecentUsers";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "../../context API/admin.context";
+import UserRetention from "./UserRetention";
+import TopExpense from "./TopExpense";
 
 const AdminDashboard = () => {
   const { metrics, loading, error } = useAdmin();
@@ -49,6 +51,29 @@ const AdminDashboard = () => {
               stylesbody={{ padding: 0, height: "400px" }}
             >
               <CategoryBreakdown />
+            </Card>
+          </Col>
+        </Row>
+      </div>
+      <Divider className="my-6 sm:my-8 md:my-10 border-gray-200" />
+
+      {/* Section 2: User Retention */}
+      <div className="mb-6 sm:mb-8 md:mb-10">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">
+          User Retention
+        </h2>
+        <Row gutter={[16, 16]} className="w-full">
+          <Col xs={24} lg={12} className="w-full h-full">
+            <Card className="bg-white p-4 rounded-lg shadow-sm h-full">
+              <UserRetention />
+            </Card>
+          </Col>
+          <Col xs={24} lg={12} className="w-full h-full">
+            <Card
+              className="bg-white p-4 rounded-lg shadow-sm"
+              stylesbody={{ padding: 0, height: "400px" }}
+            >
+              <TopExpense />
             </Card>
           </Col>
         </Row>

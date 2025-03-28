@@ -9,6 +9,30 @@ export const UserProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
+  // Adding function to update existing users with createdAt dates
+  const initializeUserDates = useCallback(async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/users");
+      const users = response.data;
+
+      // Check if any users are missing createdAt
+      const needsUpdate = users.some((user) => !user.createdAt);
+      if (!needsUpdate) return;
+
+      // Update each user missing createdAt
+      for (const user of users) {
+        if (!user.createdAt) {
+          // Generate a reasonable default date (e.g., current date)
+          await axios.patch(`http://localhost:4000/users/${user.id}`, {
+            createdAt: new Date().toISOString(),
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error initializing user dates:", error);
+    }
+  }, []);
+
   const fetchUserData = useCallback(async (userId) => {
     try {
       const response = await axios.get(`http://localhost:4000/users/${userId}`);
@@ -84,6 +108,7 @@ export const UserProvider = ({ children }) => {
         email: userData.email,
         password: userData.password,
         isAdmin: false,
+        createdAt: new Date().toISOString(),
       });
 
       const newUser = { ...signupResponse.data, role: "user" };
@@ -113,6 +138,7 @@ export const UserProvider = ({ children }) => {
         login,
         logout,
         fetchUserData,
+        initializeUserDates 
       }}
     >
       {children}

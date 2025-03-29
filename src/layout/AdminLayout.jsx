@@ -4,7 +4,6 @@ import Logo from "../assets/spend.png";
 import {
   DashboardOutlined,
   UserOutlined,
-  DollarOutlined,
   BarChartOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
@@ -12,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme, Typography, Avatar, Divider } from "antd";
 import { showSuccessToast } from "../utils/toastify.util";
-import { useUser } from "../context API/user.context";
+import { useAdmin } from "../context API/admin.context"; // Changed from useUser
 import { useMediaQuery } from "react-responsive";
 import "../App.css";
 
@@ -20,8 +19,6 @@ const { Header, Sider, Content } = Layout;
 const { Text, Title } = Typography;
 
 const AdminLayout = () => {
-
-  
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(isMobile);
@@ -30,18 +27,25 @@ const AdminLayout = () => {
   } = theme.useToken();
 
   const navigate = useNavigate();
-  const { user, logout } = useUser();
+  const { users, isAdminLoggedIn, logoutAdmin } = useAdmin(); // Updated to useAdmin
 
+  // Find the current admin user from the users list (assuming username is stored)
+  const adminUser = users.find((u) => u.role === "admin") || {
+    username: "Admin",
+  };
+
+  // Redirect to login if not logged in
   useEffect(() => {
-    if (!user || user.role !== "admin") {
-      navigate("/");
+    if (!isAdminLoggedIn) {
+      console.log("Admin not logged in, redirecting to /admin/login");
+      navigate("/admin/login");
     }
-  }, [user, navigate]);
+  }, [isAdminLoggedIn, navigate]);
 
   const handleLogoutClick = () => {
-    logout();
+    logoutAdmin();
     showSuccessToast("Logout Successful!");
-    navigate("/login");
+    navigate("/admin/login");
   };
 
   const menuItems = [
@@ -125,12 +129,17 @@ const AdminLayout = () => {
             className="bg-[#1890ff]"
           />
           {!collapsed && (
-            <Text
-              strong
-              className="text-[#1F2A44] text-sm sm:text-base text-center"
-            >
-              {user?.username || "Admin"}
-            </Text>
+            <>
+              <Text
+                strong
+                className="text-[#1F2A44] text-sm sm:text-base text-center"
+              >
+                {adminUser.username}
+              </Text>
+              <Text className="text-gray-500 text-xs">
+                Logged In: {isAdminLoggedIn ? "1" : "0"}
+              </Text>
+            </>
           )}
         </div>
 

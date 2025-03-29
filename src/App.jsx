@@ -1,5 +1,5 @@
-import React, { memo, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { memo } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Landing from "./pages/Landing";
 import Login from "./pages/Auth/Login";
@@ -24,17 +24,19 @@ import { AdminProvider } from "./context API/admin.context";
 import UserManagement from "./pages/Admin/UserManagement";
 import Reports from "./pages/Admin/Reports";
 
-const App = memo(() => {
-  useEffect(() => {
-    const blockReload = (e) => {
-      if (e.target.closest('button, [role="button"]')) {
-        e.preventDefault();
-      }
-    };
-    document.addEventListener("click", blockReload, { capture: true });
-    return () => document.removeEventListener("click", blockReload);
-  }, []);
+const ProtectedAdminRoute = ({ children }) => {
+  const isLoggedIn = localStorage.getItem("isAdminLoggedIn") === "1";
+  console.log("Checking admin session: isAdminLoggedIn =", isLoggedIn);
+  return isLoggedIn ? children : <Navigate to="/admin/login" replace />;
+};
 
+const ProtectedUserRoute = ({ children }) => {
+  const isLoggedIn = localStorage.getItem("isUserLoggedIn") === "1";
+  console.log("Checking user session: isUserLoggedIn =", isLoggedIn);
+  return isLoggedIn ? children : <Navigate to="/login" replace />;
+};
+
+const App = memo(() => {
   return (
     <UserProvider>
       <BudgetProvider>
@@ -54,7 +56,9 @@ const App = memo(() => {
               path="/admin"
               element={
                 <AdminProvider>
-                  <AdminLayout />
+                  <ProtectedAdminRoute>
+                    <AdminLayout />
+                  </ProtectedAdminRoute>
                 </AdminProvider>
               }
             >
@@ -64,7 +68,14 @@ const App = memo(() => {
             </Route>
 
             {/* User routes */}
-            <Route path="/users" element={<UserLayout />}>
+            <Route
+              path="/users"
+              element={
+                <ProtectedUserRoute>
+                  <UserLayout />
+                </ProtectedUserRoute>
+              }
+            >
               <Route path="dashboard" element={<UserDashboard />} />
               <Route path="budget" element={<Budget />} />
               <Route path="expense" element={<Expense />} />

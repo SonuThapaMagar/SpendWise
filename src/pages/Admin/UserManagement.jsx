@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Card,
   Table,
@@ -25,9 +25,8 @@ const UserManagement = () => {
   const [form] = Form.useForm();
 
   // Edit Modal Functions
-  const showEditModal = (user, e) => {
-    e.preventDefault(); // Prevent default behavior
-    e.stopPropagation(); // Stop event bubbling
+  const showEditModal = (user) => {
+    
     setSelectedUser(user);
     form.setFieldsValue({
       username: user.username,
@@ -62,9 +61,7 @@ const UserManagement = () => {
   };
 
   // Delete Modal Functions
-  const showDeleteModal = (user, e) => {
-    e.preventDefault(); // Prevent default behavior
-    e.stopPropagation(); // Stop event bubbling
+  const showDeleteModal = (user) => {
     setUserToDelete(user);
     setIsDeleteModalVisible(true);
   };
@@ -113,17 +110,28 @@ const UserManagement = () => {
       render: (_, record) => (
         <Space size="middle">
           <Button
-            type="text" // Changed from type="button" to type="text" for Ant Design consistency
+            type="button"
+            htmlType="button"
             icon={<EditOutlined />}
             className="text-blue-600 hover:text-blue-800"
-            onClick={(e) => showEditModal(record, e)} // Pass event directly
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              showEditModal(record);
+            }}
           />
+
           <Button
-            type="text" // Changed from type="button"
+            type="button"
+            htmlType="button"
             danger
             icon={<DeleteOutlined />}
             className="text-red-600 hover:text-red-800"
-            onClick={(e) => showDeleteModal(record, e)} // Pass event directly
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              showDeleteModal(record);
+            }}
           />
         </Space>
       ),

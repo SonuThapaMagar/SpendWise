@@ -8,6 +8,9 @@ export const UserProvider = ({ children }) => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(
+    localStorage.getItem("isUserLoggedIn") === "1"
+  );
 
   const updateUser = useCallback((updates) => {
     setUser((prev) => {
@@ -38,14 +41,17 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  const fetchUserData = useCallback(async (userId) => {
-    try {
-      const response = await axios.get(`http://localhost:4000/users/${userId}`);
-      updateUser(response.data);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  }, [updateUser]);
+  const fetchUserData = useCallback(
+    async (userId) => {
+      try {
+        const response = await axios.get(`http://localhost:4000/users/${userId}`);
+        updateUser(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    },
+    [updateUser]
+  );
 
   const adminLogin = useCallback(async (username, password) => {
     try {
@@ -59,7 +65,7 @@ export const UserProvider = ({ children }) => {
       if (adminUser) {
         const userData = { ...adminUser, role: "admin" };
         localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("is_login", "1");
+        localStorage.setItem("isAdminLoggedIn", "1"); // Admin-specific
         setUser(userData);
         return true;
       }
@@ -79,8 +85,9 @@ export const UserProvider = ({ children }) => {
       if (foundUser) {
         const userData = { ...foundUser, role: "user" };
         localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("is_login", "1");
+        localStorage.setItem("isUserLoggedIn", "1"); // User-specific
         setUser(userData);
+        setIsUserLoggedIn(true);
         return true;
       }
       return false;
@@ -107,7 +114,8 @@ export const UserProvider = ({ children }) => {
       const newUser = { ...signupResponse.data, role: "user" };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
-      localStorage.setItem("is_login", "1");
+      localStorage.setItem("isUserLoggedIn", "1"); // User-specific
+      setIsUserLoggedIn(true);
       return newUser;
     } catch (error) {
       throw error;
@@ -116,22 +124,35 @@ export const UserProvider = ({ children }) => {
 
   const logout = useCallback(() => {
     setUser(null);
+    setIsUserLoggedIn(false);
     localStorage.removeItem("user");
-    localStorage.removeItem("is_login");
+    localStorage.setItem("isUserLoggedIn", "0"); // User-specific
+    localStorage.setItem("isAdminLoggedIn", "0"); // Clear admin too
   }, []);
 
   const value = useMemo(
     () => ({
       user,
-      setUser: updateUser, // Use updateUser instead of raw setUser
+      setUser: updateUser,
       signup,
       adminLogin,
       login,
       logout,
       fetchUserData,
       initializeUserDates,
+      isUserLoggedIn,
     }),
-    [user, updateUser, signup, adminLogin, login, logout, fetchUserData, initializeUserDates]
+    [
+      user,
+      updateUser,
+      signup,
+      adminLogin,
+      login,
+      logout,
+      fetchUserData,
+      initializeUserDates,
+      isUserLoggedIn,
+    ]
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

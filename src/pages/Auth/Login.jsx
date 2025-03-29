@@ -12,12 +12,13 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values) => {
-    
     setLoading(true);
     try {
       const success = await login(values.username, values.password);
-
       if (success) {
+        // Set user session in localStorage
+        localStorage.setItem("isUserLoggedIn", "1");
+        console.log("User session saved: isUserLoggedIn = 1");
         showSuccessToast("Login successful!");
         navigate("/users/dashboard");
       } else {
@@ -25,6 +26,7 @@ const Login = () => {
       }
     } catch (error) {
       showErrorToast("Login failed. Please try again.");
+      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }
@@ -41,6 +43,7 @@ const Login = () => {
         <h2 className="text-2xl font-semibold text-center mb-4 text-blue-600">
           Login
         </h2>
+       
         <Form
           name="login"
           initialValues={{ remember: true }}

@@ -21,6 +21,8 @@ const AdminLogin = () => {
         values.event?.preventDefault?.();
       }
       if (success) {
+        localStorage.setItem("isAdminLoggedIn", "1");
+        console.log("Admin session saved: isAdminLoggedIn = 1");
         showSuccessToast("Admin login successful!");
         navigate("/admin/dashboard");
       } else {
@@ -40,6 +42,7 @@ const AdminLogin = () => {
         <h2 className="text-2xl font-semibold text-center mb-4 text-[#050C9C]">
           Admin Login
         </h2>
+       
         <Form
           name="adminLogin"
           initialValues={{ remember: true }}

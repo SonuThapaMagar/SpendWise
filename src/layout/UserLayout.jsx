@@ -14,7 +14,6 @@ import { Button, Layout, Menu, theme, Typography, Avatar, Divider } from "antd";
 import { showSuccessToast } from "../utils/toastify.util";
 import { useUser } from "../context API/user.context";
 import { useMediaQuery } from "react-responsive";
-// import "./App.css"
 
 const { Header, Sider, Content } = Layout;
 const { Text, Title } = Typography;
@@ -28,13 +27,14 @@ const UserLayout = () => {
   } = theme.useToken();
 
   const navigate = useNavigate();
-  const { user, logout } = useUser();
+  const { user, isUserLoggedIn, logout } = useUser();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/");
+    if (!isUserLoggedIn) {
+      console.log("User not logged in, redirecting to /login");
+      navigate("/login");
     }
-  }, [user, navigate]);
+  }, [isUserLoggedIn, navigate]);
 
   const handleLogoutClick = () => {
     logout();
@@ -71,7 +71,10 @@ const UserLayout = () => {
       key: "logout",
       icon: <LogoutOutlined style={{ fontSize: "18px" }} />,
       label: "Logout",
-      onClick: handleLogoutClick,
+      onClick: (e) => {
+        e.domEvent.preventDefault();
+        handleLogoutClick();
+      },
     },
   ];
 
@@ -138,16 +141,21 @@ const UserLayout = () => {
             style={{ backgroundColor: "#1890ff" }}
           />
           {!collapsed && (
-            <Text
-              strong
-              style={{
-                fontSize: "16px",
-                textAlign: "center",
-                color: "#1F2A44",
-              }}
-            >
-              {user?.username || "Username"}
-            </Text>
+            <>
+              <Text
+                strong
+                style={{
+                  fontSize: "16px",
+                  textAlign: "center",
+                  color: "#1F2A44",
+                }}
+              >
+                {user?.username || "Username"}
+              </Text>
+              <Text style={{ fontSize: "12px", color: "#6B7280" }}>
+                Logged In: {isUserLoggedIn ? "1" : "0"}
+              </Text>
+            </>
           )}
         </div>
 
@@ -207,11 +215,13 @@ const UserLayout = () => {
           <Title level={4} style={{ margin: 0, color: "#1F2A44" }}>
             Dashboard
           </Title>
+          <div style={{ marginLeft: "auto", paddingRight: "16px" }}>
+            <Text>Session: {isUserLoggedIn ? "1" : "0"}</Text>
+          </div>
         </Header>
         <Content
           className="mt-20 mx-4 p-6 bg-white rounded-lg overflow-y-auto"
           style={{
-            // margin: "80px 16px 16px 16px",
             padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,

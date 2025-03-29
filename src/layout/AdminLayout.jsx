@@ -20,6 +20,8 @@ const { Header, Sider, Content } = Layout;
 const { Text, Title } = Typography;
 
 const AdminLayout = () => {
+
+  
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(isMobile);
@@ -65,7 +67,10 @@ const AdminLayout = () => {
       key: "logout",
       icon: <LogoutOutlined />,
       label: "Logout",
-      onClick: handleLogoutClick,
+      onClick: (e) => {
+        e.domEvent.preventDefault();
+        handleLogoutClick();
+      },
     },
   ];
 
@@ -104,7 +109,10 @@ const AdminLayout = () => {
             }}
           />
           {!collapsed && (
-            <Text strong className="text-[#6875F5] text-lg sm:text-xl font-poppins">
+            <Text
+              strong
+              className="text-[#6875F5] text-lg sm:text-xl font-poppins"
+            >
               SpendWise Admin
             </Text>
           )}
@@ -117,7 +125,10 @@ const AdminLayout = () => {
             className="bg-[#1890ff]"
           />
           {!collapsed && (
-            <Text strong className="text-[#1F2A44] text-sm sm:text-base text-center">
+            <Text
+              strong
+              className="text-[#1F2A44] text-sm sm:text-base text-center"
+            >
               {user?.username || "Admin"}
             </Text>
           )}
@@ -125,7 +136,13 @@ const AdminLayout = () => {
 
         <Divider className="mx-2 sm:mx-4 my-0 border-[#e8e8e8]" />
 
-        <div style={{ height: "calc(100vh - 200px)", overflowY: "auto", overflowX: "hidden" }}>
+        <div
+          style={{
+            height: "calc(100vh - 200px)",
+            overflowY: "auto",
+            overflowX: "hidden",
+          }}
+        >
           <Menu
             theme="light"
             mode="inline"
@@ -161,9 +178,13 @@ const AdminLayout = () => {
           }}
         >
           <Button
-            type="text"
+            type="button"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setCollapsed(!collapsed);
+            }}
             style={{
               fontSize: "16px",
               width: 64,

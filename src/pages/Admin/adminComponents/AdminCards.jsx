@@ -6,19 +6,20 @@ const { Text, Title } = Typography;
 
 const AdminCards = ({ totalUsers, totalExpenses, totalBudgets }) => {
   return (
-    <Row gutter={[8, 8]} className="mb-4">
+    <Row gutter={[24,24]} className="mb-4 justify-evenly">
       {/* Users Card */}
-      <Col xs={24} sm={12} md={8}>
+      <Col xs={24} sm={12} md={7} style={{}}>
         <Card
           className="shadow-sm"
           style={{
             height: "104.49px",
-            padding: "0.25rem",
+            padding: "0rem",
+            gap:"12px"
           }}
           stylesbody={{ padding: 0 }} // Corrected from 'stylesbody'
         >
           <div
-            className="flex items-center gap-3"
+            className="flex items-center gap-8"
             style={{ padding: "0.5rem", height: "100%" }}
           >
             <div

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Typography,
   Button,
@@ -7,7 +7,6 @@ import {
   Input,
   Select,
   DatePicker,
-  message,
   Row,
   Col,
   Card,
@@ -34,6 +33,7 @@ import {
 } from "recharts";
 import dayjs from "dayjs";
 import { useBudget } from "../../../context API/BudgetContext";
+import { showErrorToast, showSuccessToast } from "../../../utils/toastify.util";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -59,6 +59,8 @@ const Budget = React.memo(() => {
     "Utilities",
     "Entertainment",
     "Healthcare",
+    "Clothing",
+    "Travel & Vacations",
     "Education",
     "Other",
   ];
@@ -76,18 +78,19 @@ const Budget = React.memo(() => {
     try {
       setLoading(true);
       const budgetData = {
-        budgetName: values.budgetName,
-        budgetAmount: values.amount,
+        ...values,
         date: values.date.format("YYYY-MM-DD"),
-        category: values.category,
-        accountType: values.accountType,
         icon: selectedEmoji,
       };
-      await addBudget(budgetData);
-      message.success("Budget added successfully!");
+      console.log("Adding budget:", budgetData);
+      const result = await addBudget(budgetData);
+      console.log("Add result:", result);
+      showSuccessToast("Budget added successfully!");
+      console.log("Updated budgets:", budgets);
       return true;
     } catch (error) {
-      message.error("Failed to add budget");
+      console.error("Add budget error:", error.response?.data || error.message);
+      showErrorToast("Failed to add budget: " + error.message);
       return false;
     } finally {
       setLoading(false);
@@ -106,10 +109,10 @@ const Budget = React.memo(() => {
         icon: selectedEmoji,
       };
       await editBudget(budgetToEdit.id, budgetData);
-      message.success("Budget updated successfully!");
+      showSuccessToast("Budget updated successfully!");
       return true;
     } catch (error) {
-      message.error("Failed to update budget");
+      showErrorToast("Failed to update budget");
       return false;
     } finally {
       setLoading(false);
@@ -120,9 +123,9 @@ const Budget = React.memo(() => {
     try {
       setLoading(true);
       await deleteBudget(id);
-      message.success("Budget deleted successfully!");
+      showSuccessToast("Budget deleted successfully!");
     } catch (error) {
-      message.error("Failed to delete budget");
+      showErrorToast("Failed to delete budget");
     } finally {
       setLoading(false);
     }
@@ -134,7 +137,8 @@ const Budget = React.memo(() => {
         setBudgetToDelete(id);
         setDeleteModalVisible(true);
       },
-      confirm: async () => {
+      confirm: async (e) => {
+        e?.preventDefault?.();
         if (budgetToDelete) {
           await handleDeleteBudget(budgetToDelete);
           setDeleteModalVisible(false);
@@ -147,11 +151,13 @@ const Budget = React.memo(() => {
       },
     },
     add: {
-      show: () => {
+      show: (e) => {
+        e?.preventDefault?.();
         setSelectedEmoji("💰");
         setAddBudgetModalVisible(true);
       },
-      submit: async () => {
+      submit: async (e) => {
+        e?.preventDefault?.();
         try {
           const values = await form.validateFields();
           const success = await handleAddBudget(values);
@@ -183,7 +189,8 @@ const Budget = React.memo(() => {
         });
         setEditBudgetModalVisible(true);
       },
-      submit: async () => {
+      submit: async (e) => {
+        e?.preventDefault?.();
         try {
           const values = await form.validateFields();
           const success = await handleEditBudget(values);
@@ -235,7 +242,7 @@ const Budget = React.memo(() => {
           Budget Overview
         </Title>
         <Button
-          type="primary"
+          type="button"
           icon={<PlusOutlined />}
           onClick={modalHandlers.add.show}
           size="large"
@@ -266,13 +273,25 @@ const Budget = React.memo(() => {
       <Modal
         title="Add New Budget"
         open={addBudgetModalVisible}
-        onOk={modalHandlers.add.submit}
-        onCancel={modalHandlers.add.cancel}
+        onOk={(e) => {
+          e.preventDefault();
+          modalHandlers.add.submit(e);
+        }}
+        onCancel={(e) => {
+          e?.preventDefault?.();
+          modalHandlers.add.cancel();
+        }}
         confirmLoading={loading}
       >
-        <Form form={form} layout="vertical" name="add_budget_form">
+        <Form
+          form={form}
+          layout="vertical"
+          name="add_budget_form"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div style={{ marginBottom: "16px" }}>
             <Button
+              type="button"
               icon={<SmileOutlined />}
               onClick={() => setEmojiPickerVisible(!emojiPickerVisible)}
               style={{
@@ -293,7 +312,9 @@ const Budget = React.memo(() => {
           <Form.Item
             name="budgetName"
             label="Budget Name"
-            rules={[{ required: true, message: "Please input the budget name" }]}
+            rules={[
+              { required: true, message: "Please input the budget name" },
+            ]}
           >
             <Input placeholder="Enter budget name" />
           </Form.Item>
@@ -327,7 +348,9 @@ const Budget = React.memo(() => {
           <Form.Item
             name="accountType"
             label="Account Type"
-            rules={[{ required: true, message: "Please select an account type" }]}
+            rules={[
+              { required: true, message: "Please select an account type" },
+            ]}
           >
             <Select placeholder="Select an account type">
               {accountTypes.map((type) => (
@@ -343,13 +366,20 @@ const Budget = React.memo(() => {
       <Modal
         title="Edit Budget"
         open={editBudgetModalVisible}
-        onOk={modalHandlers.edit.submit}
-        onCancel={modalHandlers.edit.cancel}
+        onOk={(e) => {
+          e.preventDefault();
+          modalHandlers.edit.submit(e);
+        }}
+        onCancel={(e) => {
+          e?.preventDefault?.();
+          modalHandlers.edit.cancel();
+        }}
         confirmLoading={loading}
       >
         <Form form={form} layout="vertical" name="edit_budget_form">
           <div style={{ marginBottom: "16px" }}>
             <Button
+              type="button"
               icon={<SmileOutlined />}
               onClick={() => setEmojiPickerVisible(!emojiPickerVisible)}
               style={{
@@ -370,7 +400,9 @@ const Budget = React.memo(() => {
           <Form.Item
             name="budgetName"
             label="Budget Name"
-            rules={[{ required: true, message: "Please input the budget name" }]}
+            rules={[
+              { required: true, message: "Please input the budget name" },
+            ]}
           >
             <Input placeholder="Enter budget name" />
           </Form.Item>
@@ -404,7 +436,9 @@ const Budget = React.memo(() => {
           <Form.Item
             name="accountType"
             label="Account Type"
-            rules={[{ required: true, message: "Please select an account type" }]}
+            rules={[
+              { required: true, message: "Please select an account type" },
+            ]}
           >
             <Select placeholder="Select an account type">
               {accountTypes.map((type) => (
@@ -425,6 +459,7 @@ const Budget = React.memo(() => {
         >
           <Title level={4}>Recent Budgets</Title>
           <Button
+            type="button"
             icon={<DownloadOutlined />}
             size="large"
             onClick={exportToExcel}
@@ -498,16 +533,24 @@ const Budget = React.memo(() => {
                       Rs. {budget.budgetAmount}
                     </Text>
                     <Button
+                      type="button"
                       icon={<EditOutlined />}
-                      type="text"
-                      onClick={() => modalHandlers.edit.show(budget)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        modalHandlers.edit.show(budget);
+                      }}
                       loading={loading && budgetToEdit?.id === budget.id}
                     />
                     <Button
                       icon={<DeleteOutlined />}
                       type="text"
                       danger
-                      onClick={() => modalHandlers.delete.show(budget.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        modalHandlers.delete.show(budget.id);
+                      }}
                       loading={loading && budgetToDelete === budget.id}
                     />
                   </Flex>
@@ -521,8 +564,14 @@ const Budget = React.memo(() => {
       <Modal
         title="Confirm Deletion"
         open={deleteModalVisible}
-        onOk={modalHandlers.delete.confirm}
-        onCancel={modalHandlers.delete.cancel}
+        onOk={(e) => {
+          e.preventDefault();
+          modalHandlers.delete.confirm(e);
+        }}
+        onCancel={(e) => {
+          e?.preventDefault?.();
+          modalHandlers.delete.cancel();
+        }}
         confirmLoading={loading}
       >
         <p>Are you sure you want to delete this budget?</p>

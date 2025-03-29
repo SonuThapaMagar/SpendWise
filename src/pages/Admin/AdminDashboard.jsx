@@ -66,7 +66,7 @@ const AdminDashboard = () => {
           <Col xs={24} lg={12} className="w-full">
             <Card
               className="bg-white p-4 rounded-lg shadow-sm h-full"
-              bodyStyle={{
+              stylesbody={{
                 height: "400px", // Fixed height for consistency
                 display: "flex",
                 flexDirection: "column",

@@ -17,11 +17,12 @@ export const AdminProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      const [usersResponse, expensesResponse, budgetsResponse] = await Promise.all([
-        fetch("http://localhost:4000/users"),
-        fetch("http://localhost:4000/expenses"),
-        fetch("http://localhost:4000/budgets"),
-      ]);
+      const [usersResponse, expensesResponse, budgetsResponse] =
+        await Promise.all([
+          fetch("http://localhost:4000/users"),
+          fetch("http://localhost:4000/expenses"),
+          fetch("http://localhost:4000/budgets"),
+        ]);
 
       if (!usersResponse.ok) throw new Error("Failed to fetch users");
       if (!expensesResponse.ok) throw new Error("Failed to fetch expenses");
@@ -55,14 +56,22 @@ export const AdminProvider = ({ children }) => {
     try {
       const response = await fetch(`http://localhost:4000/users/${userId}`, {
         method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          redirect: "manual",
+        },
       });
-      if (!response.ok) throw new Error("Failed to delete user");
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Delete failed");
+      }
+
       setUsers((prev) => prev.filter((user) => user.id !== userId));
-      setMetrics((prev) => ({ ...prev, totalUsers: prev.totalUsers - 1 }));
       return true;
     } catch (error) {
-      setError(error.message);
-      console.error("Error deleting user:", error);
+      console.error("Delete error:", error);
       throw error;
     }
   };
@@ -71,21 +80,17 @@ export const AdminProvider = ({ children }) => {
     try {
       const response = await fetch(`http://localhost:4000/users/${userId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        redirect: "manual", 
         body: JSON.stringify(updatedData),
       });
-      if (!response.ok) throw new Error("Failed to update user");
+      if (!response.ok) throw new Error("Update failed");
       const updatedUser = await response.json();
       setUsers((prev) =>
         prev.map((user) => (user.id === userId ? updatedUser : user))
       );
-      return true;
     } catch (error) {
-      setError(error.message);
-      console.error("Error updating user:", error);
-      throw error;
+      console.error("Update error:", error);
     }
   };
 

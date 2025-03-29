@@ -1,5 +1,5 @@
+import React, { createContext, useState, useCallback, useMemo } from "react";
 import axios from "axios";
-import React, { createContext, useContext, useState, useCallback } from "react";
 
 const UserContext = createContext();
 
@@ -9,25 +9,30 @@ export const UserProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // Adding function to update existing users with createdAt dates
+  const updateUser = useCallback((updates) => {
+    setUser((prev) => {
+      const updatedUser = { ...prev, ...updates };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  }, []);
+
   const initializeUserDates = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:4000/users");
       const users = response.data;
-
-      // Check if any users are missing createdAt
-      const needsUpdate = users.some((user) => !user.createdAt);
+      const needsUpdate = users.some((u) => !u.createdAt);
       if (!needsUpdate) return;
 
-      // Update each user missing createdAt
-      for (const user of users) {
-        if (!user.createdAt) {
-          // Generate a reasonable default date (e.g., current date)
-          await axios.patch(`http://localhost:4000/users/${user.id}`, {
-            createdAt: new Date().toISOString(),
-          });
-        }
-      }
+      await Promise.all(
+        users
+          .filter((u) => !u.createdAt)
+          .map((u) =>
+            axios.patch(`http://localhost:4000/users/${u.id}`, {
+              createdAt: new Date().toISOString(),
+            })
+          )
+      );
     } catch (error) {
       console.error("Error initializing user dates:", error);
     }
@@ -36,16 +41,11 @@ export const UserProvider = ({ children }) => {
   const fetchUserData = useCallback(async (userId) => {
     try {
       const response = await axios.get(`http://localhost:4000/users/${userId}`);
-      setUser((prevUser) => {
-        const updatedUser = { ...prevUser, ...response.data };
-        localStorage.setItem("user", JSON.stringify(updatedUser)); // Update localStorage
-        console.log("Updated user after fetchUserData:", updatedUser);
-        return updatedUser;
-      });
+      updateUser(response.data);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
-  }, []);
+  }, [updateUser]);
 
   const adminLogin = useCallback(async (username, password) => {
     try {
@@ -56,7 +56,6 @@ export const UserProvider = ({ children }) => {
           u.password === password &&
           (u.isAdmin === true || u.isAdmin === "true")
       );
-
       if (adminUser) {
         const userData = { ...adminUser, role: "admin" };
         localStorage.setItem("user", JSON.stringify(userData));
@@ -77,13 +76,11 @@ export const UserProvider = ({ children }) => {
       const foundUser = response.data.find(
         (u) => u.username === username && u.password === password && !u.isAdmin
       );
-
       if (foundUser) {
         const userData = { ...foundUser, role: "user" };
         localStorage.setItem("user", JSON.stringify(userData));
         localStorage.setItem("is_login", "1");
         setUser(userData);
-        console.log("User logged in:", userData);
         return true;
       }
       return false;
@@ -98,10 +95,7 @@ export const UserProvider = ({ children }) => {
       const response = await axios.get("http://localhost:4000/users", {
         params: { email: userData.email },
       });
-
-      if (response.data.length > 0) {
-        throw new Error("Email already exists");
-      }
+      if (response.data.length > 0) throw new Error("Email already exists");
 
       const signupResponse = await axios.post("http://localhost:4000/users", {
         username: userData.username,
@@ -110,7 +104,6 @@ export const UserProvider = ({ children }) => {
         isAdmin: false,
         createdAt: new Date().toISOString(),
       });
-
       const newUser = { ...signupResponse.data, role: "user" };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
@@ -125,175 +118,23 @@ export const UserProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("is_login");
-    console.log("User logged out");
   }, []);
 
-  return (
-    <UserContext.Provider
-      value={{
-        user,
-        setUser,
-        signup,
-        adminLogin,
-        login,
-        logout,
-        fetchUserData,
-        initializeUserDates 
-      }}
-    >
-      {children}
-    </UserContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      setUser: updateUser, // Use updateUser instead of raw setUser
+      signup,
+      adminLogin,
+      login,
+      logout,
+      fetchUserData,
+      initializeUserDates,
+    }),
+    [user, updateUser, signup, adminLogin, login, logout, fetchUserData, initializeUserDates]
   );
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
-export { UserContext };
-export const useUser = () => useContext(UserContext);
-
-// import axios from "axios";
-// import React, {
-//   createContext,
-//   useContext,
-//   useState,
-//   useEffect,
-//   useCallback,
-// } from "react";
-
-// // Create the context
-// const UserContext = createContext();
-
-// export const UserProvider = ({ children }) => {
-//   const [user, setUser] = useState(() => {
-//     const storedUser = localStorage.getItem("user");
-//     return storedUser ? JSON.parse(storedUser) : null;
-//   });
-
-//   //Fetching user data from JSON Server
-//   const fetchUserData = useCallback(async (userId) => {
-//     try {
-//       const response = await axios.get(`http://localhost:4000/users/${userId}`);
-//       setUser((prevUser) => {
-//         const updatedUser = {
-//           ...prevUser,
-//           ...response.data,
-//         };
-//         console.log("Updated user after fetchUserData:", updatedUser);
-//         return updatedUser;
-//       });
-//     } catch (error) {
-//       console.error("Error fetching user data:", error);
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//     if (user?.id) {
-//       console.log("Fetching user data for ID:", user.id);
-//       fetchUserData(user.id);
-//     }
-//   }, [user?.id, fetchUserData]);
-
-//   //Admin login function
-//   const adminLogin = useCallback(async (username, password) => {
-//     try {
-//       const response = await axios.get("http://localhost:4000/users");
-//       const adminUser = response.data.find(
-//         (user) =>
-//           user.username === username &&
-//           user.password === password &&
-//           (user.isAdmin === true || user.isAdmin === "true")
-//       );
-
-//       if (adminUser) {
-//         const userData = { ...adminUser, role: "admin" };
-//         localStorage.setItem("user", JSON.stringify(userData));
-//         localStorage.setItem("is_login", "1");
-//         setUser(userData);
-//         return true;
-//       }
-//       return false;
-//     } catch (error) {
-//       console.error("Admin login error:", error);
-//       return false;
-//     }
-//   }, []);
-
-//   //User login function
-//   const login = useCallback(async (username, password) => {
-//     try {
-//       const response = await axios.get("http://localhost:4000/users");
-//       const foundUser = response.data.find(
-//         (user) =>
-//           user.username === username &&
-//           user.password === password &&
-//           !user.isAdmin
-//       );
-
-//       if (foundUser) {
-//         const userData = { ...foundUser, role: "user" };
-//         localStorage.setItem("user", JSON.stringify(userData));
-//         localStorage.setItem("is_login", "1");
-//         setUser(userData);
-//         console.log("User logged in:", userData);
-//         return true;
-//       }
-//       return false;
-//     } catch (error) {
-//       console.error("User login error:", error);
-//       return false;
-//     }
-//   }, []);
-
-//   // Function to handle signup
-//   const signup = useCallback(async (userData) => {
-//     try {
-//       const response = await axios.get("http://localhost:4000/users", {
-//         params: { email: userData.email },
-//       });
-
-//       if (response.data.length > 0) {
-//         throw new Error("Email already exists");
-//       }
-
-//       const signupResponse = await axios.post("http://localhost:4000/users", {
-//         username: userData.username,
-//         email: userData.email,
-//         password: userData.password,
-//         isAdmin: false, // Explicitly set isAdmin to false for new users
-//       });
-
-//       const newUser = { ...signupResponse.data, role: "user" };
-//       setUser(newUser);
-//       localStorage.setItem("is_login", "1");
-//       return newUser;
-//     } catch (error) {
-//       throw error;
-//     }
-//   }, []);
-
-//   //Logout Function
-//   const logout = useCallback(() => {
-//     setUser(null);
-//     localStorage.removeItem("user");
-//     localStorage.removeItem("is_login");
-//     console.log("User logged out");
-//   }, []);
-
-//   return (
-//     <UserContext.Provider
-//       value={{
-//         user,
-//         setUser,
-//         signup,
-//         adminLogin,
-//         login,
-//         logout,
-//         fetchUserData,
-//       }}
-//     >
-//       {children}
-//     </UserContext.Provider>
-//   );
-// };
-
-// export { UserContext };
-
-// export const useUser = () => useContext(UserContext);
+export const useUser = () => React.useContext(UserContext);

@@ -18,14 +18,16 @@ const { Text } = Typography;
 
 const UserManagement = () => {
   const { users, loading, deleteUser, updateUser } = useAdmin();
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false); // Edit modal
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false); // Delete confirmation modal
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [userToDelete, setUserToDelete] = useState(null); // Track user to delete
+  const [userToDelete, setUserToDelete] = useState(null);
   const [form] = Form.useForm();
 
   // Edit Modal Functions
-  const showEditModal = (user) => {
+  const showEditModal = (user, e) => {
+    e.preventDefault(); // Prevent default behavior
+    e.stopPropagation(); // Stop event bubbling
     setSelectedUser(user);
     form.setFieldsValue({
       username: user.username,
@@ -36,6 +38,7 @@ const UserManagement = () => {
   };
 
   const handleEditOk = async () => {
+    // No event here, so no e.preventDefault() needed
     try {
       const values = await form.validateFields();
       await updateUser(selectedUser.id, {
@@ -59,12 +62,15 @@ const UserManagement = () => {
   };
 
   // Delete Modal Functions
-  const showDeleteModal = (user) => {
+  const showDeleteModal = (user, e) => {
+    e.preventDefault(); // Prevent default behavior
+    e.stopPropagation(); // Stop event bubbling
     setUserToDelete(user);
     setIsDeleteModalVisible(true);
   };
 
   const handleDeleteOk = async () => {
+    // No event here, so no e.preventDefault() needed
     try {
       await deleteUser(userToDelete.id);
       showSuccessToast("User deleted successfully");
@@ -107,15 +113,17 @@ const UserManagement = () => {
       render: (_, record) => (
         <Space size="middle">
           <Button
+            type="text" // Changed from type="button" to type="text" for Ant Design consistency
             icon={<EditOutlined />}
             className="text-blue-600 hover:text-blue-800"
-            onClick={() => showEditModal(record)}
+            onClick={(e) => showEditModal(record, e)} // Pass event directly
           />
           <Button
+            type="text" // Changed from type="button"
             danger
             icon={<DeleteOutlined />}
             className="text-red-600 hover:text-red-800"
-            onClick={() => showDeleteModal(record)} // Trigger delete modal
+            onClick={(e) => showDeleteModal(record, e)} // Pass event directly
           />
         </Space>
       ),
@@ -129,11 +137,7 @@ const UserManagement = () => {
           <span className="text-md sm:text-2xl font-semibold">
             User Management
           </span>
-       
         }
-        style={{
-            // backgroundColor:"#6875f5",
-        }}
         className="shadow-md rounded-lg"
       >
         <Spin spinning={loading}>
@@ -161,6 +165,7 @@ const UserManagement = () => {
         onCancel={handleEditCancel}
         okText="Save"
         cancelText="Cancel"
+        destroyOnClose
         okButtonProps={{ className: "bg-blue-600 hover:bg-blue-700" }}
       >
         <Form form={form} layout="vertical" name="edit_user_form">
@@ -195,7 +200,11 @@ const UserManagement = () => {
         onCancel={handleDeleteCancel}
         okText="Yes"
         cancelText="No"
-        okButtonProps={{ danger: true, className: "bg-red-600 hover:bg-red-700" }}
+        destroyOnClose
+        okButtonProps={{
+          danger: true,
+          className: "bg-red-600 hover:bg-red-700",
+        }}
       >
         <p>
           Are you sure you want to delete{" "}

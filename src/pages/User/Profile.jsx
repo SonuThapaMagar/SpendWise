@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback } from "react";
 import {
   Card,
   Row,
@@ -9,13 +9,9 @@ import {
   Modal,
   Form,
   Input,
+  Flex,
 } from "antd";
-import {
-  UserOutlined,
-  EditOutlined,
-  CameraOutlined,
-  LockOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useUser } from "../../context API/user.context";
 import { useNavigate } from "react-router-dom";
 import { showSuccessToast, showErrorToast } from "../../utils/toastify.util";
@@ -24,255 +20,183 @@ import axios from "axios";
 
 const { Title, Text } = Typography;
 
-const Profile = () => {
-  const { user, setUser } = useUser();
+const Profile = React.memo(() => {
+  const { user, setUser, fetchUserData } = useUser();
   const navigate = useNavigate();
   const [editForm] = Form.useForm();
   const [passwordForm] = Form.useForm();
-  const [editModalVisible, setEditModalVisible] = useState(false);
-  const [passwordModalVisible, setPasswordModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [state, setState] = React.useState({ modalType: null, loading: false });
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (user?.id) {
-        try {
-          setLoading(true);
-          const response = await axios.get(
-            `http://localhost:4000/users/${user.id}`
-          );
-          setUser(response.data);
-          // Only set form values if the modal is open
-          if (editModalVisible) {
-            editForm.setFieldsValue({
-              username: response.data.username,
-              email: response.data.email,
-              contact: response.data.contact || "",
-            });
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          showErrorToast("Failed to fetch user data");
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    fetchUserData();
-  }, [user?.id, setUser, editModalVisible, editForm]);
+  React.useEffect(() => {
+    if (user?.id && !user.username) fetchUserData(user.id);
+  }, [user?.id, fetchUserData]);
 
-  const handleEditProfile = async (values) => {
-    try {
-      setLoading(true);
-      const response = await axios.put(
-        `http://localhost:4000/users/${user.id}`,
-        {
-          ...user,
-          username: values.username,
-          email: values.email,
-          contact: values.contact,
-        }
-      );
-      setUser(response.data);
-      setEditModalVisible(false);
-      showSuccessToast("Profile updated successfully!");
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      showErrorToast("Failed to update profile");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleChangePassword = async (values) => {
-    try {
-      setLoading(true);
-      if (values.newPassword !== values.confirmPassword) {
-        showErrorToast("New password and confirm password do not match!");
-        return;
-      }
-
-      // Update the password in JSON Server
-      const response = await axios.put(
-        `http://localhost:4000/users/${user.id}`,
-        {
-          ...user,
-          password: values.newPassword,
-        }
-      );
-
-      setUser(response.data);
-      setPasswordModalVisible(false);
-      showSuccessToast("Password changed successfully! Please log in again.");
-
-      // Clear user from context and localStorage (logout)
-      setUser(null);
-      localStorage.removeItem("user");
-
-      // Redirect to login page
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
-    } catch (error) {
-      console.error("Error changing password:", error);
-      showErrorToast("Failed to change password");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const showEditModal = () => {
-    setEditModalVisible(true);
-    // Set form values after the modal is opened
-    setTimeout(() => {
+  const handleModal = useCallback((type) => {
+    setState((prev) => ({ ...prev, modalType: type }));
+    if (type === "edit") {
       editForm.setFieldsValue({
         username: user?.username,
         email: user?.email,
         contact: user?.contact || "",
       });
-    }, 0); // Defer to ensure the form is rendered
-  };
-
-  const showPasswordModal = () => {
-    setPasswordModalVisible(true);
-    // Reset form fields after the modal is opened
-    setTimeout(() => {
+    } else if (type === "password") {
       passwordForm.resetFields();
-    }, 0); // Defer to ensure the form is rendered
-  };
+    } else {
+      editForm.resetFields();
+      passwordForm.resetFields();
+    }
+  }, [user, editForm, passwordForm]);
 
-  const handleEditModalCancel = () => {
-    setEditModalVisible(false);
-    editForm.resetFields();
-  };
+  const handleEditProfile = useCallback(
+    async (values) => {
+      console.log("handleEditProfile called with values:", values); // Debug log
+      setState((prev) => ({ ...prev, loading: true }));
+      try {
+        const updatedFields = {
+          username: values.username,
+          email: values.email,
+          contact: values.contact,
+        };
+        await axios.put(`http://localhost:4000/users/${user.id}`, {
+          ...user,
+          ...updatedFields,
+        });
+        setUser(updatedFields);
+        handleModal(null);
+        showSuccessToast("Profile updated successfully!");
+      } catch (error) {
+        showErrorToast("Failed to update profile");
+      } finally {
+        setState((prev) => ({ ...prev, loading: false }));
+      }
+    },
+    [user, setUser, handleModal]
+  );
 
-  const handlePasswordModalCancel = () => {
-    setPasswordModalVisible(false);
-    passwordForm.resetFields();
-  };
+  const handleChangePassword = useCallback(
+    async (values) => {
+      console.log("handleChangePassword called with values:", values); // Debug log
+      setState((prev) => ({ ...prev, loading: true }));
+      try {
+        if (values.newPassword !== values.confirmPassword) {
+          throw new Error("New password and confirm password do not match!");
+        }
+        const updatedFields = { password: values.newPassword };
+        await axios.put(`http://localhost:4000/users/${user.id}`, {
+          ...user,
+          ...updatedFields,
+        });
+        handleModal(null);
+        showSuccessToast("Password changed successfully! Please log in again.");
+        setUser(null);
+        localStorage.removeItem("user");
+        setTimeout(() => navigate("/login"), 2000);
+      } catch (error) {
+        showErrorToast(error.message || "Failed to change password");
+      } finally {
+        setState((prev) => ({ ...prev, loading: false }));
+      }
+    },
+    [user, setUser, navigate, handleModal]
+  );
+
+  const handleEditSubmit = useCallback(() => {
+    console.log("handleEditSubmit called"); // Debug log
+    editForm.submit();
+  }, [editForm]);
+
+  const handlePasswordSubmit = useCallback(() => {
+    console.log("handlePasswordSubmit called"); // Debug log
+    passwordForm.submit();
+  }, [passwordForm]);
 
   return (
     <div style={{ padding: 24, background: "#f0f2f5" }}>
-      {/* Cover Image Section */}
       <div
         style={{
           backgroundImage: `url(${bannerImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
           height: 150,
           borderRadius: "8px 8px 0 0",
-          position: "relative",
           marginBottom: 80,
         }}
-      ></div>
-
-      {/* Profile Content */}
+      />
       <Row gutter={[24, 24]} style={{ marginTop: -120 }}>
-        {/* Left Column: Profile Photo */}
         <Col xs={24} sm={8} md={6}>
           <Card
             style={{
               borderRadius: 8,
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
               textAlign: "center",
-              marginLeft: "12px",
+              marginLeft: 12,
             }}
           >
             <Avatar
               size={100}
               src={user?.profileImage}
               icon={<UserOutlined />}
-              style={{
-                border: "2px solid #1890ff",
-                marginBottom: 16,
-              }}
+              style={{ border: "2px solid #1890ff", marginBottom: 16 }}
             />
           </Card>
         </Col>
-
-        {/* Right Column: User Info */}
         <Col xs={24} sm={16} md={18}>
           <Card
             style={{
               borderRadius: 8,
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              marginRight: "24px",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+              marginRight: 24,
             }}
           >
             <Title level={4} style={{ marginBottom: 16 }}>
               {user?.username || "Username"}
             </Title>
-
-            {/* Email Section */}
-            <div style={{ marginBottom: 16 }}>
-              <Text
-                type="secondary"
-                strong
-                style={{ display: "block", marginBottom: 4 }}
-              >
-                Email:
-              </Text>
-              <Text style={{ display: "block", fontSize: "16px" }}>
-                {user?.email || "No email provided"}
-              </Text>
-            </div>
-
-            {/* Contact Section */}
+            <Text type="secondary" strong style={{ display: "block", marginBottom: 4 }}>
+              Email:
+            </Text>
+            <Text style={{ display: "block", fontSize: 16, marginBottom: 16 }}>
+              {user?.email || "No email provided"}
+            </Text>
             {user?.contact && (
-              <div style={{ marginBottom: 24 }}>
-                <Text
-                  type="secondary"
-                  strong
-                  style={{ display: "block", marginBottom: 4 }}
-                >
+              <>
+                <Text type="secondary" strong style={{ display: "block", marginBottom: 4 }}>
                   Contact:
                 </Text>
-                <Text style={{ display: "block", fontSize: "16px" }}>
+                <Text style={{ display: "block", fontSize: 16, marginBottom: 24 }}>
                   {user?.contact}
                 </Text>
-              </div>
+              </>
             )}
-
-            {/* Buttons */}
-            <div style={{ display: "flex", gap: 16 }}>
+            <Flex gap={16}>
               <Button
                 type="primary"
                 icon={<EditOutlined />}
-                style={{
-                  backgroundColor: "#6875f5",
-                  height: 50,
-                }}
-                onClick={showEditModal}
-                loading={loading}
+                style={{ backgroundColor: "#6875f5", height: 50 }}
+                onClick={() => handleModal("edit")}
+                loading={state.loading}
               >
                 Edit Profile
               </Button>
               <Button
                 type="primary"
                 icon={<LockOutlined />}
-                style={{
-                  backgroundColor: "#6dbaa1",
-                  height: 50,
-                }}
-                onClick={showPasswordModal}
+                style={{ backgroundColor: "#6dbaa1", height: 50 }}
+                onClick={() => handleModal("password")}
               >
                 Change Password
               </Button>
-            </div>
+            </Flex>
           </Card>
         </Col>
       </Row>
 
-      {/* Edit Profile Modal */}
       <Modal
         title="Edit Profile"
-        open={editModalVisible}
-        onOk={() => editForm.submit()}
-        onCancel={handleEditModalCancel}
-        confirmLoading={loading}
+        open={state.modalType === "edit"}
+        onOk={handleEditSubmit}
+        onCancel={() => handleModal(null)}
+        confirmLoading={state.loading}
         okText="Update"
-        cancelText="Cancel"
       >
         <Form form={editForm} layout="vertical" onFinish={handleEditProfile}>
           <Form.Item
@@ -286,11 +210,7 @@ const Profile = () => {
             name="email"
             label="Email"
             rules={[
-              {
-                required: true,
-                type: "email",
-                message: "Please input a valid email!",
-              },
+              { required: true, type: "email", message: "Please input a valid email!" },
             ]}
           >
             <Input />
@@ -301,39 +221,21 @@ const Profile = () => {
         </Form>
       </Modal>
 
-      {/* Change Password Modal */}
       <Modal
         title="Change Password"
-        open={passwordModalVisible}
-        onOk={() => passwordForm.submit()}
-        onCancel={handlePasswordModalCancel}
-        confirmLoading={loading}
+        open={state.modalType === "password"}
+        onOk={handlePasswordSubmit}
+        onCancel={() => handleModal(null)}
+        confirmLoading={state.loading}
         okText="Update Password"
-        cancelText="Cancel"
       >
-        <Form
-          form={passwordForm}
-          layout="vertical"
-          onFinish={handleChangePassword}
-        >
+        <Form form={passwordForm} layout="vertical" onFinish={handleChangePassword}>
           <Form.Item
             name="currentPassword"
             label="Current Password"
             rules={[
-              {
-                required: true,
-                message: "Please input your current password!",
-              },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || value === user?.password) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error("Current password is incorrect!")
-                  );
-                },
-              }),
+              { required: true, message: "Please input your current password!" },
+              { validator: (_, value) => (value === user?.password ? Promise.resolve() : Promise.reject(new Error("Current password is incorrect!"))) },
             ]}
           >
             <Input.Password />
@@ -343,10 +245,7 @@ const Profile = () => {
             label="New Password"
             rules={[
               { required: true, message: "Please input your new password!" },
-              {
-                min: 6,
-                message: "Password must be at least 6 characters long!",
-              },
+              { min: 6, message: "Password must be at least 6 characters long!" },
             ]}
           >
             <Input.Password />
@@ -358,10 +257,9 @@ const Profile = () => {
               { required: true, message: "Please confirm your new password!" },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue("newPassword") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error("Passwords do not match!"));
+                  return value === getFieldValue("newPassword")
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Passwords do not match!"));
                 },
               }),
             ]}
@@ -372,6 +270,6 @@ const Profile = () => {
       </Modal>
     </div>
   );
-};
+});
 
 export default Profile;

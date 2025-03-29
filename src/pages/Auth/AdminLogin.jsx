@@ -17,6 +17,9 @@ const AdminLogin = () => {
 
     try {
       const success = await adminLogin(values.username, values.password);
+      if (typeof Event !== "undefined") {
+        values.event?.preventDefault?.();
+      }
       if (success) {
         showSuccessToast("Admin login successful!");
         navigate("/admin/dashboard");

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Landing from "./pages/Landing";
@@ -9,9 +9,6 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import UserDashboard from "./pages/User/UserDashboard";
 import Budget from "./pages/User/Budget/Budget";
 import UserLayout from "./layout/UserLayout";
-import AddBudget from "./pages/User/Budget/AddBudget";
-import EditBudget from "./pages/User/Budget/EditBudget";
-import AddExpense from "./pages/User/Expense/AddExpense";
 import Expense from "./pages/User/Expense/Expense";
 import About from "./content/About";
 import Services from "./content/Services";
@@ -27,7 +24,17 @@ import { AdminProvider } from "./context API/admin.context";
 import UserManagement from "./pages/Admin/UserManagement";
 import Reports from "./pages/Admin/Reports";
 
-function App() {
+const App = memo(() => {
+  useEffect(() => {
+    const blockReload = (e) => {
+      if (e.target.closest('button, [role="button"]')) {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener("click", blockReload, { capture: true });
+    return () => document.removeEventListener("click", blockReload);
+  }, []);
+
   return (
     <UserProvider>
       <BudgetProvider>
@@ -54,18 +61,13 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="users" element={<UserManagement />} />
               <Route path="reports" element={<Reports />} />
-
             </Route>
 
             {/* User routes */}
             <Route path="/users" element={<UserLayout />}>
               <Route path="dashboard" element={<UserDashboard />} />
               <Route path="budget" element={<Budget />} />
-              <Route path="budget/addBudget" element={<AddBudget />} />
-              <Route path="budget/editBudget/:id" element={<EditBudget />} />
               <Route path="expense" element={<Expense />} />
-              <Route path="expense/addExpense" element={<AddExpense />} />
-              <Route path="expense/editExpense/:id" element={<AddExpense />} />
               <Route path="profile" element={<Profile />} />
               <Route path="editProfile" element={<EditProfile />} />
               <Route path="changePassword" element={<ChangePassword />} />
@@ -76,6 +78,6 @@ function App() {
       </BudgetProvider>
     </UserProvider>
   );
-}
+});
 
 export default App;

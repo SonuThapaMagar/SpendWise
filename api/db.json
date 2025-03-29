@@ -27,28 +27,67 @@
     },
     {
       "id": "22f2",
-      "username": "user",
+      "username": "user2",
       "email": "user@gmail.com",
       "password": "user@123",
-      "createdAt": "2025-03-28T04:24:36.094Z"
+      "createdAt": "2025-03-28T04:24:36.094Z",
+      "contact": "78254367"
     },
     {
       "id": "3a78",
       "username": "sonu",
       "email": "sonu@gmail.com",
       "password": "sonu@123",
-      "createdAt": "2025-03-28T04:24:36.427Z"
+      "createdAt": "2025-03-28T04:24:36.427Z",
+      "contact": "98765432210"
+    },
+    {
+      "id": "c187",
+      "username": "Keyu",
+      "email": "daniel@gmail.com",
+      "password": "danielzhou",
+      "isAdmin": false,
+      "createdAt": "2025-03-29T01:01:24.111Z",
+      "contact": "9856734210",
+      "role": "user"
     }
   ],
   "budgets": [
     {
-      "id": "74c3",
       "budgetName": "Fashion",
-      "budgetAmount": "10000",
+      "budgetAmount": "1000",
       "date": "2025-03-01",
       "category": "Entertainment",
       "accountType": "Cash",
-      "icon": "👗"
+      "icon": "🏍️",
+      "id": "74c3"
+    },
+    {
+      "id": "66cf",
+      "budgetName": "Education",
+      "budgetAmount": "100000",
+      "date": "2025-01-15",
+      "category": "Education",
+      "accountType": "Cash",
+      "icon": "👩‍🎓"
+    },
+    {
+      "id": "2ed1",
+      "budgetName": "Healthcare",
+      "budgetAmount": "28000",
+      "date": "2025-01-13",
+      "category": "Healthcare",
+      "accountType": "Digital Wallet",
+      "icon": "👩‍🔬"
+    },
+    {
+      "budgetName": "Rent",
+      "budgetAmount": "15700",
+      "date": "2025-01-14",
+      "category": "Rent",
+      "accountType": "Credit Card",
+      "icon": "🏘️",
+      "id": "6bf9"
     }
   ],
   "expenses": [
@@ -75,22 +114,6 @@
       "date": "2025-03-12",
       "category": "Groceries",
       "icon": "🥦"
-    },
-    {
-      "id": "64a0",
-      "expenseName": "Entertainment",
-      "expenseAmount": "7500",
-      "date": "2025-02-18",
-      "category": "Entertainment",
-      "icon": "🏖️"
-    },
-    {
-      "id": "6071",
-      "expenseName": "Utilities",
-      "expenseAmount": "550",
-      "date": "2025-01-06",
-      "category": "Utilities",
-      "icon": "👠"
     }
   ]
 }

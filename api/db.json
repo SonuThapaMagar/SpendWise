@@ -2,83 +2,46 @@
   "users": [
     {
       "id": "admin1",
-      "username": "Test",
+      "username": "Test2",
       "email": "admin@example.com",
       "password": "newone",
       "isAdmin": true,
       "contact": "98765432210",
-      "createdAt": "2025-03-28T04:24:35.669Z"
+      "createdAt": "2025-03-28T04:24:35.669Z",
+      "role": "admin"
     },
     {
       "id": "0a25",
-      "username": "new4",
+      "username": "new2",
       "email": "new@gmail.com",
       "password": "one@123",
       "contact": "98765432210",
-      "createdAt": "2023-02-20T00:00:00.000Z"
+      "createdAt": "2023-02-20T00:00:00.000Z",
+      "user": {
+        "name": "Hello",
+        "email": "abc@gmail.com",
+        "age": 0
+      }
     },
     {
       "id": "eaa5",
       "username": "Andres",
       "email": "andres@gmail.com",
       "password": "abc@123",
-      "contact": "98765432210",
-      "createdAt": "2025-03-28T04:24:35.797Z"
-    },
-    {
-      "id": "22f2",
-      "username": "user1",
-      "email": "user@gmail.com",
-      "password": "user@123",
-      "createdAt": "2025-03-28T04:24:36.094Z",
-      "contact": "78254367"
-    },
-    {
-      "id": "3a78",
-      "username": "sonu",
-      "email": "sonu@gmail.com",
-      "password": "sonu@123",
-      "createdAt": "2025-03-28T04:24:36.427Z",
-      "contact": "98765432210"
-    },
-    {
-      "id": "c187",
-      "username": "Keyu",
-      "email": "daniel@gmail.com",
-      "password": "danielzhou",
-      "isAdmin": false,
-      "createdAt": "2025-03-29T01:01:24.111Z",
-      "contact": "9856734210",
+      "contact": "98765432219",
+      "createdAt": "2025-03-28T04:24:35.797Z",
       "role": "user"
     }
   ],
   "budgets": [
     {
-      "budgetName": "Fashion",
-      "budgetAmount": "1000",
-      "date": "2025-03-01",
-      "category": "Entertainment",
-      "accountType": "Cash",
-      "icon": "🏍️",
-      "id": "74c3"
-    },
-    {
-      "id": "66cf",
-      "budgetName": "Education",
-      "budgetAmount": "100000",
-      "date": "2025-01-15",
-      "category": "Education",
-      "accountType": "Cash",
-      "icon": "👩‍🎓"
-    },
-    {
-      "id": "2ed1",
       "budgetName": "Healthcare",
-      "budgetAmount": "28000",
+      "budgetAmount": 2800,
       "date": "2025-01-13",
       "category": "Healthcare",
       "accountType": "Digital Wallet",
-      "icon": "👩‍🔬"
+      "icon": "👩‍🔬",
+      "id": "2ed1"
     },
     {
       "budgetName": "Rent",
@@ -88,6 +51,42 @@
       "accountType": "Credit Card",
       "icon": "🏘️",
       "id": "6bf9"
+    },
+    {
+      "budgetName": "Groceries",
+      "budgetAmount": "2000",
+      "date": "2025-03-20",
+      "category": "Groceries",
+      "accountType": "Cash",
+      "icon": "🍅",
+      "id": "27f1"
+    },
+    {
+      "id": "3a8b",
+      "budgetName": "Fashion",
+      "budgetAmount": "8000",
+      "date": "2025-02-03",
+      "category": "Transportation",
+      "accountType": "Bank Transfer",
+      "icon": "💰"
+    },
+    {
+      "id": "1bc8",
+      "budgetName": "Travel",
+      "budgetAmount": 10000,
+      "date": "2025-01-16",
+      "category": "Transportation",
+      "accountType": "Digital Wallet",
+      "icon": "💰"
+    },
+    {
+      "id": "f632",
+      "budgetName": "Food",
+      "budgetAmount": 5500,
+      "date": "2025-01-21",
+      "category": "Dining Out",
+      "accountType": "Cash",
+      "icon": "🥦"
     }
   ],
   "expenses": [
@@ -100,20 +99,28 @@
       "icon": "👜"
     },
     {
-      "id": "9c1b",
-      "expenseName": "Other",
-      "expenseAmount": "1500",
-      "date": "2025-03-10",
-      "category": "Other",
-      "icon": "🕶️"
+      "id": "2dd1",
+      "expenseName": "Entertainment",
+      "expenseAmount": "8290",
+      "date": "2025-03-29",
+      "category": "Entertainment",
+      "icon": "🥦"
     },
     {
-      "id": "34f5",
-      "expenseName": "Groceries",
-      "expenseAmount": "1250",
-      "date": "2025-03-12",
-      "category": "Groceries",
-      "icon": "🥦"
+      "id": "685f",
+      "expenseName": "Healthcare",
+      "expenseAmount": "1200",
+      "date": "2025-03-10",
+      "category": "Healthcare",
+      "icon": "💰"
+    },
+    {
+      "id": "65d5",
+      "expenseName": "Utilities",
+      "expenseAmount": "6709",
+      "date": "2025-02-10",
+      "category": "Utilities",
+      "icon": "💰"
     }
   ]
 }

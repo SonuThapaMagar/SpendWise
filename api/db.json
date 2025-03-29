@@ -37,7 +37,7 @@
     {
       "budgetName": "Healthcare",
       "budgetAmount": 2800,
-      "date": "2025-01-13",
+      "date": "2025-02-10",
       "category": "Healthcare",
       "accountType": "Digital Wallet",
       "icon": "👩‍🔬",
@@ -45,30 +45,12 @@
     },
     {
       "budgetName": "Rent",
-      "budgetAmount": "15700",
-      "date": "2025-01-14",
+      "budgetAmount": 15700,
+      "date": "2025-02-20",
       "category": "Rent",
       "accountType": "Credit Card",
       "icon": "🏘️",
       "id": "6bf9"
-    },
-    {
-      "budgetName": "Groceries",
-      "budgetAmount": "2000",
-      "date": "2025-03-20",
-      "category": "Groceries",
-      "accountType": "Cash",
-      "icon": "🍅",
-      "id": "27f1"
-    },
-    {
-      "id": "3a8b",
-      "budgetName": "Fashion",
-      "budgetAmount": "8000",
-      "date": "2025-02-03",
-      "category": "Transportation",
-      "accountType": "Bank Transfer",
-      "icon": "💰"
     },
     {
       "id": "1bc8",

@@ -7,3 +7,13 @@
 - Edit or delete existing expenses.
 - View a list of expenses and charts summarizing spending
 
+## Admin Portal
+- User Management- CRUD operations for users
+- Financial Overview- Export data to Excel
+- Data visualization in charts
+
+## Technology Stack
+- React Js
+- Tailwindcss
+- Ant Design
+- Vite for build

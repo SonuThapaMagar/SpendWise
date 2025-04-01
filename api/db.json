@@ -1,0 +1,115 @@
+{
+  "users": [
+    {
+      "id": "admin1",
+      "username": "Test2",
+      "email": "admin@example.com",
+      "password": "newone",
+      "isAdmin": true,
+      "contact": "98765432210",
+      "createdAt": "2025-03-28T04:24:35.669Z",
+      "role": "admin"
+    },
+    {
+      "id": "eaa5",
+      "username": "Andres",
+      "email": "andres@gmail.com",
+      "password": "abc@123",
+      "contact": "98765432219",
+      "createdAt": "2025-03-28T04:24:35.797Z",
+      "role": "user"
+    },
+    {
+      "id": "3afe",
+      "username": "Daniel",
+      "email": "daniel@gmail.com",
+      "password": "daniel",
+      "isAdmin": false,
+      "createdAt": "2025-03-29T23:01:24.220Z",
+      "role": "user",
+      "contact": "98765432210"
+    },
+    {
+      "id": "77d5",
+      "username": "chiran",
+      "email": "chiran@gmail.com",
+      "password": "chiran",
+      "isAdmin": false,
+      "createdAt": "2025-03-30T04:32:24.361Z",
+      "role": "user",
+      "contact": "9745520113"
+    }
+  ],
+  "budgets": [
+    {
+      "budgetName": "Healthcare",
+      "budgetAmount": 280,
+      "date": "2025-02-10",
+      "category": "Healthcare",
+      "accountType": "Digital Wallet",
+      "icon": "👩‍🔬",
+      "id": "2ed1"
+    },
+    {
+      "id": "b794",
+      "budgetName": "Groceries",
+      "budgetAmount": 5000,
+      "date": "2025-02-03",
+      "category": "Groceries",
+      "accountType": "Other",
+      "icon": "🥦"
+    },
+    {
+      "budgetName": "Clothing",
+      "budgetAmount": 3000,
+      "date": "2025-03-11",
+      "category": "Clothing",
+      "accountType": "Credit Card",
+      "icon": "👗",
+      "id": "801d"
+    },
+    {
+      "id": "dbc7",
+      "budgetName": "Travel",
+      "budgetAmount": 7000,
+      "date": "2025-03-23",
+      "category": "Healthcare",
+      "accountType": "Debit Card",
+      "icon": "💰"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "2fd5",
+      "expenseName": "Groceries",
+      "expenseAmount": "1230",
+      "date": "2025-03-03",
+      "category": "Groceries",
+      "icon": "🥦"
+    },
+    {
+      "id": "e060",
+      "expenseName": "Other",
+      "expenseAmount": "550",
+      "date": "2025-02-24",
+      "category": "Other",
+      "icon": "👗"
+    },
+    {
+      "id": "a11d",
+      "expenseName": "Utilities",
+      "expenseAmount": "400",
+      "date": "2025-03-02",
+      "category": "Utilities",
+      "icon": "💰"
+    },
+    {
+      "id": "0622",
+      "expenseName": "Utilities",
+      "expenseAmount": "890",
+      "date": "2025-03-24",
+      "category": "Utilities",
+      "icon": "💰"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+/* src/App.css */
+@import "tailwindcss";
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Base menu item styles */
+.custom-menu .ant-menu-item {
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    color: #000 !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 48px !important;
+    line-height: 48px !important;
+    margin: 4px 0 !important;
+}
+
+.custom-menu .ant-menu-item .anticon {
+    font-size: 20px !important;
+    min-width: 24px !important;
+    display: flex !important;
+    justify-content: center !important;
+    transition: color 0.3s ease;
+}
+
+/* Hover and active states */
+.custom-menu .ant-menu-item:hover {
+    background-color: #f0f4ff !important;
+    color: #6875f5 !important;
+}
+
+.custom-menu .ant-menu-item:hover .anticon {
+    color: #6875f5 !important;
+}
+
+.custom-menu .ant-menu-item-selected {
+    background-color: #6875f5 !important;
+    color: white !important;
+}
+
+.custom-menu .ant-menu-item-selected .anticon {
+    color: white !important;
+}
+
+/* Mobile specific styles */
+@media (max-width: 768px) {
+    .custom-menu .ant-menu-item {
+        padding: 0 12px !important;
+        margin: 8px 0 !important;
+    }
+
+    .custom-menu .ant-menu-item .anticon {
+        font-size: 24px !important;
+    }
+}
+
+.custom-menu .ant-menu-item::after {
+    display: none !important;
+}
+
+.bg-loginBackground {
+    background-image: url('/src/assets/hero-bg.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 100;
+}

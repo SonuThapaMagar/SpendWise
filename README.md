@@ -28,3 +28,19 @@
 ## Screenshots
 - Landing Page
   ![image](https://github.com/user-attachments/assets/339a2445-0c3f-4077-b80b-79dc629e7fe9)
+
+- User Dashboard
+  ![image](https://github.com/user-attachments/assets/f31a1eec-ce70-40b0-a25f-dd6269fe3e80)
+
+- Admin Dashboard
+  ![image](https://github.com/user-attachments/assets/a87d8218-c85a-4217-b83c-cc9810d27c95)
+
+- Budget Management
+  ![image](https://github.com/user-attachments/assets/a8184362-c832-4e11-8d19-694af58feb6d)
+
+- Expense Management
+  ![image](https://github.com/user-attachments/assets/d50a4e3f-116d-474b-8602-184568b081c8)
+
+
+
+

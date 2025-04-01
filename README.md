@@ -17,3 +17,10 @@
 - Tailwindcss
 - Ant Design
 - Vite for build
+
+# Installation Setup
+- Clone the repo `https://github.com/SonuThapaMagar/SpendWise`
+- Go to the project `cd project_name`
+- Install dependencies `npm install`
+- Start the dev server `npm run dev`
+- **Access the app**: [http://localhost:5173](http://localhost:5173)

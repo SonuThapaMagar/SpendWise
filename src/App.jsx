@@ -21,13 +21,15 @@ import ChangePassword from "./pages/Auth/ChangePassword";
 import AdminLayout from "./layout/AdminLayout";
 import { BudgetProvider } from "./context API/BudgetContext";
 import { AdminProvider } from "./context API/admin.context";
+import { ExpenseProvider } from "./context API/ExpenseContext";
+import { CombinedFinanceProvider } from "./context API/CombinedFinanceContext";
 import UserManagement from "./pages/Admin/UserManagement";
 import Reports from "./pages/Admin/Reports";
+import { useAdmin } from "./context API/admin.context";
 
 const ProtectedAdminRoute = ({ children }) => {
-  const isLoggedIn = localStorage.getItem("isAdminLoggedIn") === "1";
-  console.log("Checking admin session: isAdminLoggedIn =", isLoggedIn);
-  return isLoggedIn ? children : <Navigate to="/admin/login" replace />;
+  const { isAdminLoggedIn } = useAdmin();
+  return isAdminLoggedIn ? children : <Navigate to="/admin/login" replace />;
 };
 
 const ProtectedUserRoute = ({ children }) => {
@@ -39,54 +41,58 @@ const ProtectedUserRoute = ({ children }) => {
 const App = memo(() => {
   return (
     <UserProvider>
-      <BudgetProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/features" element={<Services />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
+      <AdminProvider>
+        <BudgetProvider>
+          <ExpenseProvider>
+            <CombinedFinanceProvider>
+              <BrowserRouter>
+                <Routes>
+                  {/* Public routes */}
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/features" element={<Services />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<SignUp />} />
 
-            {/* Admin routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route
-              path="/admin"
-              element={
-                <AdminProvider>
-                  <ProtectedAdminRoute>
-                    <AdminLayout />
-                  </ProtectedAdminRoute>
-                </AdminProvider>
-              }
-            >
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="users" element={<UserManagement />} />
-              <Route path="reports" element={<Reports />} />
-            </Route>
+                  {/* Admin routes */}
+                  <Route path="/admin/login" element={<AdminLogin />} />
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminLayout />
+                      </ProtectedAdminRoute>
+                    }
+                  >
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="users" element={<UserManagement />} />
+                    <Route path="reports" element={<Reports />} />
+                  </Route>
 
-            {/* User routes */}
-            <Route
-              path="/users"
-              element={
-                <ProtectedUserRoute>
-                  <UserLayout />
-                </ProtectedUserRoute>
-              }
-            >
-              <Route path="dashboard" element={<UserDashboard />} />
-              <Route path="budget" element={<Budget />} />
-              <Route path="expense" element={<Expense />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="editProfile" element={<EditProfile />} />
-              <Route path="changePassword" element={<ChangePassword />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-        <ToastContainer />
-      </BudgetProvider>
+                  {/* User routes */}
+                  <Route
+                    path="/users"
+                    element={
+                      <ProtectedUserRoute>
+                        <UserLayout />
+                      </ProtectedUserRoute>
+                    }
+                  >
+                    <Route path="dashboard" element={<UserDashboard />} />
+                    <Route path="budget" element={<Budget />} />
+                    <Route path="expense" element={<Expense />} />
+                    <Route path="profile" element={<Profile />} />
+                    <Route path="editProfile" element={<EditProfile />} />
+                    <Route path="changePassword" element={<ChangePassword />} />
+                  </Route>
+                </Routes>
+              </BrowserRouter>
+              <ToastContainer />
+            </CombinedFinanceProvider>
+          </ExpenseProvider>
+        </BudgetProvider>
+      </AdminProvider>
     </UserProvider>
   );
 });

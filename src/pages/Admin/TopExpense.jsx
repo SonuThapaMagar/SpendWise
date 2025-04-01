@@ -1,36 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Timeline, Typography } from "antd";
-import { useBudget } from "../../context API/BudgetContext";
+import { useAdmin } from "../../context API/admin.context";
 
 const { Text } = Typography;
 
 const TopExpense = () => {
-  const { expenses, loading } = useBudget();
+  const { metrics, loading } = useAdmin();
   const [topExpenses, setTopExpenses] = useState([]);
-
   const dotColors = ["purple", "blue", "cyan", "magenta"];
 
   useEffect(() => {
-    if (expenses && expenses.length > 0) {
-      const sortedExpenses = [...expenses]
-        .sort(
-          (a, b) => parseFloat(b.expenseAmount) - parseFloat(a.expenseAmount)
-        )
-        .slice(0, 4);
-
-      const formattedExpenses = sortedExpenses.map((expense, index) => ({
-        time: new Date(expense.date).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+    if (metrics.topExpenses && metrics.topExpenses.length > 0) {
+      const formattedExpenses = metrics.topExpenses.map((expense, index) => ({
         description: `Expense: ${expense.expenseName || "Uncategorized"}`,
-        amount: parseFloat(expense.expenseAmount) || 0,
         color: dotColors[index % dotColors.length],
+        category: expense.category || "General",
       }));
-
       setTopExpenses(formattedExpenses);
     }
-  }, [expenses]);
+  }, [metrics.topExpenses]);
 
   return (
     <div className="h-full flex flex-col font-poppins">
@@ -83,8 +71,13 @@ const TopExpense = () => {
                     >
                       {expense.description}
                     </Text>
-                    <Text className="text-base md:text-lg text-gray-700">
-                      Rs.{expense.amount.toFixed(2)}
+                    <div className="flex gap-2 items-center">
+                      <Text className="text-xs text-gray-500">
+                        ({expense.category})
+                      </Text>
+                    </div>
+                    <Text className="text-xs text-gray-400">
+                      {expense.time}
                     </Text>
                   </div>
                 </div>

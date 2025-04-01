@@ -136,9 +136,7 @@ const AdminLayout = () => {
               >
                 {adminUser.username}
               </Text>
-              <Text className="text-gray-500 text-xs">
-                Logged In: {isAdminLoggedIn ? "1" : "0"}
-              </Text>
+              
             </>
           )}
         </div>

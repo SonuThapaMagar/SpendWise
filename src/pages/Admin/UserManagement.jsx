@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Card,
   Table,
@@ -17,16 +17,41 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastify.util";
 const { Text } = Typography;
 
 const UserManagement = () => {
-  const { users, loading, deleteUser, updateUser } = useAdmin();
+  const { users, loading, deleteUser, updateUser, fetchAdminData } = useAdmin();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [userToDelete, setUserToDelete] = useState(null);
   const [form] = Form.useForm();
 
-  // Edit Modal Functions
+  useEffect(() => {
+    if (!users.length) {
+      fetchAdminData();
+    }
+  }, [fetchAdminData, users.length]);
+
+
+  const handleEdit = async () => {
+    try {
+      const values = await form.validateFields();
+      await updateUser(selectedUser.id, values);
+      showSuccessToast("User updated successfully");
+      setIsEditModalVisible(false);
+    } catch (error) {
+      showErrorToast("Failed to update user");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteUser(selectedUser.id);
+      showSuccessToast("User deleted successfully");
+      setIsDeleteModalVisible(false);
+    } catch (error) {
+      showErrorToast("Failed to delete user");
+    }
+  };
+
   const showEditModal = (user) => {
-    
     setSelectedUser(user);
     form.setFieldsValue({
       username: user.username,
@@ -34,54 +59,6 @@ const UserManagement = () => {
       contact: user.contact || "",
     });
     setIsEditModalVisible(true);
-  };
-
-  const handleEditOk = async () => {
-    // No event here, so no e.preventDefault() needed
-    try {
-      const values = await form.validateFields();
-      await updateUser(selectedUser.id, {
-        ...selectedUser,
-        ...values,
-      });
-      showSuccessToast("User updated successfully");
-      setIsEditModalVisible(false);
-      setSelectedUser(null);
-      form.resetFields();
-    } catch (error) {
-      showErrorToast("Failed to update user");
-      console.error("Update error:", error);
-    }
-  };
-
-  const handleEditCancel = () => {
-    setIsEditModalVisible(false);
-    setSelectedUser(null);
-    form.resetFields();
-  };
-
-  // Delete Modal Functions
-  const showDeleteModal = (user) => {
-    setUserToDelete(user);
-    setIsDeleteModalVisible(true);
-  };
-
-  const handleDeleteOk = async () => {
-    // No event here, so no e.preventDefault() needed
-    try {
-      await deleteUser(userToDelete.id);
-      showSuccessToast("User deleted successfully");
-      setIsDeleteModalVisible(false);
-      setUserToDelete(null);
-    } catch (error) {
-      showErrorToast("Failed to delete user");
-      console.error("Delete error:", error);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setIsDeleteModalVisible(false);
-    setUserToDelete(null);
   };
 
   const columns = [
@@ -110,27 +87,17 @@ const UserManagement = () => {
       render: (_, record) => (
         <Space size="middle">
           <Button
-            type="button"
-            htmlType="button"
             icon={<EditOutlined />}
             className="text-blue-600 hover:text-blue-800"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              showEditModal(record);
-            }}
+            onClick={() => showEditModal(record)}
           />
-
           <Button
-            type="button"
-            htmlType="button"
             danger
             icon={<DeleteOutlined />}
             className="text-red-600 hover:text-red-800"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              showDeleteModal(record);
+            onClick={() => {
+              setSelectedUser(record);
+              setIsDeleteModalVisible(true);
             }}
           />
         </Space>
@@ -141,11 +108,7 @@ const UserManagement = () => {
   return (
     <div className="p-4 sm:p-6 md:p-8 bg-[#F0F5FF]">
       <Card
-        title={
-          <span className="text-md sm:text-2xl font-semibold">
-            User Management
-          </span>
-        }
+        title={<span className="text-md sm:text-2xl font-semibold">User Management</span>}
         className="shadow-md rounded-lg"
       >
         <Spin spinning={loading}>
@@ -169,11 +132,11 @@ const UserManagement = () => {
       <Modal
         title="Edit User"
         open={isEditModalVisible}
-        onOk={handleEditOk}
-        onCancel={handleEditCancel}
+        onOk={handleEdit}
+        onCancel={() => setIsEditModalVisible(false)}
         okText="Save"
         cancelText="Cancel"
-        destroyOnClose
+        confirmLoading={loading}
         okButtonProps={{ className: "bg-blue-600 hover:bg-blue-700" }}
       >
         <Form form={form} layout="vertical" name="edit_user_form">
@@ -204,20 +167,16 @@ const UserManagement = () => {
       <Modal
         title="Confirm Deletion"
         open={isDeleteModalVisible}
-        onOk={handleDeleteOk}
-        onCancel={handleDeleteCancel}
+        onOk={handleDelete}
+        onCancel={() => setIsDeleteModalVisible(false)}
+        confirmLoading={loading}
         okText="Yes"
         cancelText="No"
-        destroyOnClose
-        okButtonProps={{
-          danger: true,
-          className: "bg-red-600 hover:bg-red-700",
-        }}
+        okButtonProps={{ danger: true, className: "bg-red-600 hover:bg-red-700" }}
       >
         <p>
           Are you sure you want to delete{" "}
-          <Text strong>{userToDelete?.username}</Text>? This action cannot be
-          undone.
+          <Text strong>{selectedUser?.username}</Text>? This action cannot be undone.
         </p>
       </Modal>
     </div>

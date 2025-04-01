@@ -18,7 +18,8 @@ const ExpensesBarChart = ({ chartData }) => {
   const dataWithIndex = chartData.map((item, index) => ({
     ...item,
     index,
-    key: `bar-${index}`, // Unique key for each bar
+    // Unique key for each bar
+    key: `bar-${index}`, 
   }));
 
   return (
@@ -32,16 +33,16 @@ const ExpensesBarChart = ({ chartData }) => {
         className="shadow-lg rounded-lg"
         style={{
           minHeight: "380px",
-          flex: 1, // Ensure the card stretches to fill available space
+          flex: 1, 
           display: "flex",
           flexDirection: "column",
         }}
         styles={{
           body: {
-            flex: 1, // Ensure the card body takes up remaining space
+            flex: 1, 
             display: "flex",
             flexDirection: "column",
-            padding: "16px", // Consistent padding
+            padding: "16px", 
           },
         }}
       >

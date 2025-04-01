@@ -12,21 +12,25 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { useBudget } from "../../context API/BudgetContext";
+import { useAdmin } from "../../context API/admin.context";
 import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const ExpenseCharts = () => {
-  const { expenses, loading } = useBudget();
+  const { metrics, loading } = useAdmin(); // Changed to useAdmin
   const [selectedMonth, setSelectedMonth] = useState("All");
 
-  const safeExpenses = Array.isArray(expenses) ? expenses : [];
+  // Use topExpenses from admin context
+  const safeExpenses = Array.isArray(metrics.topExpenses) ? metrics.topExpenses : [];
 
+  // Months dropdown - unchanged
   const months = ["All", ...Array.from({ length: 12 }, (_, i) => {
     const date = new Date();
     date.setMonth(date.getMonth() - i);
     return date.toLocaleString("default", { month: "long", year: "numeric" });
   })];
 
+  // Filtering logic - unchanged
   const filteredExpenses = selectedMonth === "All"
     ? safeExpenses
     : safeExpenses.filter((exp) => {
@@ -35,6 +39,7 @@ const ExpenseCharts = () => {
         return monthYear === selectedMonth;
       });
 
+  // Data processing - unchanged
   const expensesByMonth = safeExpenses.reduce((acc, exp) => {
     const month = new Date(exp.date).toLocaleString("default", { month: "long", year: "numeric" });
     acc[month] = (acc[month] || 0) + parseFloat(exp.expenseAmount || 0);
@@ -59,6 +64,7 @@ const ExpenseCharts = () => {
 
   const COLORS = ["#4bc0c0", "#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4", "#ffeead"];
 
+  // Download function - unchanged
   const downloadExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(safeExpenses);
     const workbook = XLSX.utils.book_new();
@@ -70,6 +76,7 @@ const ExpenseCharts = () => {
 
   if (loading) return <div className="p-4 text-center">Loading...</div>;
 
+  // UI remains exactly the same
   return (
     <Card className="mb-6 shadow-md">
       <div className="flex flex-col gap-4">

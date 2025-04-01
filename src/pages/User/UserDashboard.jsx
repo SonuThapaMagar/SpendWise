@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { Row } from "antd";
 import SummaryCards from "../../components/SummaryCards";
 import RecentTransactions from "../../components/RecentTransactions";
@@ -7,7 +7,7 @@ import Last30DaysExpenses from "../../components/Last30DaysExpenses";
 import ExpensesBarChart from "../../components/ExpensesBarChart";
 import Last60DaysIncomeChart from "../../components/Last60DaysIncomeChart";
 import RecentBudgets from "../../components/RecentBudgets";
-import { useBudget } from "../../context API/BudgetContext";
+import { useCombinedFinance } from "../../context API/CombinedFinanceContext";
 
 const UserDashboard = () => {
   const {
@@ -19,7 +19,15 @@ const UserDashboard = () => {
     last30DaysChartData,
     last60DaysBudgets,
     last60DaysIncomeChartData,
-  } = useBudget();
+    budgets,
+    expenses,
+    loading,
+    refreshData,
+  } = useCombinedFinance();
+
+  useEffect(() => {
+    refreshData();
+  }, []);
 
   // Data for the donut chart
   const chartData = [
@@ -42,6 +50,8 @@ const UserDashboard = () => {
       backgroundColor: "#d9534f",
     },
   ];
+  if (loading) return <div>Loading dashboard data...</div>;
+  // if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">

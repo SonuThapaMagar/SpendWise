@@ -14,6 +14,7 @@ export const UserProvider = ({ children }) => {
 
   const updateUser = useCallback((updates) => {
     setUser((prev) => {
+      if (!prev) return updates; // If no previous user, return updates
       const updatedUser = { ...prev, ...updates };
       localStorage.setItem("user", JSON.stringify(updatedUser));
       return updatedUser;
@@ -44,7 +45,9 @@ export const UserProvider = ({ children }) => {
   const fetchUserData = useCallback(
     async (userId) => {
       try {
-        const response = await axios.get(`http://localhost:4000/users/${userId}`);
+        const response = await axios.get(
+          `http://localhost:4000/users/${userId}`
+        );
         updateUser(response.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -123,11 +126,11 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(() => {
-    setUser(null);
-    setIsUserLoggedIn(false);
     localStorage.removeItem("user");
     localStorage.setItem("isUserLoggedIn", "0"); // User-specific
     localStorage.setItem("isAdminLoggedIn", "0"); // Clear admin too
+    setIsUserLoggedIn(false);
+    setUser(null);
   }, []);
 
   const value = useMemo(

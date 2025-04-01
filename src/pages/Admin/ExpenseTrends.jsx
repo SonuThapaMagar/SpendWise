@@ -6,29 +6,33 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
-import { useBudget } from "../../context API/BudgetContext";
+import { useAdmin } from "../../context API/admin.context";
 
 const ExpenseTrends = () => {
-  const { expenses, loading } = useBudget();
+  const { metrics, loading } = useAdmin();
 
-  // Process data to get monthly averages
+  // Process data to get monthly averages from admin context
   const getMonthlyAverages = () => {
-    const safeExpenses = Array.isArray(expenses) ? expenses : [];
-    
+    const safeExpenses = Array.isArray(metrics.topExpenses)
+      ? metrics.topExpenses
+      : [];
+
     // 1. Group by month and calculate totals
     const monthlyData = safeExpenses.reduce((acc, expense) => {
       if (!expense.date) return acc;
-      
+
       const date = new Date(expense.date);
-      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const monthYear = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}`;
       const amount = parseFloat(expense.expenseAmount) || 0;
-      
+
       if (!acc[monthYear]) {
         acc[monthYear] = { total: 0, count: 0 };
       }
-      
+
       acc[monthYear].total += amount;
       acc[monthYear].count += 1;
       return acc;
@@ -36,14 +40,18 @@ const ExpenseTrends = () => {
 
     // 2. Calculate averages and format for chart
     return Object.keys(monthlyData)
-      .map(monthYear => {
-        const [year, month] = monthYear.split('-');
+      .map((monthYear) => {
+        const [year, month] = monthYear.split("-");
         return {
           monthYear,
-          name: new Date(year, month-1).toLocaleString('default', { month: 'short', year: 'numeric' }),
-          average: monthlyData[monthYear].count > 0 
-            ? monthlyData[monthYear].total / monthlyData[monthYear].count 
-            : 0
+          name: new Date(year, month - 1).toLocaleString("default", {
+            month: "short",
+            year: "numeric",
+          }),
+          average:
+            monthlyData[monthYear].count > 0
+              ? monthlyData[monthYear].total / monthlyData[monthYear].count
+              : 0,
         };
       })
       .sort((a, b) => a.monthYear.localeCompare(b.monthYear)); // Sort chronologically
@@ -73,7 +81,7 @@ const ExpenseTrends = () => {
       <h3 className="text-lg font-medium text-gray-700 mb-4">
         Average Monthly Expense Trends
       </h3>
-      <div style={{ width: '100%', height: '400px' }}>
+      <div style={{ width: "100%", height: "400px" }}>
         <ResponsiveContainer>
           <AreaChart
             data={chartData}
@@ -81,11 +89,9 @@ const ExpenseTrends = () => {
           >
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
             <XAxis dataKey="name" />
-            <YAxis 
-              tickFormatter={(value) => `Rs.${value.toFixed(0)}`}
-            />
-            <Tooltip 
-              formatter={(value) => [`$${value.toFixed(2)}`, "Average"]}
+            <YAxis tickFormatter={(value) => `Rs.${value.toFixed(0)}`} />
+            <Tooltip
+              formatter={(value) => [`Rs.${value.toFixed(2)}`, "Average"]}
               labelFormatter={(label) => `Month: ${label}`}
             />
             <Area

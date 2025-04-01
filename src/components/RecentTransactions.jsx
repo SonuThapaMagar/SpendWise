@@ -34,16 +34,16 @@ const RecentTransactions = ({ recentTransactions }) => {
         className="shadow-lg rounded-lg"
         style={{
           minHeight: "380px",
-          flex: 1, // Ensure the card stretches to fill available space
+          flex: 1,
           display: "flex",
           flexDirection: "column",
         }}
         styles={{
           body: {
-            flex: 1, // Ensure the card body takes up remaining space
+            flex: 1, 
             display: "flex",
             flexDirection: "column",
-            padding: "16px", // Consistent padding
+            padding: "16px", 
           },
         }}
       >

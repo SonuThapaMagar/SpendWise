@@ -27,7 +27,11 @@ const UserLayout = () => {
   } = theme.useToken();
 
   const navigate = useNavigate();
-  const { user, isUserLoggedIn, logout } = useUser();
+  const { user, logout } = useUser();
+  const isUserLoggedIn = React.useMemo(
+    () => localStorage.getItem("isUserLoggedIn") === "1",
+    []
+  );
 
   useEffect(() => {
     if (!isUserLoggedIn) {
@@ -152,9 +156,6 @@ const UserLayout = () => {
               >
                 {user?.username || "Username"}
               </Text>
-              <Text style={{ fontSize: "12px", color: "#6B7280" }}>
-                Logged In: {isUserLoggedIn ? "1" : "0"}
-              </Text>
             </>
           )}
         </div>
@@ -215,9 +216,6 @@ const UserLayout = () => {
           <Title level={4} style={{ margin: 0, color: "#1F2A44" }}>
             Dashboard
           </Title>
-          <div style={{ marginLeft: "auto", paddingRight: "16px" }}>
-            <Text>Session: {isUserLoggedIn ? "1" : "0"}</Text>
-          </div>
         </Header>
         <Content
           className="mt-20 mx-4 p-6 bg-white rounded-lg overflow-y-auto"

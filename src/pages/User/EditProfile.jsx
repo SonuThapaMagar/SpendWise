@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Card, Typography, message } from "antd";
+import React, { useEffect ,useState} from "react";
+import { Form, Input, Button, Card, Typography, message, Spin } from "antd";
 import { useUser } from "../../context API/user.context";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 const { Title } = Typography;
 
 const EditProfile = () => {
   const { user, setUser } = useUser();
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,91 +17,96 @@ const EditProfile = () => {
       form.setFieldsValue({
         username: user.username,
         email: user.email,
-        contact: user.contact,
+        contact: user.contact || "", // Handle potential undefined
       });
+    } else {
+      // If no user, redirect to profile
+      navigate("/users/profile");
     }
-  }, [user, form]);
+  }, [user, form, navigate]);
 
   const onFinish = async (values) => {
+    setLoading(true);
     try {
-      // Update the user data on the server
-      const response = await axios.patch(
+      // Use PUT instead of PATCH for full updates
+      const response = await axios.put(
         `http://localhost:4000/users/${user.id}`,
-        values
+        { ...user, ...values } // Merge existing user data with updates
       );
 
-      // Update the user data in the context and localStorage
-      setUser(response.data);
-      localStorage.setItem("user", JSON.stringify(response.data));
+      // Update context without causing full reload
+      setUser(prev => ({
+        ...prev,
+        ...response.data
+      }));
 
-      // Show success message
       message.success("Profile updated successfully!");
-
-      // Redirect back to the profile page
       navigate("/users/profile");
     } catch (error) {
       console.error("Error updating profile:", error);
-      message.error("Failed to update profile. Please try again.");
+      message.error(error.response?.data?.message || "Failed to update profile");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Card
-      title="Edit Profile"
+      title={<Title level={4}>Edit Profile</Title>}
       style={{
-        width: "100%",
         maxWidth: 800,
-        margin: "0 auto",
-        border: "1px solid #f0f0f0",
-        borderRadius: "8px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        margin: "16px auto",
+        borderRadius: 8,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
       }}
     >
-      <Form
-        form={form}
-        onFinish={onFinish}
-        layout="vertical"
-        style={{ maxWidth: 600, margin: "0 auto" }}
-      >
-        {/* Username Field */}
-        <Form.Item
-          name="username"
-          label="Username"
-          rules={[{ required: true, message: "Please enter your username!" }]}
+      <Spin spinning={loading}>
+        <Form
+          form={form}
+          onFinish={onFinish}
+          layout="vertical"
+          style={{ maxWidth: 600, margin: "0 auto" }}
         >
-          <Input placeholder="Enter your username" />
-        </Form.Item>
+          <Form.Item
+            name="username"
+            label="Username"
+            rules={[{ required: true, message: "Please enter username" }]}
+          >
+            <Input />
+          </Form.Item>
 
-        {/* Email Field */}
-        <Form.Item
-          name="email"
-          label="Email"
-          rules={[
-            { required: true, message: "Please enter your email!" },
-            { type: "email", message: "Please enter a valid email!" },
-          ]}
-        >
-          <Input placeholder="Enter your email" />
-        </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              { required: true, message: "Please enter email" },
+              { type: "email", message: "Invalid email format" }
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
-        {/* Contact Field */}
-        <Form.Item
-          name="contact"
-          label="Contact"
-          rules={[
-            { required: true, message: "Please enter your contact number!" },
-          ]}
-        >
-          <Input placeholder="Enter your contact number" />
-        </Form.Item>
+          <Form.Item
+            name="contact"
+            label="Contact"
+            rules={[{ required: true, message: "Please enter contact" }]}
+          >
+            <Input />
+          </Form.Item>
 
-        {/* Submit Button */}
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Save Changes
-          </Button>
-        </Form.Item>
-      </Form>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Save Changes
+            </Button>
+            <Button 
+              style={{ marginLeft: 8 }} 
+              onClick={() => navigate("/users/profile")}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
+        </Form>
+      </Spin>
     </Card>
   );
 };

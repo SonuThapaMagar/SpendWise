@@ -16,17 +16,17 @@ const FinancialOverview = ({ chartData, remainingBalance }) => {
         className="shadow-lg rounded-lg"
         style={{
           minHeight: "380px",
-          flex: 1, // Ensure the card stretches to fill available space
+          flex: 1, 
           display: "flex",
           flexDirection: "column",
         }}
         styles={{
           body: {
-            flex: 1, // Ensure the card body takes up remaining space
+            flex: 1, 
             display: "flex",
             flexDirection: "column",
-            padding: "16px", // Consistent padding
-            position: "relative", // Allow absolute positioning of the overlay
+            padding: "16px",
+            position: "relative", 
           },
         }}
       >
@@ -68,7 +68,7 @@ const FinancialOverview = ({ chartData, remainingBalance }) => {
               left: "50%",
               transform: "translate(-50%, -50%)",
               textAlign: "center",
-              pointerEvents: "none", // Prevent interference with chart interactions
+              pointerEvents: "none", 
             }}
           >
             <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: 500 }}>

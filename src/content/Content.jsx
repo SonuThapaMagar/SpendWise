@@ -5,12 +5,17 @@ import Services from "./Services";
 import About from "./About";
 import Cards from "./Cards";
 import Contact from "./Contact";
+import { useNavigate } from "react-router-dom";
 
 const Content = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex-grow">
       {/* Home Section */}
-      <section id="home" className="relative py-8 md:py-20 px-4 sm:px-6 md:px-20 overflow-hidden bg-indigo-50">
+      <section
+        id="home"
+        className="relative py-8 md:py-20 px-4 sm:px-6 md:px-20 overflow-hidden bg-indigo-50"
+      >
         <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center mt-6 md:mt-8">
             <div className="text-center md:text-left mx-0 sm:mx-8 pt-6 sm:pt-8 md:pt-0">
@@ -27,7 +32,10 @@ const Content = () => {
                 perfect amount every day, so you don't have to think about it.
               </p>
               <div className="flex justify-center md:justify-start">
-                <button className="bg-blue-500 text-gray-100 px-4 py-2 sm:px-6 sm:py-3 rounded-full hover:bg-blue-600 transition duration-300 text-sm sm:text-base flex items-center justify-center whitespace-nowrap">
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="bg-blue-500 text-gray-100 px-4 py-2 sm:px-6 sm:py-3 rounded-full hover:bg-blue-600 transition duration-300 text-sm sm:text-base flex items-center justify-center whitespace-nowrap"
+                >
                   Sign Up Now <ArrowRight className="ml-2 h-4 w-4" />
                 </button>
               </div>

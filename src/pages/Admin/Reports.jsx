@@ -1,14 +1,15 @@
 import React from "react";
-import { Card, Button, Spin } from "antd";
-import { useBudget } from "../../context API/BudgetContext";
+import { Card, Spin } from "antd";
+import { useAdmin } from "../../context API/admin.context";
 import ExpenseCharts from "./ExpenseCharts";
 import RecentUsers from "./RecentUsers";
 
 const Reports = () => {
-  const { loading } = useBudget();
+  const { loading } = useAdmin(); // Changed to useAdmin
 
-  if (loading)
+  if (loading) {
     return <Spin tip="Loading reports..." size="large" className="mt-8" />;
+  }
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
@@ -19,12 +20,12 @@ const Reports = () => {
       </div>
 
       <div className="flex flex-col gap-8">
-        {/* Expense Charts Section */}
+        {/* Expense Charts Section - No changes to the component itself */}
         <div className="mb-4">
           <ExpenseCharts />
         </div>
 
-        {/* Recent Users Section */}
+        {/* Recent Users Section - No changes to the component itself */}
         <div className="mt-4">
           <RecentUsers />
         </div>

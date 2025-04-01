@@ -11,19 +11,6 @@
       "role": "admin"
     },
     {
-      "id": "0a25",
-      "username": "new3",
-      "email": "new@gmail.com",
-      "password": "one@123",
-      "contact": "98765432210",
-      "createdAt": "2023-02-20T00:00:00.000Z",
-      "user": {
-        "name": "Hello",
-        "email": "abc@gmail.com",
-        "age": 0
-      }
-    },
-    {
       "id": "eaa5",
       "username": "Andres",
       "email": "andres@gmail.com",
@@ -41,12 +28,22 @@
       "createdAt": "2025-03-29T23:01:24.220Z",
       "role": "user",
       "contact": "98765432210"
+    },
+    {
+      "id": "77d5",
+      "username": "chiran",
+      "email": "chiran@gmail.com",
+      "password": "chiran",
+      "isAdmin": false,
+      "createdAt": "2025-03-30T04:32:24.361Z",
+      "role": "user",
+      "contact": "9745520113"
     }
   ],
   "budgets": [
     {
       "budgetName": "Healthcare",
-      "budgetAmount": 2800,
+      "budgetAmount": 280,
       "date": "2025-02-10",
       "category": "Healthcare",
       "accountType": "Digital Wallet",
@@ -63,13 +60,22 @@
       "icon": "🥦"
     },
     {
-      "id": "801d",
       "budgetName": "Clothing",
-      "budgetAmount": 5000,
+      "budgetAmount": 3000,
       "date": "2025-03-11",
       "category": "Clothing",
       "accountType": "Credit Card",
-      "icon": "👗"
+      "icon": "👗",
+      "id": "801d"
+    },
+    {
+      "id": "dbc7",
+      "budgetName": "Travel",
+      "budgetAmount": 7000,
+      "date": "2025-03-23",
+      "category": "Healthcare",
+      "accountType": "Debit Card",
+      "icon": "💰"
     }
   ],
   "expenses": [
@@ -88,6 +94,22 @@
       "date": "2025-02-24",
       "category": "Other",
       "icon": "👗"
+    },
+    {
+      "id": "a11d",
+      "expenseName": "Utilities",
+      "expenseAmount": "400",
+      "date": "2025-03-02",
+      "category": "Utilities",
+      "icon": "💰"
+    },
+    {
+      "id": "0622",
+      "expenseName": "Utilities",
+      "expenseAmount": "890",
+      "date": "2025-03-24",
+      "category": "Utilities",
+      "icon": "💰"
     }
   ]
 }

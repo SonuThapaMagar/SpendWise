@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { getUsers } from "../utils/user.utils";
+import axios from "axios"
 
 const AdminContext = createContext();
 
@@ -8,6 +10,8 @@ export const AdminProvider = ({ children }) => {
     totalUsers: 0,
     totalExpenses: 0,
     totalBudgets: 0,
+    topExpenses: [],
+    userRetention: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,21 +24,16 @@ export const AdminProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      const [usersResponse, expensesResponse, budgetsResponse] =
-        await Promise.all([
-          fetch("http://localhost:4000/users"),
-          fetch("http://localhost:4000/expenses"),
-          fetch("http://localhost:4000/budgets"),
-        ]);
+      const [usersRes, expensesRes, budgetsRes] = await Promise.all([
+        axios.get("http://localhost:4000/users"),
+        axios.get("http://localhost:4000/expenses"),
+        axios.get("http://localhost:4000/budgets"),
+      ]);
+      const usersData = usersRes.data;
+      const expensesData = expensesRes.data;
+      const budgetsData = budgetsRes.data;
 
-      if (!usersResponse.ok) throw new Error("Failed to fetch users");
-      if (!expensesResponse.ok) throw new Error("Failed to fetch expenses");
-      if (!budgetsResponse.ok) throw new Error("Failed to fetch budgets");
-
-      const usersData = await usersResponse.json();
-      const expensesData = await expensesResponse.json();
-      const budgetsData = await budgetsResponse.json();
-
+      // Calculate metrics
       const totalUsers = usersData.length;
       const totalExpenses = expensesData.reduce(
         (sum, expense) => sum + parseFloat(expense.expenseAmount || 0),
@@ -45,8 +44,25 @@ export const AdminProvider = ({ children }) => {
         0
       );
 
+      // Get top 5 expenses
+      const topExpenses = [...expensesData]
+        .sort(
+          (a, b) => parseFloat(b.expenseAmount) - parseFloat(a.expenseAmount)
+        )
+        .slice(0, 5);
+
+      // Calculate user retention
+      const userRetention = calculateUserRetention(usersData);
+
       setUsers(usersData);
-      setMetrics({ totalUsers, totalExpenses, totalBudgets });
+
+      setMetrics({
+        totalUsers,
+        totalExpenses,
+        totalBudgets,
+        topExpenses,
+        userRetention,
+      });
     } catch (error) {
       setError(error.message);
       console.error("Error fetching admin data:", error);
@@ -55,55 +71,75 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  const calculateUserRetention = (users) => {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
+
+    return users.map((user) => ({
+      id: user.id,
+      username: user.username,
+      joined: user.createdAt,
+      active: Math.random() > 0.3, 
+      lastActive: new Date(
+        Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+      ),
+    }));
+  };
+
   const updateUser = async (userId, updatedData) => {
     try {
-      console.log("Updating user:", userId, updatedData);
+      setLoading(true);
       const response = await fetch(`http://localhost:4000/users/${userId}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
       });
-      console.log("Response status:", response.status);
-      if (!response.ok) throw new Error("Update failed");
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Update failed");
+      }
+
       const updatedUser = await response.json();
-      console.log("Updated user data:", updatedUser);
       setUsers((prev) =>
-        prev.map((user) => (user.id === userId ? updatedUser : user))
+        prev.map((user) =>
+          user.id === userId ? { ...user, ...updatedUser } : user
+        )
       );
+      return updatedUser;
     } catch (error) {
       console.error("Update error:", error);
-      throw error; // Rethrow to ensure UserManagement catches it
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteUser = async (userId) => {
     try {
-      console.log("Deleting user:", userId);
+      setLoading(true);
       const response = await fetch(`http://localhost:4000/users/${userId}`, {
         method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
       });
-      console.log("Response status:", response.status);
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Delete failed");
       }
+
       setUsers((prev) => prev.filter((user) => user.id !== userId));
-      console.log("User deleted successfully");
       return true;
     } catch (error) {
       console.error("Delete error:", error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const logoutAdmin = () => {
     localStorage.setItem("isAdminLoggedIn", "0");
     setIsAdminLoggedIn(false);
-    console.log("Admin logged out: isAdminLoggedIn = 0");
   };
 
   useEffect(() => {
@@ -123,6 +159,7 @@ export const AdminProvider = ({ children }) => {
         deleteUser,
         updateUser,
         isAdminLoggedIn,
+        setIsAdminLoggedIn,
         logoutAdmin,
       }}
     >

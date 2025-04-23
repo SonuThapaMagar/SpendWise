@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # SpendWise
 - A modern expense tracking web app built with React.js, Ant Design, and TailwindCSS. Helps users manage budgets, track expenses, and visualize spending patterns.
   
